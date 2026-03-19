@@ -13,15 +13,12 @@ export default function Footer() {
           thuật.
         </p>
       </aside>
-
       {/* Liên hệ */}
       <nav>
         <h6 className="footer-title">Liên hệ</h6>
-        <a className="link link-hover text-sm">
-          20 Tăng Nhơn Phú, TP. Thủ Đức, TP.HCM
-        </a>
-        <a className="link link-hover text-sm">(028) 3897 0023</a>
-        <a className="link link-hover text-sm">contact@hitu.edu.vn</a>
+        <p className="text-sm">20 Tăng Nhơn Phú, TP. Thủ Đức, TP.HCM</p>
+        <p className="text-sm">(028) 3897 0023</p>
+        <p className="text-sm">contact@hitu.edu.vn</p>
       </nav>
 
       {/* Website trường / khoa */}
@@ -41,7 +38,7 @@ export default function Footer() {
         >
           Tuyển sinh
         </a>
-        <a href="#" className="link link-hover text-sm">
+        <a href="https://fit-hitu.edu.vn/" className="link link-hover text-sm">
           Khoa Công nghệ thông tin
         </a>
       </nav>
