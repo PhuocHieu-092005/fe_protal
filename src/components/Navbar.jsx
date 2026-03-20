@@ -28,6 +28,9 @@ export default function Navbar() {
             <li>
               <a>CV</a>
             </li>
+            <li>
+              <a>Project</a>
+            </li>
           </ul>
         </div>
 

@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="footer sm:footer-horizontal bg-neutral text-neutral-content px-10 py-10">
       {/* Logo + giới thiệu */}
       <aside>
-        <img src="public/logo-hitc.png" alt="HITU" className="h-12 mb-3" />
+        <img src="/logo-hitc.png" alt="HITU" className="h-12 mb-3" />
         <p className="text-sm max-w-xs">
           Trường Cao đẳng Công Thương TP.HCM (HITU)
           <br />
