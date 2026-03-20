@@ -1,7 +1,7 @@
-import React from "react";
 import CvCard from "./CvCard";
-
-export default function CvList() {
+import { useState } from "react";
+import Pagination from "../../components/common/Pagination";
+export default function CvGridView() {
   const cards = [
     {
       id: 1,
@@ -71,35 +71,40 @@ export default function CvList() {
       description:
         "Thiết kế giao diện với Figma, Adobe XD. Có kinh nghiệm xây dựng design system.",
     },
+    {
+      id: 1,
+      image:
+        "https://assets.prebuiltui.com/images/components/feature-sections/ai-avatar-image1.png",
+      title: "Trần Thị B - Backend Developer",
+      position: "Software Developer",
+      description:
+        "Chuyên Laravel, MySQL, xây dựng RESTful API. Có kinh nghiệm deploy server.",
+    },
   ];
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const cardsPerPage = 8;
+  // Tính toán index
+  const indexOfLastCard = currentPage * cardsPerPage;
+  const indexOfFirstCard = indexOfLastCard - cardsPerPage;
+  const currentCards = cards.slice(indexOfFirstCard, indexOfLastCard);
+  const totalPages = Math.ceil(cards.length / cardsPerPage);
   return (
-    <>
-      <style>
-        {`
-          @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-          *{
-              font-family: "Poppins", sans-serif;
-          }
-        `}
-      </style>
+    <div className="w-3/4 flex flex-col min-h-[700px]">
+      {/* Grid hiển thị card */}
+      <section className="grid grid-cols-4 gap-6 flex-1">
+        {currentCards.map((card, index) => (
+          <CvCard key={index} card={card} />
+        ))}
+      </section>
 
-      <div className="bg-[#FAFAFA] py-16 px-4 flex flex-col items-center">
-        <div className="text-center mb-15">
-          <h1 className="text-[40px] font-medium text-slate-900 mb-4">
-            Candidate Profiles
-          </h1>
-          <p className="text-base text-slate-600 max-w-md leading-relaxed">
-            Review and select candidates that best align with your hiring needs.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl w-full mt-6">
-          {cards.map((card, index) => (
-            <CvCard key={index} card={card} />
-          ))}
-        </div>
+      {/* Pagination luôn nằm dưới cùng và giữa */}
+      <div className="flex justify-center mt-8">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          setCurrentPage={setCurrentPage}
+        />
       </div>
-    </>
+    </div>
   );
 }

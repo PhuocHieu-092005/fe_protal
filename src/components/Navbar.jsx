@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../assets/global.css";
 import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpFrom";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const [authMode, setAuthMode] = useState(null); // null | 'signin' | 'signup'
@@ -53,21 +54,30 @@ export default function Navbar() {
         {/* MENU */}
         <ul className="menu menu-horizontal px-1 font-medium">
           <li>
-            <a className={menuLinkStyles}>Home</a>
+            <Link to="/" className={menuLinkStyles}>
+              Home
+            </Link>
           </li>
           <li>
-            <a className={menuLinkStyles}>Job</a>
+            <Link to="/job" className={menuLinkStyles}>
+              Job
+            </Link>
           </li>
           <li>
-            <a className={menuLinkStyles}>CV</a>
+            <Link to="/cv" className={menuLinkStyles}>
+              CV
+            </Link>
           </li>
           <li>
-            <a className={menuLinkStyles}>Project</a>
+            <Link to="/project" className={menuLinkStyles}>
+              Project
+            </Link>
           </li>
-
           {role !== "company" && role !== "teacher" && (
             <li>
-              <a className={menuLinkStyles}>Template</a>
+              <Link to="/template" className={menuLinkStyles}>
+                Template
+              </Link>
             </li>
           )}
         </ul>

@@ -5,7 +5,7 @@ export default function PostAside() {
 
   return (
     <aside className="w-full md:w-64 flex-shrink-0">
-      <div className="bg-white border border-slate-200 rounded-2xl p-5 sticky top-5 shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-2xl p-5 sticky top-20 shadow-sm">
         {/* Title */}
         <h3 className="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2 uppercase tracking-wide">
           <div className="w-1.5 h-4 bg-black rounded-full"></div>

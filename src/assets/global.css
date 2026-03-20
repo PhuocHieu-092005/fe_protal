@@ -1,0 +1,5 @@
+/* global.css */
+select option:hover {
+  background-color: #000;
+  color: #fff;
+}
