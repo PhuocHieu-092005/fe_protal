@@ -9,6 +9,9 @@ export default function Navbar() {
 
   const closeAuth = () => setAuthMode(null);
 
+  // Role giả lập
+  const role = "student"; // test: student | company | teacher
+
   // Scroll
   useEffect(() => {
     const handleScroll = () => {
@@ -18,6 +21,14 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Class chung cho các mục Menu
+  const menuLinkStyles = `
+    transition-colors duration-300 
+    active:bg-transparent active:text-gray-400 
+    focus:bg-transparent 
+    ${scrolled ? "text-black hover:text-gray-600" : "text-gray-700 hover:text-gray-600"}
+  `;
 
   return (
     <>
@@ -40,74 +51,35 @@ export default function Navbar() {
         </div>
 
         {/* MENU */}
-        <div className="flex-none hidden md:flex">
-          <ul className="menu menu-horizontal px-1 font-medium">
-            <li>
-              <a
-                className={`transition-colors duration-300 ${
-                  scrolled
-                    ? "text-black hover:text-gray-600"
-                    : "hover:text-primary"
-                }`}
-              >
-                Home
-              </a>
-            </li>
-            <li>
-              <a
-                className={`transition-colors duration-300 ${
-                  scrolled
-                    ? "text-black hover:text-gray-600"
-                    : "hover:text-primary"
-                }`}
-              >
-                Job
-              </a>
-            </li>
-            <li>
-              <a
-                className={`transition-colors duration-300 ${
-                  scrolled
-                    ? "text-black hover:text-gray-600"
-                    : "hover:text-primary"
-                }`}
-              >
-                CV
-              </a>
-            </li>
-            <li>
-              <a
-                className={`transition-colors duration-300 ${
-                  scrolled
-                    ? "text-black hover:text-gray-600"
-                    : "hover:text-primary"
-                }`}
-              >
-                Project
-              </a>
-            </li>
-            <li>
-              <a
-                className={`transition-colors duration-300 ${
-                  scrolled
-                    ? "text-black hover:text-gray-600"
-                    : "hover:text-primary"
-                }`}
-              >
-                Template
-              </a>
-            </li>
-          </ul>
-        </div>
+        <ul className="menu menu-horizontal px-1 font-medium">
+          <li>
+            <a className={menuLinkStyles}>Home</a>
+          </li>
+          <li>
+            <a className={menuLinkStyles}>Job</a>
+          </li>
+          <li>
+            <a className={menuLinkStyles}>CV</a>
+          </li>
+          <li>
+            <a className={menuLinkStyles}>Project</a>
+          </li>
 
-        {/* BUTTON */}
+          {role !== "company" && role !== "teacher" && (
+            <li>
+              <a className={menuLinkStyles}>Template</a>
+            </li>
+          )}
+        </ul>
+
+        {/* BUTTONS */}
         <div className="flex-1 flex justify-end items-center gap-2">
           <button
             onClick={() => setAuthMode("signin")}
             className={`btn rounded-full px-6 border-2 transition-all duration-300 ${
               scrolled
-                ? "bg-black text-white border-black hover:bg-gray-800"
-                : "bg-black text-white border-transparent hover:bg-white hover:text-black hover:border-black"
+                ? "bg-black text-white border-black hover:bg-gray-200 hover:text-black"
+                : "bg-black text-white border-transparent hover:bg-gray-200 hover:text-black hover:border-black"
             }`}
           >
             Sign in
@@ -116,7 +88,7 @@ export default function Navbar() {
           <button
             onClick={() => setAuthMode("signup")}
             className={`btn rounded-full px-6 shadow-md transition-all duration-300 ${
-              scrolled ? "bg-white text-black hover:bg-gray-800" : "btn-primary"
+              scrolled ? "bg-white text-black hover:bg-gray-200" : "btn-primary"
             }`}
           >
             Sign up
