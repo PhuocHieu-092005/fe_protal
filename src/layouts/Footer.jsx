@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Footer() {
   return (
-    <footer className="footer sm:footer-horizontal bg-neutral text-neutral-content px-10 py-10">
+    <footer className="footer sm:footer-horizontal bg-[#182837] text-neutral-content px-10 py-10">
       {/* Logo + giới thiệu */}
       <aside>
         <img src="/logo-hitc.png" alt="HITU" className="h-12 mb-3" />
@@ -25,14 +25,14 @@ export default function Footer() {
       <nav>
         <h6 className="footer-title">Website</h6>
         <a
-          href="https://hitu.edu.vn"
+          href="https://hitu.edu.vn/?srsltid=AfmBOop8uY_WsLWVUH9uk9XB5IaK0U5oHh_QuVo7fJ7w4USPcZr0pBQb"
           target="_blank"
           className="link link-hover text-sm"
         >
           Trang chủ HITU
         </a>
         <a
-          href="https://tuyensinh.hitu.edu.vn"
+          href="https://hitu.edu.vn/tuyen-sinh/?srsltid=AfmBOopcksu95tll4enwArxQRSwuEgNnrRk3bVZT441PO69aShHnTvsq"
           target="_blank"
           className="link link-hover text-sm"
         >
