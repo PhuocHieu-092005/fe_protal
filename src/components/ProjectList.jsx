@@ -11,7 +11,7 @@ const projectsData = [
     views: 1250,
     downloads: 45,
     image:
-      "https://images.unsplash.com/photo-1581093448793-1e42f1d7f9d6?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
     description:
       "Nền tảng quản lý hồ sơ bệnh nhân, lịch hẹn bác sĩ và quy trình khám chữa bệnh trực tuyến.",
   },
@@ -89,11 +89,11 @@ const ProjectList = () => {
   ];
 
   return (
-    // Thêm max-w-7xl để container nhỏ lại và gọn hơn giữa màn hình
-    <div className="mx-auto w-full max-w-7xl py-10 bg-white overflow-hidden relative">
+    // Thêm py-20 để có không gian cho card scale lên không bị chạm biên trên/dưới
+    <div className="mx-auto w-full max-w-7xl py-20 bg-white relative">
       <style>{`
-        .marquee-forward { animation: scrollForward 35s linear infinite; }
-        .marquee-reverse { animation: scrollReverse 25s linear infinite; }
+        .marquee-forward { animation: scrollForward 23s linear infinite; }
+        .marquee-reverse { animation: scrollReverse 23s linear infinite; }
         
         @keyframes scrollForward {
           0% { transform: translateX(0); }
@@ -105,7 +105,6 @@ const ProjectList = () => {
           100% { transform: translateX(0); }
         }
 
-        /* Hover hàng nào hàng đó dừng, hàng kia vẫn chạy */
         .marquee-container:hover .marquee-inner {
           animation-play-state: paused;
         }
@@ -121,14 +120,13 @@ const ProjectList = () => {
         </p>
       </div>
 
-      <div className="flex flex-col gap-10">
-        {/* Hàng 1: Move Right to Left - Tách biệt logic hover bằng class marquee-container */}
-        <div className="marquee-container relative flex overflow-hidden group">
+      <div className="flex flex-col gap-10 overflow-hidden py-4">
+        <div className="marquee-container relative flex overflow-visible group">
           <div className="flex marquee-forward marquee-inner">
             {row1.map((project, index) => (
               <div
                 key={`row1-${index}`}
-                className="w-[360px] mx-4 flex-shrink-0 transition-transform duration-300 group-hover:scale-[1.02]"
+                className="w-[310px] mx-4 flex-shrink-0 transition-all duration-300 hover:scale-105 hover:z-50"
               >
                 <ProjectCard project={project} />
               </div>
@@ -136,13 +134,13 @@ const ProjectList = () => {
           </div>
         </div>
 
-        {/* Hàng 2: Move Left to Right - Tách biệt logic hover */}
-        <div className="marquee-container relative flex overflow-hidden group">
+        {/* Hàng 2 */}
+        <div className="marquee-container relative flex overflow-visible group">
           <div className="flex marquee-reverse marquee-inner">
             {row2.map((project, index) => (
               <div
                 key={`row2-${index}`}
-                className="w-[360px] mx-4 flex-shrink-0 transition-transform duration-300 group-hover:scale-[1.02]"
+                className="w-[310px] mx-4 flex-shrink-0 transition-all duration-300 hover:scale-105 hover:z-50"
               >
                 <ProjectCard project={project} />
               </div>
@@ -151,9 +149,9 @@ const ProjectList = () => {
         </div>
       </div>
 
-      {/* Hiệu ứng mờ biên (Vignette) - Đặt trong container để khớp với max-w */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-white to-transparent z-10" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-white to-transparent z-10" />
+      {/* Hiệu ứng mờ biên: Nâng z-index cao hơn card thường nhưng thấp hơn card đang hover */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white via-white/80 to-transparent z-20" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white via-white/80 to-transparent z-20" />
     </div>
   );
 };
