@@ -4,7 +4,7 @@ export default function ProfileCategory() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="mt-24 px-6 flex flex-col items-center flex-grow">
-        Profile
+        Profile Test...
       </main>
       <Footer />
     </div>
