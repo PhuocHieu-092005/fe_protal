@@ -12,7 +12,6 @@ const MainLayout = ({ children }) => {
       <BannerHero />
       <main className="flex-grow container mx-auto px-4 py-6">
         {children}
-        {/* <div className="divider"></div> */}
         <PostList />
         <ProjectList />
         <CvList />

@@ -1,7 +1,7 @@
 import React from "react";
 import CvFilterSidebar from "./CvFilterSidebar";
 import CvGridView from "./CvGridView";
-import Footer from "../../layouts/Footer";
+import Footer from "../../../layouts/Footer";
 
 export default function CvCategory() {
   return (

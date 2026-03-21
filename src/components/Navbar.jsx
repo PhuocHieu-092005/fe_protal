@@ -5,29 +5,31 @@ import SignUpForm from "./SignUpFrom";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
-  const [authMode, setAuthMode] = useState(null); // null | 'signin' | 'signup'
+  const [authMode, setAuthMode] = useState(null);
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const closeAuth = () => setAuthMode(null);
 
-  // Role giả lập
-  const role = "student"; // test: student | company | teacher
+  // Giả lập role và trạng thái login
+  const role = "student";
+  let isLoggedIn = false; //chỉnh chỗ này để vào trạng thái đăng nhập
+  const user = {
+    name: "Nguyễn Văn A",
+    avatar:
+      "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200",
+  };
 
-  // Scroll
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Class chung cho các mục Menu
   const menuLinkStyles = `
     transition-colors duration-300 
-    active:bg-transparent active:text-gray-400 
-    focus:bg-transparent 
     ${scrolled ? "text-black hover:text-gray-600" : "text-gray-700 hover:text-gray-600"}
   `;
 
@@ -42,13 +44,14 @@ export default function Navbar() {
       >
         {/* LOGO */}
         <div className="flex-1">
-          <a
+          <Link
+            to="/"
             className={`text-xl font-bold cursor-pointer transition-colors duration-300 ${
               scrolled ? "text-black" : "text-primary"
             }`}
           >
             Job Portal
-          </a>
+          </Link>
         </div>
 
         {/* MENU */}
@@ -82,33 +85,84 @@ export default function Navbar() {
           )}
         </ul>
 
-        {/* BUTTONS */}
+        {/* AUTH / USER */}
         <div className="flex-1 flex justify-end items-center gap-2">
-          <button
-            onClick={() => setAuthMode("signin")}
-            className={`btn rounded-full px-6 border-2 transition-all duration-300 ${
-              scrolled
-                ? "bg-black text-white border-black hover:bg-gray-200 hover:text-black"
-                : "bg-black text-white border-transparent hover:bg-gray-200 hover:text-black hover:border-black"
-            }`}
-          >
-            Sign in
-          </button>
-
-          <button
-            onClick={() => setAuthMode("signup")}
-            className={`btn rounded-full px-6 shadow-md transition-all duration-300 ${
-              scrolled ? "bg-white text-black hover:bg-gray-200" : "btn-primary"
-            }`}
-          >
-            Sign up
-          </button>
+          {!isLoggedIn ? (
+            <>
+              <button
+                onClick={() => setAuthMode("signin")}
+                className="btn rounded-full px-6 bg-black text-white"
+              >
+                Sign in
+              </button>
+              <button
+                onClick={() => setAuthMode("signup")}
+                className="btn rounded-full px-6 btn-primary"
+              >
+                Sign up
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setMenuOpen(true)}
+              className="flex items-center gap-2"
+            >
+              <img
+                src={user.avatar}
+                alt="avatar"
+                className="w-10 h-10 rounded-full border"
+              />
+              <span className="font-medium">{user.name}</span>
+            </button>
+          )}
         </div>
       </div>
 
-      {/* MODAL CONTAINER */}
+      {/*Side bar */}
+      {menuOpen && (
+        <>
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 bg-black/50 z-40"
+            onClick={() => setMenuOpen(false)}
+          />
+          <div
+            className={`fixed top-0 right-0 w-64 h-full 
+                 bg-gradient-to-l from-white/70 to-transparent 
+                 backdrop-blur-md shadow-lg z-50 p-4 flex flex-col 
+                 transform transition-transform duration-300 
+                 ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
+          >
+            <div className="flex items-center gap-2 mb-6">
+              <img
+                src={user.avatar}
+                alt="avatar"
+                className="w-12 h-12 rounded-full border"
+              />
+              <span className="font-semibold ">{user.name}</span>
+            </div>
+            <Link
+              to="/profile"
+              className="px-4 py-2 hover:bg-white/30 rounded transition-colors text-white"
+            >
+              Profile
+            </Link>
+            <Link
+              to="/settings"
+              className="px-4 py-2 hover:bg-white/30 rounded transition-colors  text-white"
+            >
+              Settings
+            </Link>
+            <button className="px-4 py-2 hover:bg-white/30 rounded text-left transition-colors  text-white">
+              Logout
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* MODAL AUTH */}
       {authMode && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
           <div className="relative w-full flex justify-center">
             {authMode === "signin" ? (
               <SignInForm

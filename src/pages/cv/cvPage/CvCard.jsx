@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 export default function CvCard({ card }) {
   const [hover, setHover] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -47,10 +48,9 @@ export default function CvCard({ card }) {
         <p className="text-sm text-slate-600 leading-relaxed mb-4 px-2 line-clamp-3">
           {card.description}
         </p>
-
         <div className="mt-auto w-full flex justify-end">
-          <a
-            href="#"
+          <Link
+            to={`/cv/${card.id}`}
             className="inline-flex items-center gap-1 text-sm font-semibold text-black hover:text-slate-700"
           >
             Detail
@@ -66,7 +66,7 @@ export default function CvCard({ card }) {
               <path d="M5 12h14" />
               <path d="M13 5l7 7-7 7" />
             </svg>
-          </a>
+          </Link>
         </div>
       </div>
     </div>

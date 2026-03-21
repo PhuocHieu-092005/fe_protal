@@ -1,6 +1,6 @@
 import CvCard from "./CvCard";
 import { useState } from "react";
-import Pagination from "../../components/common/Pagination";
+import Pagination from "../../../components/common/Pagination";
 export default function CvGridView() {
   const cards = [
     {
@@ -40,7 +40,7 @@ export default function CvGridView() {
         "Vue/React/Tailwind, tối ưu UI/UX và hệ thống component reusable.",
     },
     {
-      id: 2,
+      id: 5,
       image:
         "https://assets.prebuiltui.com/images/components/feature-sections/ai-avatar-image1.png",
       title: "Trần Thị B - Backend Developer",
@@ -48,7 +48,7 @@ export default function CvGridView() {
         "Chuyên Laravel, MySQL, xây dựng RESTful API. Có kinh nghiệm deploy server.",
     },
     {
-      id: 3,
+      id: 5,
       image:
         "https://assets.prebuiltui.com/images/components/feature-sections/ai-avatar-image1.png",
       title: "Lê Văn C - Fullstack Developer",
@@ -56,7 +56,7 @@ export default function CvGridView() {
         "Sử dụng NodeJS, React, MongoDB. Có thể phát triển full hệ thống từ frontend đến backend.",
     },
     {
-      id: 4,
+      id: 6,
       image:
         "https://assets.prebuiltui.com/images/components/feature-sections/ai-avatar-image1.png",
       title: "Phạm Thị D - UI/UX Designer",
@@ -64,7 +64,7 @@ export default function CvGridView() {
         "Thiết kế giao diện với Figma, Adobe XD. Có kinh nghiệm xây dựng design system.",
     },
     {
-      id: 4,
+      id: 7,
       image:
         "https://assets.prebuiltui.com/images/components/feature-sections/ai-avatar-image1.png",
       title: "Phạm Thị D - UI/UX Designer",
@@ -72,7 +72,7 @@ export default function CvGridView() {
         "Thiết kế giao diện với Figma, Adobe XD. Có kinh nghiệm xây dựng design system.",
     },
     {
-      id: 1,
+      id: 8,
       image:
         "https://assets.prebuiltui.com/images/components/feature-sections/ai-avatar-image1.png",
       title: "Trần Thị B - Backend Developer",
