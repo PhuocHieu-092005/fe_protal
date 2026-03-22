@@ -5,7 +5,7 @@ import CvCategory from "./pages/cv/cvPage/CvCategory";
 import CvDetail from "./pages/cv/cvDetail/CvDetail";
 import JobCategory from "./pages/job/jobPage/JobCategory";
 import JobDetail from "./pages/job/jobDetail/jobDetail";
-import ProjectCaterogy from "./pages/project/projectPage/ProjectCaterogy";
+import ProjectCategory from "./pages/project/projectPage/ProjectCategory";
 import ProjectDetail from "./pages/project/projectDetail/ProjectDetail";
 import TemplateCategory from "./pages/template/templatePage/TemplateCategory";
 import ProfileCategory from "./pages/profile/profilePage/ProfileCategory";
@@ -23,7 +23,7 @@ function App() {
         <Route path="/job" element={<JobCategory />} />
         <Route path="/job/:id" element={<JobDetail />} />
         {/*============ Project====================== */}
-        <Route path="/project" element={<ProjectCaterogy />} />
+        <Route path="/project" element={<ProjectCategory />} />
         <Route path="/project/:id" element={<ProjectDetail />} />
         {/*============ Template====================== */}
         <Route path="/template" element={<TemplateCategory />} />
