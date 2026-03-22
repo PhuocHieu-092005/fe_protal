@@ -4,7 +4,7 @@ import Navbar from "./components/Navbar";
 import CvCategory from "./pages/cv/cvPage/CvCategory";
 import CvDetail from "./pages/cv/cvDetail/CvDetail";
 import JobCategory from "./pages/job/jobPage/JobCategory";
-import JobDetail from "./pages/job/jobDetail/jobDetail";
+import JobDetail from "./pages/job/jobDetail/JobDetail";
 import ProjectCategory from "./pages/project/projectPage/ProjectCategory";
 import ProjectDetail from "./pages/project/projectDetail/ProjectDetail";
 import TemplateCategory from "./pages/template/templatePage/TemplateCategory";
