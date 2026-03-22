@@ -1,11 +1,26 @@
 import React from "react";
 import Footer from "../../../layouts/Footer";
+import JobHero from "./JobHero";
+import JobFilterSidebar from "./JobFilterSidebar";
+import JobSectionHeader from "./JobSectionHeader";
+import JobGridView from "./JobGridView";
+
 export default function JobCategory() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <main className="mt-24 px-6 flex flex-col items-center flex-grow">
-        Job
+    <div className="min-h-screen bg-slate-50 flex flex-col">
+      <main className="flex-grow">
+        <JobHero />
+
+        <section className="mx-auto max-w-7xl px-6 py-10">
+          <JobSectionHeader />
+
+          <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[280px_1fr]">
+            <JobFilterSidebar />
+            <JobGridView />
+          </div>
+        </section>
       </main>
+
       <Footer />
     </div>
   );
