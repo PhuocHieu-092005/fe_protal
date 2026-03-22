@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../assets/global.css";
 import SignInForm from "./SignInForm";
-import SignUpForm from "./SignUpFrom";
+import SignUpForm from "./SignUpForm";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
