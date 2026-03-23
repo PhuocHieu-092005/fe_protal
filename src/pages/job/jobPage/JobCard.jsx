@@ -1,7 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function JobCard({ job }) {
+  //state trạng thái yêu thích
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const handleFavoriteClick = (e) => {
+    e.preventDefault(); // Tránh bị chuyển trang khi bấm tim
+    setIsFavorite(!isFavorite);
+    // Xử lý gọi API
+  };
+
   return (
     <div className="group rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
       <div className="flex items-start justify-between gap-4">
@@ -20,7 +29,14 @@ export default function JobCard({ job }) {
           </div>
         </div>
 
-        <button className="rounded-full border border-slate-200 p-2 text-slate-500 hover:border-slate-900 hover:text-slate-900">
+        <button
+          onClick={handleFavoriteClick}
+          className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border transition-all duration-300 text-xl leading-none ${
+            isFavorite
+              ? "border-red-100 bg-red-50 text-red-500 scale-110"
+              : "border-slate-200 bg-white text-slate-400 hover:border-red-100 hover:bg-red-50 hover:text-red-400"
+          }`}
+        >
           ♥
         </button>
       </div>
