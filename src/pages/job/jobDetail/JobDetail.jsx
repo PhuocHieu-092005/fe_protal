@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Footer from "../../../layouts/Footer";
+import ApplyJobModal from "./ApplyJobModal";
 
 export default function JobDetail() {
   const { id } = useParams();
+  const [isApplyOpen, setIsApplyOpen] = useState(false);
 
-  // Dữ liệu tạm
   const jobData = {
     id,
     title: "Frontend Developer Intern",
@@ -62,7 +63,6 @@ export default function JobDetail() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <main className="flex-grow">
-        {/* Breadcrumb */}
         <section className="mx-auto max-w-7xl px-6 pt-24 pb-6">
           <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500">
             <Link to="/" className="hover:text-slate-900">
@@ -77,12 +77,9 @@ export default function JobDetail() {
           </div>
         </section>
 
-        {/* Phần chính */}
         <section className="mx-auto max-w-7xl px-6 pb-14">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_340px]">
-            {/* Left Content */}
             <div className="space-y-8">
-              {/* Header */}
               <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
                   <div className="flex items-start gap-4">
@@ -125,7 +122,6 @@ export default function JobDetail() {
                 </div>
               </div>
 
-              {/* Loại Job */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                   <p className="text-sm text-slate-500">Job Type</p>
@@ -133,14 +129,14 @@ export default function JobDetail() {
                     {jobData.type}
                   </p>
                 </div>
-                {/* Thời hạn Job */}
+
                 <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                   <p className="text-sm text-slate-500">Deadline</p>
                   <p className="mt-2 text-lg font-semibold text-slate-900">
                     {jobData.deadline}
                   </p>
                 </div>
-                {/* Số lượng đã nộp */}
+
                 <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                   <p className="text-sm text-slate-500">Applicants</p>
                   <p className="mt-2 text-lg font-semibold text-slate-900">
@@ -149,7 +145,6 @@ export default function JobDetail() {
                 </div>
               </div>
 
-              {/* Description */}
               <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <h2 className="text-xl font-bold text-slate-900">
                   Job Description
@@ -159,7 +154,6 @@ export default function JobDetail() {
                 </p>
               </div>
 
-              {/* Requirements */}
               <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <h2 className="text-xl font-bold text-slate-900">
                   Requirements
@@ -174,7 +168,6 @@ export default function JobDetail() {
                 </ul>
               </div>
 
-              {/* Benefits */}
               <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <h2 className="text-xl font-bold text-slate-900">Benefits</h2>
                 <ul className="mt-4 space-y-3 text-slate-600">
@@ -187,7 +180,6 @@ export default function JobDetail() {
                 </ul>
               </div>
 
-              {/* Skills */}
               <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <h2 className="text-xl font-bold text-slate-900">
                   Required Skills
@@ -204,7 +196,6 @@ export default function JobDetail() {
                 </div>
               </div>
 
-              {/* Related Jobs */}
               <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <div className="flex items-center justify-between gap-4">
                   <h2 className="text-xl font-bold text-slate-900">
@@ -238,9 +229,7 @@ export default function JobDetail() {
               </div>
             </div>
 
-            {/* Right Sidebar */}
             <div className="space-y-6">
-              {/* Action Panel - Đã xóa lg:sticky lg:top-28 */}
               <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <p className="text-sm text-slate-500">Salary Range</p>
                 <p className="mt-2 text-2xl font-bold text-slate-900">
@@ -248,7 +237,10 @@ export default function JobDetail() {
                 </p>
 
                 <div className="mt-6 space-y-3">
-                  <button className="w-full rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
+                  <button
+                    onClick={() => setIsApplyOpen(true)}
+                    className="w-full rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                  >
                     Apply Now
                   </button>
 
@@ -285,7 +277,6 @@ export default function JobDetail() {
                 </div>
               </div>
 
-              {/* Company Info */}
               <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <h2 className="text-lg font-bold text-slate-900">
                   About Company
@@ -300,6 +291,13 @@ export default function JobDetail() {
       </main>
 
       <Footer />
+
+      <ApplyJobModal
+        isOpen={isApplyOpen}
+        onClose={() => setIsApplyOpen(false)}
+        jobTitle={jobData.title}
+        company={jobData.company}
+      />
     </div>
   );
 }

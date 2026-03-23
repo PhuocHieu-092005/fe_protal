@@ -43,7 +43,10 @@ export default function JobSearchBar() {
           <option>Freelancer</option>
         </select>
 
-        <button className="rounded-2xl bg-slate-950 px-6 py-4 font-semibold text-white transition hover:bg-slate-800">
+        <button
+          type="button"
+          className="bg-slate-900 px-5 h-10 rounded-full text-sm text-white hover:bg-slate-800 transition"
+        >
           Search
         </button>
       </div>
