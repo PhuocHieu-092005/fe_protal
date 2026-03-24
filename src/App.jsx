@@ -7,8 +7,11 @@ import JobCategory from "./pages/job/jobPage/JobCategory";
 import JobDetail from "./pages/job/jobDetail/JobDetail";
 import ProjectCategory from "./pages/project/projectPage/ProjectCategory";
 import ProjectDetail from "./pages/project/projectDetail/ProjectDetail";
-import TemplateCategory from "./pages/template/templatePage/TemplateCategory";
 import ProfileCategory from "./pages/profile/profilePage/ProfileCategory";
+
+// template
+import TemplatePage from "./pages/template/templatePage/TemplatePage";
+import TemplateDetail from "./pages/template/templateDetail/TemplateDetail";
 function App() {
   return (
     <Router>
@@ -26,7 +29,13 @@ function App() {
         <Route path="/project" element={<ProjectCategory />} />
         <Route path="/project/:id" element={<ProjectDetail />} />
         {/*============ Template====================== */}
-        <Route path="/template" element={<TemplateCategory />} />
+        {/* <Route path="/template" element={<TemplateCategory />} /> */}
+        <Route path="/template" element={<TemplatePage />} />
+
+        {/* ================Template 1================= */}
+        <Route path="/template/create" element={<TemplateDetail />} />
+        {/* ================Template 2================= */}
+
         {/*============ Profile====================== */}
         <Route path="/profile" element={<ProfileCategory />} />
       </Routes>
