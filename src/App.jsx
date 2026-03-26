@@ -8,7 +8,7 @@ import JobDetail from "./pages/job/jobDetail/JobDetail";
 import ProjectCategory from "./pages/project/projectPage/ProjectCategory";
 import ProjectDetail from "./pages/project/projectDetail/ProjectDetail";
 import ProfileCategory from "./pages/profile/profilePage/ProfileCategory";
-
+import OAuthSuccess from "./pages/OAuthSuccess";
 // template
 import TemplatePage from "./pages/template/templatePage/TemplatePage";
 import TemplateDetail from "./pages/template/templateDetail/TemplateDetail";
@@ -38,6 +38,8 @@ function App() {
 
         {/*============ Profile====================== */}
         <Route path="/profile" element={<ProfileCategory />} />
+
+        <Route path="/oauth2-success" element={<OAuthSuccess />} />
       </Routes>
     </Router>
   );

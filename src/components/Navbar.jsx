@@ -1,24 +1,17 @@
 import React, { useState, useEffect } from "react";
-import "../assets/global.css";
+import { useAuth } from "../contexts/AuthContext";
 import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
-  const [authMode, setAuthMode] = useState(null);
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [authMode, setAuthMode] = useState(null); //mở form sign in, sign up
+  const [scrolled, setScrolled] = useState(false); //sroll navbar
+  const [menuOpen, setMenuOpen] = useState(false); //mở sidebar sau khi đã đăng nhập
+
+  const { user, isLoggedIn, logout } = useAuth(); //quản lý trạng thái đăng nhập & thông tin user
 
   const closeAuth = () => setAuthMode(null);
-
-  // Giả lập role và trạng thái login
-  const role = "student";
-  let isLoggedIn = false; //chỉnh chỗ này để vào trạng thái đăng nhập
-  const user = {
-    name: "Nguyễn Văn A",
-    avatar:
-      "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200",
-  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,27 +21,26 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleLogout = () => {
+    logout();
+    setMenuOpen(false);
+  };
+
   const menuLinkStyles = `
-    transition-colors duration-300 
-    ${scrolled ? "text-black hover:text-gray-600" : "text-gray-700 hover:text-gray-600"}
-  `;
+        transition-colors duration-300 
+        ${scrolled ? "text-black hover:text-gray-600" : "text-gray-700 hover:text-gray-600"}
+    `;
 
   return (
     <>
       <div
-        className={`navbar fixed top-0 left-0 w-full z-50 px-4 md:px-10 transition-all duration-300 ${
-          scrolled
-            ? "bg-gray-100/60 backdrop-blur-md shadow-md"
-            : "bg-base-100 shadow-md"
-        }`}
+        className={`navbar fixed top-0 left-0 w-full z-50 px-4 md:px-10 transition-all duration-300 ${scrolled ? "bg-gray-100/60 backdrop-blur-md shadow-md" : "bg-base-100 shadow-md"}`}
       >
         {/* LOGO */}
         <div className="flex-1">
           <Link
             to="/"
-            className={`text-xl font-bold cursor-pointer transition-colors duration-300 ${
-              scrolled ? "text-black" : "text-primary"
-            }`}
+            className={`text-xl font-bold cursor-pointer transition-colors duration-300 ${scrolled ? "text-black" : "text-primary"}`}
           >
             Job Portal
           </Link>
@@ -76,7 +68,7 @@ export default function Navbar() {
               Project
             </Link>
           </li>
-          {role !== "company" && role !== "teacher" && (
+          {user?.role !== "COMPANY" && (
             <li>
               <Link to="/template" className={menuLinkStyles}>
                 Template
@@ -108,38 +100,35 @@ export default function Navbar() {
               className="flex items-center gap-2"
             >
               <img
-                src={user.avatar}
+                src={user?.avatar_url}
                 alt="avatar"
                 className="w-10 h-10 rounded-full border"
+                referrerPolicy="no-referrer"
               />
-              <span className="font-medium">{user.name}</span>
+              <span className="font-medium">{user?.full_name}</span>
             </button>
           )}
         </div>
       </div>
 
-      {/*Side bar */}
+      {/* Sidebar khi đã login */}
       {menuOpen && (
         <>
-          {/* Overlay */}
           <div
             className="fixed inset-0 bg-black/50 z-40"
             onClick={() => setMenuOpen(false)}
           />
           <div
-            className={`fixed top-0 right-0 w-64 h-full 
-                 bg-gradient-to-l from-white/70 to-transparent 
-                 backdrop-blur-md shadow-lg z-50 p-4 flex flex-col 
-                 transform transition-transform duration-300 
-                 ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
+            className={`fixed top-0 right-0 w-64 h-full bg-gradient-to-l from-white/70 to-transparent backdrop-blur-md shadow-lg z-50 p-4 flex flex-col transform transition-transform duration-300 ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
           >
             <div className="flex items-center gap-2 mb-6">
               <img
-                src={user.avatar}
+                src={user.avatar_url}
                 alt="avatar"
                 className="w-12 h-12 rounded-full border"
+                referrerPolicy="no-referrer"
               />
-              <span className="font-semibold ">{user.name}</span>
+              <span className="font-semibold">{user?.full_name}</span>
             </div>
             <Link
               to="/profile"
@@ -149,18 +138,21 @@ export default function Navbar() {
             </Link>
             <Link
               to="/settings"
-              className="px-4 py-2 hover:bg-white/30 rounded transition-colors  text-white"
+              className="px-4 py-2 hover:bg-white/30 rounded transition-colors text-white"
             >
               Settings
             </Link>
-            <button className="px-4 py-2 hover:bg-white/30 rounded text-left transition-colors  text-white">
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 hover:bg-white/30 rounded text-left transition-colors text-white"
+            >
               Logout
             </button>
           </div>
         </>
       )}
 
-      {/* MODAL AUTH */}
+      {/* Modal Auth */}
       {authMode && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
           <div className="relative w-full flex justify-center">
