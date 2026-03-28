@@ -22,10 +22,11 @@ export default function SignInForm({ onClose, onSwitchSignUp }) {
         role: role,
       };
       const res = await login(loginData);
-      // console.log("res:", res);
+      console.log("res:", res);
       onClose();
     } catch (err) {
       const errorMsg = err.response?.data?.data || "Đăng nhập thất bại!";
+      console.log("Login error:", err.response);
       setError(errorMsg);
     } finally {
       setLoading(false);
