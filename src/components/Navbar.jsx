@@ -42,7 +42,7 @@ export default function Navbar() {
             to="/"
             className={`text-xl font-bold cursor-pointer transition-colors duration-300 ${scrolled ? "text-black" : "text-primary"}`}
           >
-            Job Portal
+            Cổng thông tin việc làm
           </Link>
         </div>
 
@@ -50,12 +50,12 @@ export default function Navbar() {
         <ul className="menu menu-horizontal px-1 font-medium">
           <li>
             <Link to="/" className={menuLinkStyles}>
-              Home
+              Trang chủ
             </Link>
           </li>
           <li>
             <Link to="/job" className={menuLinkStyles}>
-              Job
+              Công việc
             </Link>
           </li>
           <li>
@@ -65,13 +65,13 @@ export default function Navbar() {
           </li>
           <li>
             <Link to="/project" className={menuLinkStyles}>
-              Project
+              Đồ án
             </Link>
           </li>
           {user?.role !== "COMPANY" && (
             <li>
               <Link to="/template" className={menuLinkStyles}>
-                Template
+                Mẫu CV
               </Link>
             </li>
           )}
@@ -85,13 +85,13 @@ export default function Navbar() {
                 onClick={() => setAuthMode("signin")}
                 className="btn rounded-full px-6 bg-black text-white"
               >
-                Sign in
+                Đăng nhập
               </button>
               <button
                 onClick={() => setAuthMode("signup")}
                 className="btn rounded-full px-6 btn-primary"
               >
-                Sign up
+                Đăng ký
               </button>
             </>
           ) : (
@@ -134,19 +134,19 @@ export default function Navbar() {
               to="/profile"
               className="px-4 py-2 hover:bg-white/30 rounded transition-colors text-white"
             >
-              Profile
+              Hồ sơ cá nhân
             </Link>
             <Link
               to="/settings"
               className="px-4 py-2 hover:bg-white/30 rounded transition-colors text-white"
             >
-              Settings
+              Cài đặt
             </Link>
             <button
               onClick={handleLogout}
               className="px-4 py-2 hover:bg-white/30 rounded text-left transition-colors text-white"
             >
-              Logout
+              Đăng xuất
             </button>
           </div>
         </>

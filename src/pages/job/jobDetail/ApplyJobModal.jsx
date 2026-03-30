@@ -5,26 +5,26 @@ export default function ApplyJobModal({ isOpen, onClose, jobTitle, company }) {
     {
       id: 1,
       name: "CV React Fresher 2026",
-      updatedAt: "Last updated 2 months ago",
+      updatedAt: "Cập nhật 2 tháng trước",
       status: "",
     },
     {
       id: 2,
       name: "CV Backend Intern",
-      updatedAt: "Last updated 1 month ago",
-      status: "Public",
+      updatedAt: "Cập nhật 1 tháng trước",
+      status: "Công khai",
     },
     {
       id: 3,
       name: "CV UI/UX Portfolio",
-      updatedAt: "Last updated 3 days ago",
-      status: "Private",
+      updatedAt: "Cập nhật 3 ngày trước",
+      status: "Riêng tư",
     },
   ];
 
   const [selectedCv, setSelectedCv] = useState(1);
   const [note, setNote] = useState(
-    "Hi, I am very excited about the opportunity to apply for this Frontend Developer Intern position. I have experience with React and TailwindCSS and am eager to learn more from your team.",
+    "Xin chào, tôi rất hứng thú với cơ hội ứng tuyển vị trí Frontend Developer Intern này. Tôi đã có kinh nghiệm với React, TailwindCSS và rất mong muốn được học hỏi thêm từ đội ngũ của quý công ty.",
   );
 
   if (!isOpen) return null;
@@ -36,7 +36,7 @@ export default function ApplyJobModal({ isOpen, onClose, jobTitle, company }) {
         <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
           <div>
             <h2 className="text-xl font-bold text-slate-900">
-              Apply for {jobTitle}
+              Ứng tuyển vị trí {jobTitle}
             </h2>
             <p className="mt-1 text-sm text-slate-500">{company}</p>
           </div>
@@ -66,7 +66,7 @@ export default function ApplyJobModal({ isOpen, onClose, jobTitle, company }) {
           {/* Select CV */}
           <div>
             <h3 className="text-base font-semibold text-slate-900">
-              Select Your CV
+              Chọn CV của bạn
             </h3>
 
             <div className="mt-4 space-y-3">
@@ -116,7 +116,7 @@ export default function ApplyJobModal({ isOpen, onClose, jobTitle, company }) {
                       {cv.status && (
                         <span
                           className={`rounded-full px-3 py-1 text-xs font-medium ${
-                            cv.status === "Public"
+                            cv.status === "Công khai"
                               ? "bg-emerald-100 text-emerald-700"
                               : "bg-slate-100 text-slate-500"
                           }`}
@@ -144,7 +144,7 @@ export default function ApplyJobModal({ isOpen, onClose, jobTitle, company }) {
           {/* Note */}
           <div className="mt-6">
             <h3 className="text-base font-semibold text-slate-900">
-              Cover Letter / Note
+              Thư giới thiệu / Ghi chú
             </h3>
 
             <div className="mt-3 rounded-2xl border border-slate-200 p-4">
@@ -154,7 +154,7 @@ export default function ApplyJobModal({ isOpen, onClose, jobTitle, company }) {
                 maxLength={500}
                 rows={4}
                 className="w-full resize-none text-sm text-slate-700 outline-none"
-                placeholder="Write a short message to the employer..."
+                placeholder="Viết một lời nhắn ngắn gọn gửi đến nhà tuyển dụng..."
               />
               <div className="mt-2 text-right text-xs text-slate-500">
                 {note.length} / 500
@@ -165,14 +165,14 @@ export default function ApplyJobModal({ isOpen, onClose, jobTitle, company }) {
           {/* Actions */}
           <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
             <button className="rounded-xl bg-slate-950 px-5 py-3 text-base font-semibold text-white transition hover:bg-slate-800">
-              Submit Application
+              Gửi ứng tuyển
             </button>
 
             <button
               onClick={onClose}
               className="rounded-xl border border-slate-200 px-5 py-3 text-base font-medium text-slate-700 transition hover:border-slate-900 hover:text-slate-900"
             >
-              Cancel
+              Hủy bỏ
             </button>
           </div>
         </div>

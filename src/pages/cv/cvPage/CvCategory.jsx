@@ -11,11 +11,11 @@ export default function CvCategory() {
         {/* Hero Section */}
         <div className="w-full mb-10 text-center bg-gray-200/30 backdrop-blur-md py-12 rounded-xl shadow-lg">
           <h1 className="text-[40px] font-medium text-slate-900 mb-4">
-            Candidate Profile
+            Hồ Sơ Ứng Viên
           </h1>
           <p className="mt-4 text-gray-800 text-xl max-w-2xl mx-auto font-light">
-            Access a comprehensive collection of student resumes and project
-            experiences for recruitment.
+            Khám phá kho hồ sơ và kinh nghiệm đồ án của sinh viên, giúp doanh
+            nghiệp dễ dàng tìm kiếm ứng viên phù hợp.
           </p>
         </div>
 

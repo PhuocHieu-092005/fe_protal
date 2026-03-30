@@ -60,7 +60,7 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
       </button>
 
       <h2 className="text-3xl font-extrabold mb-6 text-center text-slate-800">
-        Create Account
+        Tạo Tài Khoản
       </h2>
 
       {/* Role Selector */}
@@ -73,7 +73,7 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
               : "text-gray-500"
           }`}
         >
-          Student
+          Sinh viên
         </button>
         <button
           onClick={() => setRole("COMPANY")}
@@ -83,14 +83,14 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
               : "text-gray-500"
           }`}
         >
-          Company
+          Doanh nghiệp
         </button>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block mb-1.5 ml-4 font-semibold text-gray-700">
-            Full Name
+            Họ và tên
           </label>
           <input
             type="text"
@@ -98,7 +98,9 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
             onChange={(e) => setFullName(e.target.value)}
             className="w-full border border-gray-300 rounded-full py-3 px-6 outline-none focus:border-indigo-500"
             placeholder={
-              role === "STUDENT" ? "Enter your full name" : "Enter company name"
+              role === "STUDENT"
+                ? "Nhập họ và tên của bạn"
+                : "Nhập tên doanh nghiệp"
             }
             required
           />
@@ -106,7 +108,7 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
 
         <div>
           <label className="block mb-1.5 ml-4 font-semibold text-gray-700">
-            Email Address
+            Địa chỉ Email
           </label>
           <input
             type="email"
@@ -115,8 +117,8 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
             className="w-full border border-gray-300 rounded-full py-3 px-6 outline-none focus:border-indigo-500"
             placeholder={
               role === "STUDENT"
-                ? "Enter your student email"
-                : "Enter business email"
+                ? "Nhập email sinh viên của bạn"
+                : "Nhập email doanh nghiệp"
             }
             required
           />
@@ -124,14 +126,14 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
 
         <div>
           <label className="block mb-1.5 ml-4 font-semibold text-gray-700">
-            Password
+            Mật khẩu
           </label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full border border-gray-300 rounded-full py-3 px-6 outline-none focus:border-indigo-500"
-            placeholder="Create a password"
+            placeholder="Tạo mật khẩu"
             required
           />
         </div>
@@ -143,17 +145,17 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
           disabled={loading}
           className="w-full !mt-8 bg-indigo-600 py-4 rounded-full text-white font-bold text-base hover:bg-indigo-700 transition-all disabled:opacity-70"
         >
-          {loading ? "Creating Account..." : "Create Account"}
+          {loading ? "Đang tạo tài khoản..." : "Tạo Tài Khoản"}
         </button>
       </form>
 
       <p className="text-center mt-6 text-gray-700">
-        Already have an account?{" "}
+        Đã có tài khoản?{" "}
         <button
           onClick={onSwitchSignIn}
           className="text-blue-600 font-extrabold hover:underline"
         >
-          Sign in
+          Đăng nhập
         </button>
       </p>
     </div>

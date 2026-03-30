@@ -21,7 +21,7 @@ const ProjectCard = ({ project }) => {
             </p>
           </div>
           <div className="text-right">
-            <div className="text-xs text-slate-500">Views</div>
+            <div className="text-xs text-slate-500">Lượt xem</div>
             <div className="text-sm font-semibold text-slate-700">
               {project.views}
             </div>
@@ -59,10 +59,10 @@ const ProjectCard = ({ project }) => {
                 d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            {project.downloads} downloads
+            {project.downloads} lượt tải
           </span>
           <button className="rounded-full bg-black px-3 py-1 text-white text-xs font-medium hover:bg-slate-800 transition">
-            Detail
+            Chi tiết
           </button>
         </div>
       </div>

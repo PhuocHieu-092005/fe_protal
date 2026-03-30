@@ -1,4 +1,10 @@
-/* global.css */
+/* Import font Inter trực tiếp vào CSS */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* Ép toàn bộ project dùng font Inter */
+* {
+  font-family: 'Inter', sans-serif !important;
+}
 select option:hover {
   background-color: #000;
   color: #fff;

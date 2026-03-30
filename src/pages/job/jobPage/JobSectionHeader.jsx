@@ -5,19 +5,19 @@ export default function JobSectionHeader() {
     <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
       <div>
         <h2 className="text-2xl font-bold text-slate-900 md:text-3xl">
-          Available Jobs
+          Việc làm đang tuyển
         </h2>
         <p className="mt-2 text-sm text-slate-500">
-          Explore the latest opportunities from top companies.
+          Khám phá những cơ hội mới nhất từ các công ty hàng đầu.
         </p>
       </div>
 
       <div className="flex items-center gap-3">
-        <span className="text-sm text-slate-500">Sort by</span>
+        <span className="text-sm text-slate-500">Sắp xếp theo</span>
         <select className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 outline-none">
-          <option>Newest</option>
-          <option>Highest salary</option>
-          <option>Oldest</option>
+          <option>Mới nhất</option>
+          <option>Lương cao nhất</option>
+          <option>Cũ nhất</option>
         </select>
       </div>
     </div>

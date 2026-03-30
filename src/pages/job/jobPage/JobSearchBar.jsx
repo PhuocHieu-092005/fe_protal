@@ -2,15 +2,15 @@ import React, { useState } from "react";
 
 export default function JobSearchBar() {
   // State cho Location
-  const [location, setLocation] = useState("Location");
+  const [location, setLocation] = useState("Vị trí");
   const [showLocation, setShowLocation] = useState(false);
 
   // Thêm State cho Job Type
-  const [jobType, setJobType] = useState("Job type");
+  const [jobType, setJobType] = useState("Loại hình");
   const [showJobType, setShowJobType] = useState(false);
 
-  const locations = ["Ho Chi Minh City", "Hanoi", "Da Nang", "Remote"];
-  const jobTypes = ["Internship", "Part-time", "Full-time", "Freelancer"];
+  const locations = ["TP Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Làm việc từ xa"];
+  const jobTypes = ["Thực tập", "Bán thời gian", "Toàn thời gian", "Tự do"];
 
   return (
     <div className="w-full flex justify-center">
@@ -34,7 +34,7 @@ export default function JobSearchBar() {
 
           <input
             type="text"
-            placeholder="Search job, position, skill..."
+            placeholder="Tìm kiếm công việc, vị trí, kỹ năng..."
             className="flex-1 bg-transparent px-3 py-2 text-sm text-slate-700 outline-none"
           />
         </div>
@@ -52,7 +52,7 @@ export default function JobSearchBar() {
             className="flex items-center gap-1 rounded-full border border-slate-200 px-3 py-1 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
           >
             📍
-            <span className="font-medium">Location:</span>
+            {/* <span className="font-medium">Vị trí:</span> */}
             <span className="max-w-[90px] truncate">{location}</span>
           </button>
 
@@ -61,12 +61,12 @@ export default function JobSearchBar() {
               <li>
                 <button
                   onClick={() => {
-                    setLocation("Location");
+                    setLocation("Vị trí");
                     setShowLocation(false);
                   }}
                   className="w-full rounded-lg px-3 py-2 text-left text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
                 >
-                  Clear
+                  Tất cả vị trí
                 </button>
               </li>
 
@@ -122,16 +122,16 @@ export default function JobSearchBar() {
           </button>
 
           {showJobType && (
-            <ul className="absolute right-0 z-50 mt-4 w-40 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+            <ul className="absolute right-0 z-50 mt-4 w-44 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
               <li>
                 <button
                   onClick={() => {
-                    setJobType("Job type");
+                    setJobType("Loại hình");
                     setShowJobType(false);
                   }}
                   className="w-full rounded-lg px-3 py-2 text-left text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
                 >
-                  Clear
+                  Tất cả loại hình
                 </button>
               </li>
               {jobTypes.map((type) => (
@@ -157,7 +157,7 @@ export default function JobSearchBar() {
 
         {/* Button */}
         <button className="ml-2 h-9 rounded-full bg-slate-900 px-6 text-sm font-medium text-white transition hover:bg-slate-800 shadow-sm">
-          Search
+          Tìm kiếm
         </button>
       </div>
     </div>

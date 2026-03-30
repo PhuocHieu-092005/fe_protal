@@ -11,17 +11,18 @@ export default function JobHero() {
         <div className="relative mx-auto max-w-7xl px-6 py-24 md:py-32">
           <div className="mx-auto max-w-4xl text-center text-white">
             <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-1 text-sm backdrop-blur">
-              Career opportunities for IT students
+              Cơ hội việc làm dành cho sinh viên CNTT
             </span>
 
             <h1 className="mt-6 text-4xl font-bold leading-tight md:text-6xl">
-              Find the right job for your skills and career goals
+              Tìm kiếm công việc phù hợp với kỹ năng và định hướng nghề nghiệp
+              của bạn
             </h1>
 
             <p className="mx-auto mt-5 max-w-2xl text-base text-slate-200 md:text-lg">
-              Explore jobs, internships, and collaboration opportunities from
-              companies. Connect employers with student CVs and projects more
-              efficiently.
+              Khám phá các vị trí việc làm, thực tập và cơ hội hợp tác từ các
+              doanh nghiệp. Kết nối nhà tuyển dụng với CV và đồ án của sinh viên
+              một cách hiệu quả nhất.
             </p>
 
             <div className="mt-10">

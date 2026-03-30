@@ -44,7 +44,7 @@ export default function CvCard({ card }) {
           {card.title}
         </h3>
         <p className="text-sm font-semibold text-indigo-600 mb-2">
-          {card.position || "Software Developer"}
+          {card.position || "Lập trình viên"}
         </p>
         <p className="text-sm text-slate-600 leading-relaxed mb-4 px-2 line-clamp-3">
           {card.description}
@@ -55,7 +55,7 @@ export default function CvCard({ card }) {
             href="#"
             className="inline-flex items-center gap-1 text-sm font-semibold text-black hover:text-slate-700"
           >
-            Detail
+            Chi tiết
             <svg
               className="w-4 h-4"
               viewBox="0 0 24 24"

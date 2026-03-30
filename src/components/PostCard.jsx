@@ -26,7 +26,7 @@ export default function PostCard({ job }) {
           {/* FIX badge */}
           <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600 font-medium bg-emerald-50 px-2 py-[2px] rounded mt-1 w-fit">
             <span className="w-1 h-1 bg-emerald-500 rounded-full"></span>
-            Hiring
+            Đang tuyển
           </span>
         </div>
       </div>
@@ -60,22 +60,22 @@ export default function PostCard({ job }) {
       {/* Stats */}
       <div className="flex justify-between text-[11px] text-slate-500 py-2 border-t mt-2">
         <span>👁 {job.view_count.toLocaleString()}</span>
-        <span>👤 {job.applied_count} applicants</span>
+        <span>👤 {job.applied_count} ứng viên</span>
       </div>
 
       {/* Time */}
       <div className="flex justify-between text-[10px] mt-1">
-        <span className="text-slate-400">Start: {job.start_day}</span>
-        <span className="text-rose-500">End: {job.end_day}</span>
+        <span className="text-slate-400">Bắt đầu: {job.start_day}</span>
+        <span className="text-rose-500">Hạn nộp: {job.end_day}</span>
       </div>
 
       {/* Actions */}
       <div className="flex gap-2 mt-2">
         <button className="flex-1 py-1.5 text-[11px] font-medium border border-slate-200 rounded-lg hover:bg-slate-50">
-          Details
+          Chi tiết
         </button>
         <button className="flex-1 py-1.5 text-[11px] font-medium bg-black text-white border border-black rounded-lg hover:bg-white hover:text-black transition-all duration-200">
-          Apply
+          Ứng tuyển
         </button>
       </div>
     </div>

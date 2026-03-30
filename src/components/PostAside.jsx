@@ -1,7 +1,12 @@
 import React from "react";
 
 export default function PostAside() {
-  const filters = ["All Jobs", "Internship", "Part-time", "Full-time"];
+  const filters = [
+    "Tất cả công việc",
+    "Thực tập",
+    "Bán thời gian",
+    "Toàn thời gian",
+  ];
 
   return (
     <aside className="w-full md:w-64 flex-shrink-0">
@@ -9,7 +14,7 @@ export default function PostAside() {
         {/* Title */}
         <h3 className="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2 uppercase tracking-wide">
           <div className="w-1.5 h-4 bg-black rounded-full"></div>
-          Categories
+          Danh mục
         </h3>
 
         {/* Filters */}

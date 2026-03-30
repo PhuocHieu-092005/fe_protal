@@ -87,10 +87,11 @@ export default function CvList() {
       <div className="bg-[#FAFAFA] py-16 px-4 flex flex-col items-center">
         <div className="text-center mb-15">
           <h1 className="text-[40px] font-medium text-slate-900 mb-4">
-            Candidate Profiles
+            Hồ Sơ Ứng Viên
           </h1>
           <p className="text-base text-slate-600 max-w-md leading-relaxed">
-            Review and select candidates that best align with your hiring needs.
+            Xem xét và lựa chọn những ứng viên phù hợp nhất với nhu cầu tuyển
+            dụng của doanh nghiệp.
           </p>
         </div>
 

@@ -113,10 +113,10 @@ const ProjectList = () => {
       {/* Header */}
       <div className="text-center mb-12 px-4">
         <h1 className="text-3xl text-slate-900 font-bold tracking-tight">
-          Featured Student Projects
+          Đồ Án Sinh Viên Nổi Bật
         </h1>
         <p className="text-gray-500 mt-2 max-w-2xl mx-auto italic">
-          Faculty-endorsed technical solutions and innovations.
+          Các giải pháp công nghệ sáng tạo được đánh giá cao bởi Khoa.
         </p>
       </div>
 

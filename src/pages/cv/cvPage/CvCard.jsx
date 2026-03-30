@@ -53,7 +53,7 @@ export default function CvCard({ card }) {
             to={`/cv/${card.id}`}
             className="inline-flex items-center gap-1 text-sm font-semibold text-black hover:text-slate-700"
           >
-            Detail
+            Chi tiêt
             <svg
               className="w-4 h-4"
               viewBox="0 0 24 24"

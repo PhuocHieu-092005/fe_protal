@@ -48,7 +48,7 @@ export default function SignInForm({ onClose, onSwitchSignUp }) {
       </button>
 
       <h2 className="text-3xl font-extrabold mb-6 text-center text-slate-800">
-        Job Portal
+        Cổng Thông Tin Việc Làm
       </h2>
 
       {/* Role Selector */}
@@ -57,20 +57,20 @@ export default function SignInForm({ onClose, onSwitchSignUp }) {
           onClick={() => setRole("STUDENT")}
           className={`flex-1 py-2 rounded-full font-bold transition-all ${role === "STUDENT" ? "bg-white text-indigo-600 shadow-sm" : "text-gray-500"}`}
         >
-          Student
+          Sinh viên
         </button>
         <button
           onClick={() => setRole("COMPANY")}
           className={`flex-1 py-2 rounded-full font-bold transition-all ${role === "COMPANY" ? "bg-white text-indigo-600 shadow-sm" : "text-gray-500"}`}
         >
-          Company
+          Doanh nghiệp
         </button>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block mb-1.5 ml-4 font-semibold text-gray-700">
-            Email Address
+            Địa chỉ Email
           </label>
           <input
             type="email"
@@ -79,8 +79,8 @@ export default function SignInForm({ onClose, onSwitchSignUp }) {
             className="w-full bg-gray-50 border border-gray-200 outline-none rounded-full py-3 px-6 focus:border-indigo-500 focus:bg-white transition-all"
             placeholder={
               role === "STUDENT"
-                ? "Enter your student email"
-                : "Enter your company email"
+                ? "Nhập email sinh viên của bạn"
+                : "Nhập email doanh nghiệp"
             }
             required
           />
@@ -88,14 +88,14 @@ export default function SignInForm({ onClose, onSwitchSignUp }) {
 
         <div>
           <label className="block mb-1.5 ml-4 font-semibold text-gray-700">
-            Password
+            Mật khẩu
           </label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full bg-gray-50 border border-gray-200 outline-none rounded-full py-3 px-6 focus:border-indigo-500 focus:bg-white transition-all"
-            placeholder="Enter your password"
+            placeholder="Nhập mật khẩu"
             required
           />
         </div>
@@ -107,24 +107,24 @@ export default function SignInForm({ onClose, onSwitchSignUp }) {
           disabled={loading}
           className="w-full bg-indigo-600 py-3.5 rounded-full text-white font-bold text-base hover:bg-indigo-700 hover:shadow-md transition-all active:scale-[0.98] disabled:opacity-70"
         >
-          {loading ? "Signing in..." : "Sign in"}
+          {loading ? "Đang đăng nhập..." : "Đăng nhập"}
         </button>
       </form>
 
       <p className="text-center mt-6 text-gray-600">
-        Don’t have an account?{" "}
+        Chưa có tài khoản?{" "}
         <button
           onClick={onSwitchSignUp}
           className="text-indigo-600 font-extrabold hover:underline"
         >
-          Sign up
+          Đăng ký ngay
         </button>
       </p>
 
       {/* Social Login */}
       <div className="flex items-center my-6">
         <div className="flex-1 border-t border-gray-200"></div>
-        <span className="px-3 text-gray-400 text-xs uppercase">Or</span>
+        <span className="px-3 text-gray-400 text-xs uppercase">HOẶC</span>
         <div className="flex-1 border-t border-gray-200"></div>
       </div>
 

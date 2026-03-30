@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 
 export default function Search() {
-  const [location, setLocation] = useState("Location");
+  const [location, setLocation] = useState("Vị trí");
   const [showList, setShowList] = useState(false);
-  const locations = ["TP Ho Chi Minh", "Ha Noi", "Da Nang"];
+  const locations = ["TP Hồ Chí Minh", "Hà Nội", "Đà Nẵng"];
 
   return (
     <div className="group flex items-center rounded-full border border-slate-200 bg-white px-3 py-2 shadow-md max-w-3xl w-full gap-2 transition-all duration-300 hover:border-sky-300 hover:ring-2 hover:ring-sky-300/40 hover:shadow-xl focus-within:border-sky-400 focus-within:ring-2 focus-within:ring-sky-400/40">
@@ -19,7 +19,7 @@ export default function Search() {
 
       <input
         type="text"
-        placeholder="Search job, position, skill..."
+        placeholder="Tìm kiếm công việc, vị trí, kỹ năng..."
         className="flex-1 h-10 bg-transparent outline-none text-sm text-slate-700 placeholder:text-slate-400"
       />
 
@@ -43,10 +43,10 @@ export default function Search() {
             <path d="M12 21s-6-5.686-6-10a6 6 0 1 1 12 0c0 4.314-6 10-6 10z" />
             <circle cx="12" cy="11" r="2.5" />
           </svg>
-          <span className="font-medium">Location:</span>
+          {/* <span className="font-medium">Vị trí:</span> */}
           <span className="truncate w-[90px]">{location}</span>
           <svg
-            className="w-3 h-3"
+            className="w-3 h-3 ml-auto"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
@@ -60,12 +60,12 @@ export default function Search() {
             <li>
               <button
                 onClick={() => {
-                  setLocation("Location");
+                  setLocation("Vị trí");
                   setShowList(false);
                 }}
                 className="w-full text-left rounded-md px-2 py-1 text-sm text-gray-700 hover:bg-gray-100"
               >
-                Clear Location
+                Tất cả vị trí
               </button>
             </li>
             {locations.map((loc) => (
@@ -93,7 +93,7 @@ export default function Search() {
         type="button"
         className="bg-slate-900 px-5 h-10 rounded-full text-sm text-white hover:bg-slate-800 transition"
       >
-        Search
+        Tìm kiếm
       </button>
     </div>
   );

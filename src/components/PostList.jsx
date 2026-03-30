@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PostCard from "./PostCard";
 import PostAside from "./PostAside";
 import Pagination from "./common/Pagination";
+
 export default function PostList() {
   const jobs = [
     ...Array.from({ length: 15 }, (_, i) => ({
@@ -34,10 +35,10 @@ export default function PostList() {
           {/* Header */}
           <div className="mb-8">
             <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 tracking-tight leading-tight">
-              Career Opportunities
+              Cơ Hội Việc Làm
             </h2>
             <p className="text-slate-500 text-sm mt-1 font-medium">
-              Latest job opportunities for developerss
+              Những cơ hội việc làm mới nhất dành cho lập trình viên
             </p>
             <div className="h-1 w-20 bg-blue-600 mt-2 rounded-full"></div>
           </div>

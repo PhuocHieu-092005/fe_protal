@@ -16,80 +16,80 @@ export default function JobFilterSidebar() {
   return (
     <aside className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="mb-5 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-slate-900">Filters</h3>
+        <h3 className="text-lg font-semibold text-slate-900">Bộ lọc</h3>
         <button
           onClick={() => setSelectedSkills([])}
           className="text-sm font-medium text-slate-500 hover:text-slate-900"
         >
-          Reset
+          Đặt lại
         </button>
       </div>
 
       <div className="space-y-6">
         <div>
           <label className="mb-2 block text-sm font-medium text-slate-700">
-            Location
+            Khu vực làm việc
           </label>
           <select className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none">
-            <option>All locations</option>
-            <option>Ho Chi Minh City</option>
-            <option>Hanoi</option>
-            <option>Da Nang</option>
-            <option>Remote</option>
+            <option>Tất cả khu vực</option>
+            <option>TP. Hồ Chí Minh</option>
+            <option>Hà Nội</option>
+            <option>Đà Nẵng</option>
+            <option>Làm việc từ xa (Remote)</option>
           </select>
         </div>
 
         <div>
           <label className="mb-2 block text-sm font-medium text-slate-700">
-            Job type
+            Loại hình công việc
           </label>
           <div className="space-y-2 text-sm text-slate-600">
             <label className="flex items-center gap-2">
               <input type="checkbox" />
-              Internship
+              Thực tập (Internship)
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" />
-              Part-time
+              Bán thời gian (Part-time)
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" />
-              Full-time
+              Toàn thời gian (Full-time)
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" />
-              Freelance
+              Tự do (Freelance)
             </label>
           </div>
         </div>
 
         <div>
           <label className="mb-2 block text-sm font-medium text-slate-700">
-            Experience level
+            Cấp bậc / Kinh nghiệm
           </label>
           <div className="space-y-2 text-sm text-slate-600">
             <label className="flex items-center gap-2">
               <input type="checkbox" />
-              Fresher
+              Mới tốt nghiệp (Fresher)
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" />
-              Junior
+              Sơ cấp (Junior)
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" />
-              Mid-level
+              Trung cấp (Mid-level)
             </label>
             <label className="flex items-center gap-2">
               <input type="checkbox" />
-              Senior
+              Cao cấp (Senior)
             </label>
           </div>
         </div>
 
         <div>
           <label className="mb-2 block text-sm font-medium text-slate-700">
-            Skills
+            Kỹ năng chuyên môn
           </label>
 
           <div className="flex flex-wrap gap-2">
