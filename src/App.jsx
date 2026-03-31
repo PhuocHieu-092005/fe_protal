@@ -10,8 +10,8 @@ import ProjectDetail from "./pages/project/projectDetail/ProjectDetail";
 import ProfileCategory from "./pages/profile/profilePage/ProfileCategory";
 import OAuthSuccess from "./pages/OAuthSuccess";
 // template
-import TemplatePage from "./pages/template/templatePage/TemplatePage";
-import TemplateDetail from "./pages/template/templateDetail/TemplateDetail";
+import CvEdit from "./pages/template/CvEdit";
+import TemplateCategory from "./pages/template/templatePage/TemplateCategory";
 function App() {
   return (
     <Router>
@@ -28,18 +28,16 @@ function App() {
         {/*============ Project====================== */}
         <Route path="/project" element={<ProjectCategory />} />
         <Route path="/project/:id" element={<ProjectDetail />} />
-        {/*============ Template====================== */}
-        {/* <Route path="/template" element={<TemplateCategory />} /> */}
-        <Route path="/template" element={<TemplatePage />} />
-
-        {/* ================Template 1================= */}
-        <Route path="/template/create" element={<TemplateDetail />} />
-        {/* ================Template 2================= */}
 
         {/*============ Profile====================== */}
         <Route path="/profile" element={<ProfileCategory />} />
 
         <Route path="/oauth2-success" element={<OAuthSuccess />} />
+
+        {/*============ Template====================== */}
+        <Route path="/template" element={<TemplateCategory />} />
+        <Route path="/template/edit" element={<CvEdit />} />
+        {/* <Route path="/template/:id" element={<CvEdit />} /> */}
       </Routes>
     </Router>
   );
