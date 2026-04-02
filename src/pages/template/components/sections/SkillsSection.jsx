@@ -81,7 +81,7 @@ const SkillsSection = ({ cvData, updateCvData }) => {
         />
         <button
           onClick={addSkill}
-          className="px-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-medium"
+          className="px-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-medium"
         >
           Thêm
         </button>

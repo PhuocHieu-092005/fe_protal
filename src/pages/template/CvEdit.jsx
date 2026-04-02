@@ -134,7 +134,7 @@ const CvEdit = () => {
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50 mt-14">
       {/* CỘT TRÁI - Sidebar */}
-      <div className="w-[400px] bg-white border-r overflow-y-auto mt-4">
+      <div className="w-[450px] bg-white border-r overflow-y-auto mt-4">
         <CvEditorLeftPanel
           title={title}
           setTitle={setTitle}
