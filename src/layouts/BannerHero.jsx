@@ -39,12 +39,12 @@ export default function BannerHero() {
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-white px-4">
         <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center tracking-wide">
-          JOB INFORMATION PORTAL
+          CỔNG THÔNG TIN VIỆC LÀM
         </h1>
 
         <p className="mb-8 max-w-2xl text-center text-base md:text-lg text-slate-200">
-          Trusted marketplace to find top talent and career opportunities
-          quickly.
+          Nền tảng đáng tin cậy để tìm kiếm nhân tài hàng đầu và cơ hội nghề
+          nghiệp nhanh chóng.
         </p>
 
         <div className="w-full max-w-3xl px-2">

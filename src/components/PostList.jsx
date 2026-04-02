@@ -35,9 +35,9 @@ export default function PostList() {
           {/* Header */}
           <div className="mb-8">
             <h2 className="text-3xl md:text-4xl font-semibold text-slate-900 tracking-tight leading-tight">
-              Cơ Hội Việc Làm
+              Cơ hội việc làm
             </h2>
-            <p className="text-slate-500 text-sm mt-1 font-medium">
+            <p className="text-gray-500 mt-2 max-w-2xl italic">
               Những cơ hội việc làm mới nhất dành cho lập trình viên
             </p>
             <div className="h-1 w-20 bg-blue-600 mt-2 rounded-full"></div>

@@ -10,6 +10,7 @@ const ProfileForm = ({ profile, setProfile }) => {
   const [selectedFile, setSelectedFile] = useState(null); // Lưu file ảnh
   const [previewUrl, setPreviewUrl] = useState(null); // Lưu link ảnh tạm
   const fileInputRef = useRef(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   // 1. Xử lý khi gõ phím
   const handleChange = (e) => {
@@ -32,6 +33,7 @@ const ProfileForm = ({ profile, setProfile }) => {
 
   // 3. Hàm lưu dữ liệu
   const handleSave = async () => {
+    setIsSaving(true);
     try {
       const formData = new FormData();
       formData.append("fullName", profile.full_name || "");
@@ -50,7 +52,7 @@ const ProfileForm = ({ profile, setProfile }) => {
 
       const response = await studentService.updateProfileMe(formData);
 
-      // Cập nhật thông tin user trong AuthContext để navbar tự động cập nhật
+      // Cập nhật thôngContext
       updateUser({
         full_name: profile.full_name,
         avatar_url:
@@ -73,10 +75,23 @@ const ProfileForm = ({ profile, setProfile }) => {
         title: "Lỗi",
         text: "Không thể cập nhật thông tin. Vui lòng kiểm tra lại kết nối.",
       });
+    } finally {
+      setIsSaving(false);
     }
   };
-  // up ảnh lên clound
-  const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(profile?.full_name || "User")}&background=random`;
+
+  const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+    profile?.full_name || "User",
+  )}&background=random`;
+
+  const editableInputClass = `input w-full transition-all duration-200 ${
+    isEditing
+      ? "input-bordered bg-white border-gray-300 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+      : "bg-gray-50 border-transparent text-gray-700 cursor-default focus:!outline-none focus:!border-transparent focus:!ring-0"
+  }`;
+
+  const readOnlyInputClass =
+    "input input-bordered w-full bg-gray-100 text-gray-500 cursor-not-allowed focus:!outline-none focus:!border-transparent focus:!ring-0";
 
   return (
     <section className="w-3/4 bg-white rounded-lg shadow-sm p-8 border border-gray-100">
@@ -84,21 +99,29 @@ const ProfileForm = ({ profile, setProfile }) => {
         <h2 className="text-3xl font-bold text-gray-900">Cập nhật hồ sơ</h2>
         <button
           onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
-          className={`px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition-all duration-300 ${
-            isEditing
-              ? "bg-gradient-to-r from-green-500 to-green-600 hover:shadow-lg hover:-translate-y-0.5 active:scale-95"
-              : "bg-gradient-to-r from-blue-500 to-blue-600 hover:shadow-lg hover:-translate-y-0.5 active:scale-95"
-          } text-white`}
+          disabled={isSaving}
+          className={`px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition-all duration-300 text-white
+            ${
+              isSaving
+                ? "bg-gray-400 cursor-not-allowed opacity-70"
+                : isEditing
+                  ? "bg-gradient-to-r from-green-500 to-green-600 hover:shadow-lg hover:-translate-y-0.5 active:scale-95"
+                  : "bg-gradient-to-r from-blue-500 to-blue-600 hover:shadow-lg hover:-translate-y-0.5 active:scale-95"
+            }
+          `}
         >
-          {isEditing ? (
+          {isSaving ? (
             <>
-              {" "}
-              <Save size={18} /> Lưu thay đổi{" "}
+              <span className="loading loading-spinner loading-sm"></span> Đang
+              lưu...
+            </>
+          ) : isEditing ? (
+            <>
+              <Save size={18} /> Lưu thay đổi
             </>
           ) : (
             <>
-              {" "}
-              <Edit3 size={18} /> Chỉnh sửa thông tin{" "}
+              <Edit3 size={18} /> Chỉnh sửa thông tin
             </>
           )}
         </button>
@@ -116,15 +139,12 @@ const ProfileForm = ({ profile, setProfile }) => {
 
         {isEditing && (
           <>
-            {/* Nút bấm để mở hộp thoại chọn file */}
             <button
               onClick={() => fileInputRef.current.click()}
               className="absolute bottom-0 translate-x-12 bg-white p-2 rounded-full shadow-lg border border-gray-200 hover:bg-gray-50 transition-transform active:scale-90"
             >
               <Camera size={18} className="text-blue-600" />
             </button>
-
-            {/* Input file bị ẩn đi */}
             <input
               type="file"
               ref={fileInputRef}
@@ -153,22 +173,22 @@ const ProfileForm = ({ profile, setProfile }) => {
             value={profile?.full_name || ""}
             onChange={handleChange}
             readOnly={!isEditing}
-            className={`input input-bordered w-full ${!isEditing ? "bg-gray-50" : "border-blue-400 focus:ring-2 focus:ring-blue-100"}`}
+            className={editableInputClass}
           />
         </div>
 
-        {/* Email */}
+        {/* Email - KHÔNG ĐƯỢC ĐỔI */}
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-gray-600">Email</label>
           <input
             type="text"
             value={profile?.email || ""}
             readOnly
-            className="input input-bordered w-full bg-gray-100 cursor-not-allowed"
+            className={readOnlyInputClass}
           />
         </div>
 
-        {/* MSSV */}
+        {/* MSSV - KHÔNG ĐƯỢC ĐỔI */}
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-gray-600">
             Mã số sinh viên
@@ -177,7 +197,7 @@ const ProfileForm = ({ profile, setProfile }) => {
             type="text"
             value={profile?.mssv || ""}
             readOnly
-            className="input input-bordered w-full bg-gray-100"
+            className={readOnlyInputClass}
           />
         </div>
 
@@ -192,7 +212,7 @@ const ProfileForm = ({ profile, setProfile }) => {
             value={profile?.phone || ""}
             onChange={handleChange}
             readOnly={!isEditing}
-            className={`input input-bordered w-full ${!isEditing ? "bg-gray-50" : "border-blue-400"}`}
+            className={editableInputClass}
           />
         </div>
 
@@ -202,7 +222,9 @@ const ProfileForm = ({ profile, setProfile }) => {
             Giới tính
           </label>
           <div className="flex gap-6 mt-2">
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label
+              className={`flex items-center gap-2 ${!isEditing ? "cursor-default opacity-70" : "cursor-pointer"}`}
+            >
               <input
                 type="radio"
                 name="gender"
@@ -211,11 +233,13 @@ const ProfileForm = ({ profile, setProfile }) => {
                   isEditing && setProfile({ ...profile, gender: true })
                 }
                 disabled={!isEditing}
-                className="radio radio-primary radio-sm"
+                className="radio radio-primary radio-sm disabled:bg-gray-200"
               />
               <span className="text-sm">Nam</span>
             </label>
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label
+              className={`flex items-center gap-2 ${!isEditing ? "cursor-default opacity-70" : "cursor-pointer"}`}
+            >
               <input
                 type="radio"
                 name="gender"
@@ -224,7 +248,7 @@ const ProfileForm = ({ profile, setProfile }) => {
                   isEditing && setProfile({ ...profile, gender: false })
                 }
                 disabled={!isEditing}
-                className="radio radio-primary radio-sm"
+                className="radio radio-primary radio-sm disabled:bg-gray-200"
               />
               <span className="text-sm">Nữ</span>
             </label>
@@ -240,7 +264,7 @@ const ProfileForm = ({ profile, setProfile }) => {
             value={profile?.address || ""}
             onChange={handleChange}
             readOnly={!isEditing}
-            className={`input input-bordered w-full ${!isEditing ? "bg-gray-50" : "border-blue-400"}`}
+            className={editableInputClass}
           />
         </div>
       </div>

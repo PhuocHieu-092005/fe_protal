@@ -113,7 +113,7 @@ const ProjectList = () => {
       {/* Header */}
       <div className="text-center mb-12 px-4">
         <h1 className="text-3xl text-slate-900 font-bold tracking-tight">
-          Đồ Án Sinh Viên Nổi Bật
+          Đồ án sinh viên nổi bật
         </h1>
         <p className="text-gray-500 mt-2 max-w-2xl mx-auto italic">
           Các giải pháp công nghệ sáng tạo được đánh giá cao bởi Khoa.
