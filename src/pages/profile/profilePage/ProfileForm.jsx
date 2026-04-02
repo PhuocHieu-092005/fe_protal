@@ -1,9 +1,11 @@
 import React, { useState, useRef } from "react";
 import { Camera, Save, Edit3 } from "lucide-react";
 import studentService from "../../../services/studentService";
+import { useAuth } from "../../../contexts/AuthContext";
 import Swal from "sweetalert2";
 
 const ProfileForm = ({ profile, setProfile }) => {
+  const { updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null); // Lưu file ảnh
   const [previewUrl, setPreviewUrl] = useState(null); // Lưu link ảnh tạm
@@ -46,7 +48,14 @@ const ProfileForm = ({ profile, setProfile }) => {
         formData.append("avatar", selectedFile);
       }
 
-      await studentService.updateProfileMe(formData);
+      const response = await studentService.updateProfileMe(formData);
+
+      // Cập nhật thông tin user trong AuthContext để navbar tự động cập nhật
+      updateUser({
+        full_name: profile.full_name,
+        avatar_url:
+          previewUrl || profile?.avatar_url || response.data?.avatar_url,
+      });
 
       Swal.fire({
         icon: "success",

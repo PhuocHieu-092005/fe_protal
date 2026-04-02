@@ -63,12 +63,20 @@ export const AuthProvider = ({ children }) => {
     setIsLoggedIn(false);
   };
 
+  // ====================== CẬP NHẬT THÔNG TIN USER ======================
+  const updateUser = (updatedUserData) => {
+    const newUser = { ...user, ...updatedUserData };
+    setUser(newUser);
+    localStorage.setItem("user", JSON.stringify(newUser));
+  };
+
   const value = {
     user,
     isLoggedIn,
     loading,
     login,
     logout,
+    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
