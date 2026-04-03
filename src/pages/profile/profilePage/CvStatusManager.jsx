@@ -54,12 +54,12 @@ const CvStatusManager = () => {
           </span>
         );
       case "REJECTED":
-        return (
-          <span className="badge badge-error gap-1 bg-red-100 text-red-700 border-red-200">
-            <XCircle size={14} /> Từ chối
-          </span>
-        );
-      default:
+        //   return (
+        //     <span className="badge badge-warning gap-1 bg-red-100 text-yellow-700 border-yellow-200">
+        //       <Clock size={14} /> Chờ duyệt
+        //     </span>
+        //   );
+        // default:
         return null;
     }
   };
