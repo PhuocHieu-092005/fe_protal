@@ -1,77 +1,31 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import CvCard from "./CvCard";
+import cvService from "../services/cvService";
 
 export default function CvList() {
-  const cards = [
-    {
-      id: 1,
-      image:
-        "https://assets.prebuiltui.com/images/components/feature-sections/ai-avatar-image1.png",
-      title: "Trần Thị B - Backend Developer",
-      position: "Software Developer",
-      description:
-        "Chuyên Laravel, MySQL, xây dựng RESTful API. Có kinh nghiệm deploy server.",
-    },
-    {
-      id: 2,
-      image:
-        "https://assets.prebuiltui.com/images/components/feature-sections/ai-avatar-image1.png",
-      title: "Phạm Thị D - UI/UX Designer",
-      position: "Product Designer",
-      description:
-        "Thiết kế hệ thống UI với Figma và xây dựng design system consistent.",
-    },
-    {
-      id: 3,
-      image:
-        "https://assets.prebuiltui.com/images/components/feature-sections/ai-avatar-image1.png",
-      title: "Lê Văn C - Fullstack Developer",
-      position: "Fullstack Developer",
-      description:
-        "Node.js + React + MongoDB. Xây dựng app end-to-end với hiệu năng cao.",
-    },
-    {
-      id: 4,
-      image:
-        "https://assets.prebuiltui.com/images/components/feature-sections/ai-avatar-image1.png",
-      title: "Nguyễn Hoàng A - Frontend Developer",
-      position: "Frontend Engineer",
-      description:
-        "Vue/React/Tailwind, tối ưu UI/UX và hệ thống component reusable.",
-    },
-    {
-      id: 2,
-      image:
-        "https://assets.prebuiltui.com/images/components/feature-sections/ai-avatar-image1.png",
-      title: "Trần Thị B - Backend Developer",
-      description:
-        "Chuyên Laravel, MySQL, xây dựng RESTful API. Có kinh nghiệm deploy server.",
-    },
-    {
-      id: 3,
-      image:
-        "https://assets.prebuiltui.com/images/components/feature-sections/ai-avatar-image1.png",
-      title: "Lê Văn C - Fullstack Developer",
-      description:
-        "Sử dụng NodeJS, React, MongoDB. Có thể phát triển full hệ thống từ frontend đến backend.",
-    },
-    {
-      id: 4,
-      image:
-        "https://assets.prebuiltui.com/images/components/feature-sections/ai-avatar-image1.png",
-      title: "Phạm Thị D - UI/UX Designer",
-      description:
-        "Thiết kế giao diện với Figma, Adobe XD. Có kinh nghiệm xây dựng design system.",
-    },
-    {
-      id: 4,
-      image:
-        "https://assets.prebuiltui.com/images/components/feature-sections/ai-avatar-image1.png",
-      title: "Phạm Thị D - UI/UX Designer",
-      description:
-        "Thiết kế giao diện với Figma, Adobe XD. Có kinh nghiệm xây dựng design system.",
-    },
-  ];
+  const [cards, setCards] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCvs();
+  }, []);
+
+  const fetchCvs = async () => {
+    try {
+      setLoading(true);
+      const response = await cvService.getPublicCvs({ page: 0, size: 8 });
+
+      if (response.code === 200 && response.data?.content) {
+        // Set thẳng mảng raw data từ API vào state
+        setCards(response.data.content);
+        console.log("Danh sách CV đã lấy về:", response.data.content);
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách CV:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -84,7 +38,7 @@ export default function CvList() {
         `}
       </style>
 
-      <div className="bg-[#FAFAFA] py-16 px-4 flex flex-col items-center">
+      <div className="bg-[#FAFAFA] py-16 px-4 flex flex-col items-center min-h-screen">
         <div className="text-center mb-15">
           <h1 className="text-[35px] font-bold text-slate-900 mb-4">
             Hồ sơ ứng viên
@@ -95,11 +49,22 @@ export default function CvList() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl w-full mt-6">
-          {cards.map((card, index) => (
-            <CvCard key={index} card={card} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="mt-10 text-lg font-medium text-gray-500">
+            Đang tải danh sách CV...
+          </div>
+        ) : cards.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl w-full mt-6">
+            {cards.map((cvData) => (
+              // Truyền nguyên object cvData lấy từ API vào component
+              <CvCard key={cvData.id} card={cvData} />
+            ))}
+          </div>
+        ) : (
+          <div className="mt-10 text-lg font-medium text-gray-500">
+            Chưa có hồ sơ nào.
+          </div>
+        )}
       </div>
     </>
   );

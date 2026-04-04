@@ -13,7 +13,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-
+import { validateCVData } from "../../helpers/cvValidation";
 import CvEditorLeftPanel from "./components/CvEditorLeftPanel";
 import CvPreview from "./components/CvPreview";
 import SortableSection from "./components/SortableSection";
@@ -25,7 +25,7 @@ import ExperienceSection from "./components/sections/ExperienceSection";
 import SkillsSection from "./components/sections/SkillsSection";
 
 const CvEdit = () => {
-  const [title, setTitle] = useState("Tên CV của bạn");
+  const [title, setTitle] = useState("Title CV - Frontend Developer");
   const [avatarPreview, setAvatarPreview] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [cvData, setCvData] = useState({
@@ -88,6 +88,13 @@ const CvEdit = () => {
     }
   };
   const handleSaveCV = async () => {
+    // Kiểm tra tính hợp lệ của dữ liệu CV
+    const validation = validateCVData(title, cvData);
+    if (!validation.isValid) {
+      alert(validation.message);
+      return;
+    }
+
     const formData = new FormData();
     //content_json là Map/Object
     const cvRequest = {
