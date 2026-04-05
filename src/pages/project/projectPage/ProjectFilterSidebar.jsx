@@ -71,7 +71,7 @@ export default function ProjectFilterSidebar({
           className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700 outline-none transition-all focus:border-[#0f172a] focus:bg-white focus:ring-0"
         >
           <option value="">Tất cả công nghệ</option>
-          {technologies.map((t) => (
+          {technologies?.map((t) => (
             <option key={t.id} value={t.id}>
               {t.name}
             </option>

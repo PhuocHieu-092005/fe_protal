@@ -1,259 +1,246 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FileText,
-  Globe,
-  Lock,
   Eye,
-  Download,
-  CalendarDays,
-  CheckCircle2,
-  Clock3,
+  Trash2,
+  CheckCircle,
+  Clock,
+  Plus,
+  X,
   XCircle,
-  Code2,
-  UserRound,
 } from "lucide-react";
 import cvService from "../../../services/cvService";
-import CvDetailModal from "./CvDetailModal";
 
-export default function CvStatusManager() {
-  const [cvList, setCvList] = useState([]);
+const CvStatusManager = () => {
+  const [cvs, setCvs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [selectedCv, setSelectedCv] = useState(null);
 
-  const fetchMyCvs = async () => {
-    try {
-      setLoading(true);
-      setError("");
+  const [pdfPreviewUrl, setPdfPreviewUrl] = useState(null);
 
-      const response = await cvService.getMyCvs();
-      const normalized = Array.isArray(response) ? response : [];
-
-      setCvList(normalized);
-    } catch (err) {
-      console.error("Lỗi lấy danh sách CV:", err);
-      setError("Không thể tải danh sách CV. Vui lòng thử lại.");
-      setCvList([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchMyCvs();
   }, []);
 
-  const renderStatusBadge = (isApproved) => {
-    if (isApproved === true) {
-      return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-          <CheckCircle2 size={14} />
-          Đã duyệt
-        </span>
+  const fetchMyCvs = async () => {
+    try {
+      setLoading(true);
+      const response = await cvService.getMyCvs();
+      if (response.code === 200 && response.data) {
+        setCvs(response.data);
+        console.log("Danh sách CV của tôi:", response.data);
+      }
+    } catch (error) {
+      console.error(
+        "Lỗi khi lấy danh sách CV:",
+        error.response?.data || error.message,
       );
+    } finally {
+      setLoading(false);
     }
-
-    if (isApproved === false) {
-      return (
-        <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-          <Clock3 size={14} />
-          Chờ duyệt
-        </span>
-      );
-    }
-
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-        <XCircle size={14} />
-        Không rõ
-      </span>
-    );
   };
 
-  const renderTypeBadge = (type) => {
-    return (
-      <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
-        {type === "FORM"
-          ? "CV Form"
-          : type === "UPLOAD"
-            ? "CV Upload"
-            : type || "CV"}
-      </span>
-    );
+  // Xử lý xóa CV
+  const handleDelete = async (id) => {
+    if (
+      !window.confirm(
+        "Bạn có chắc chắn muốn xóa CV này không? Hành động này không thể hoàn tác.",
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await cvService.deleteCv(id);
+      // Xóa thành công thì lọc CV đó ra khỏi state hiện tại
+      setCvs(cvs.filter((cv) => cv.id !== id));
+      alert("Xóa CV thành công!");
+    } catch (error) {
+      console.error("Lỗi khi xóa CV:", error.response?.data || error.message);
+      alert("Có lỗi xảy ra khi xóa CV.");
+    }
   };
 
-  if (loading) {
-    return (
-      <section className="w-3/4 rounded-lg border border-gray-100 bg-white p-8 shadow-sm">
-        <div className="mb-6">
-          <h2 className="text-3xl font-bold text-gray-900">
-            Quản lý CV & Trạng thái
-          </h2>
-          <p className="mt-2 text-gray-500">Đang tải danh sách CV...</p>
-        </div>
+  // Xử lý xem chi tiết
+  const handlePreview = (cv) => {
+    if (cv.type === "FORM") {
+      navigate(`/cv/${cv.id}`);
+    } else if (cv.type === "UPLOAD") {
+      // Mở Modal xem file PDF
+      const fileObj = cv.cv_file;
+      if (fileObj && fileObj.file_path) {
+        setPdfPreviewUrl(fileObj.file_path);
+      } else {
+        alert("Không tìm thấy link file PDF của CV này.");
+      }
+    }
+  };
 
-        <div className="space-y-4">
-          {Array.from({ length: 3 }).map((_, index) => (
-            <div
-              key={index}
-              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
-            >
-              <div className="h-5 w-1/3 animate-pulse rounded bg-slate-100" />
-              <div className="mt-4 h-4 w-1/2 animate-pulse rounded bg-slate-100" />
-              <div className="mt-3 h-4 w-1/4 animate-pulse rounded bg-slate-100" />
-            </div>
-          ))}
-        </div>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section className="w-3/4 rounded-lg border border-red-100 bg-white p-8 shadow-sm">
-        <h2 className="text-3xl font-bold text-gray-900">
-          Quản lý CV & Trạng thái
-        </h2>
-        <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-red-700">
-          {error}
-        </div>
-      </section>
-    );
-  }
+  // CẬP NHẬT LẠI: renderStatus dựa trên chuỗi status ("APPROVED", "PENDING", "REJECTED")
+  const renderStatus = (status) => {
+    switch (status) {
+      case "APPROVED":
+        return (
+          <span className="badge gap-1 bg-green-100 text-green-700 border-green-200 px-2.5 py-1 rounded-full text-xs font-semibold flex items-center shadow-sm">
+            <CheckCircle size={14} /> Đã duyệt
+          </span>
+        );
+      case "REJECTED":
+        return (
+          <span className="badge gap-1 bg-rose-100 text-rose-700 border-rose-200 px-2.5 py-1 rounded-full text-xs font-semibold flex items-center shadow-sm">
+            <XCircle size={14} /> Bị từ chối
+          </span>
+        );
+      case "PENDING":
+      default:
+        return (
+          <span className="badge gap-1 bg-yellow-100 text-yellow-700 border-yellow-200 px-2.5 py-1 rounded-full text-xs font-semibold flex items-center shadow-sm">
+            <Clock size={14} /> Đang chờ duyệt
+          </span>
+        );
+    }
+  };
 
   return (
     <>
-      <section className="w-3/4 rounded-lg border border-gray-100 bg-white p-8 shadow-sm">
-        <div className="mb-8 flex items-start justify-between gap-4">
+      <section className="w-full bg-white rounded-xl shadow-sm p-8 border border-gray-100 animate-in fade-in duration-500">
+        <div className="flex justify-between items-center mb-8 pb-4 border-b border-gray-50">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900">
-              Quản lý CV & Trạng thái
+            <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+              <FileText className="text-indigo-600" size={28} />
+              Quản lý Hồ sơ CV
             </h2>
-            <p className="mt-2 text-gray-500">
-              Theo dõi danh sách CV hiện tại của bạn và trạng thái phê duyệt.
+            <p className="text-gray-500 mt-2 text-sm">
+              Bạn có thể tạo tối đa 2 CV để ứng tuyển.
             </p>
           </div>
-
-          <div className="rounded-2xl bg-slate-100 px-4 py-3 text-sm font-medium text-slate-700">
-            Tổng CV: {cvList.length}
-          </div>
+          <button
+            onClick={() => {
+              if (cvs.length < 2) {
+                navigate("/template"); // Chuyển trang nếu chưa đủ 2 CV
+              }
+            }}
+            disabled={cvs.length >= 2}
+            className={`flex items-center gap-2 px-6 py-3 font-medium rounded-xl transition-all duration-300 ${
+              cvs.length >= 2
+                ? "bg-gray-200 text-gray-500 cursor-not-allowed pointer-events-none"
+                : "bg-slate-900 text-white hover:bg-indigo-600 hover:shadow-lg active:scale-95"
+            }`}
+          >
+            <Plus size={20} />
+            <span>Tạo CV mới</span>
+          </button>
         </div>
 
-        {cvList.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-14 text-center">
-            <FileText className="mx-auto mb-4 text-slate-400" size={42} />
-            <h3 className="text-xl font-semibold text-slate-800">
-              Bạn chưa có CV nào
-            </h3>
-            <p className="mt-2 text-sm text-slate-500">
-              Hãy tạo CV mới hoặc upload CV để bắt đầu ứng tuyển.
-            </p>
+        {loading ? (
+          <div className="py-10 flex justify-center text-gray-500 animate-pulse">
+            Đang tải danh sách CV...
+          </div>
+        ) : cvs.length === 0 ? (
+          <div className="py-16 flex flex-col items-center justify-center text-gray-500 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+            <FileText size={48} className="text-gray-300 mb-4" />
+            <p>Bạn chưa tạo CV nào.</p>
           </div>
         ) : (
-          <div className="space-y-5">
-            {cvList.map((cv) => (
-              <article
-                key={cv.id}
-                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md"
-              >
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <h3 className="text-xl font-bold text-slate-900">
-                        {cv.title || `CV #${cv.id}`}
-                      </h3>
-                      {renderTypeBadge(cv.type)}
-                      {renderStatusBadge(cv.is_approved)}
+          <div className="grid grid-cols-1 gap-4">
+            {cvs.map((cv) => {
+              const currentStatus = cv.status;
+              const viewCount = cv.view_count ?? 0;
+              const createdAt = cv.created_at;
+
+              return (
+                <div
+                  key={cv.id}
+                  className="group border border-gray-100 rounded-2xl p-5 hover:border-indigo-100 hover:shadow-md transition-all bg-white flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-5">
+                    <div
+                      className={`p-4 rounded-xl ${
+                        cv.type === "FORM"
+                          ? "bg-indigo-50 text-indigo-600"
+                          : "bg-orange-50 text-orange-600"
+                      }`}
+                    >
+                      <FileText size={24} />
                     </div>
-
-                    <div className="mt-4 flex flex-wrap gap-4 text-sm text-slate-500">
-                      <div className="flex items-center gap-2">
-                        <CalendarDays size={16} />
-                        <span>
-                          Tạo:{" "}
-                          {cv.created_at
-                            ? new Date(cv.created_at).toLocaleDateString(
-                                "vi-VN",
-                              )
-                            : "Chưa có"}
+                    <div>
+                      <div className="flex items-center gap-3 mb-1.5">
+                        <h3 className="font-bold text-gray-800 text-lg">
+                          {cv.title || "CV Chưa có tiêu đề"}
+                        </h3>
+                        {renderStatus(currentStatus)}
+                      </div>
+                      <div className="flex items-center gap-4 text-sm text-gray-500">
+                        <span className="bg-gray-100 px-2 py-0.5 rounded-md text-xs font-semibold">
+                          {cv.type}
                         </span>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        {cv.is_public ? (
-                          <>
-                            <Globe size={16} />
-                            <span>Công khai</span>
-                          </>
-                        ) : (
-                          <>
-                            <Lock size={16} />
-                            <span>Riêng tư</span>
-                          </>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <Eye size={16} />
-                        <span>Lượt xem: {cv.view_count ?? 0}</span>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <Download size={16} />
-                        <span>Lượt tải: {cv.download_count ?? 0}</span>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 rounded-2xl bg-slate-50 p-4">
-                      <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                        <UserRound size={16} />
                         <span>
-                          {cv.content_json?.fullName ||
-                            "Chưa có họ tên trong CV"}
+                          Ngày tạo:{" "}
+                          <b className="text-gray-700">
+                            {new Date(createdAt).toLocaleDateString("vi-VN")}
+                          </b>
                         </span>
-                      </div>
-
-                      <div className="mt-2 flex items-center gap-2 text-sm text-slate-600">
-                        <Code2 size={16} />
-                        <span>
-                          {cv.content_json?.position ||
-                            "Chưa có vị trí ứng tuyển"}
+                        <span className="flex items-center gap-1.5">
+                          <Eye size={14} /> {viewCount} lượt xem
                         </span>
-                      </div>
-
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {(cv.content_json?.skills || []).map((skill, index) => (
-                          <span
-                            key={index}
-                            className="rounded-full bg-white px-3 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-200"
-                          >
-                            {skill}
-                          </span>
-                        ))}
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex gap-2">
                     <button
-                      onClick={() => setSelectedCv(cv)}
-                      className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                      onClick={() => handlePreview(cv)}
+                      className="p-2.5 rounded-lg text-indigo-600 hover:bg-indigo-50 transition-colors"
+                      title="Xem chi tiết"
                     >
-                      Xem chi tiết
+                      <Eye size={20} />
                     </button>
-
-                    <button className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">
-                      Chỉnh sửa
+                    <button
+                      onClick={() => handleDelete(cv.id)}
+                      className="p-2.5 rounded-lg text-rose-500 hover:bg-rose-50 transition-colors"
+                      title="Xóa CV"
+                    >
+                      <Trash2 size={20} />
                     </button>
                   </div>
                 </div>
-              </article>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>
 
-      <CvDetailModal cv={selectedCv} onClose={() => setSelectedCv(null)} />
+      {/* MODAL HIỂN THỊ FILE PDF CHO LOẠI UPLOAD */}
+      {pdfPreviewUrl && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white w-full max-w-5xl h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+              <h3 className="font-bold text-lg text-slate-800">
+                Xem trước CV PDF
+              </h3>
+              <button
+                onClick={() => setPdfPreviewUrl(null)}
+                className="p-2 rounded-full hover:bg-gray-200 text-gray-500 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            {/* (Iframe) */}
+            <div className="flex-1 w-full bg-gray-100 p-2 sm:p-4">
+              <iframe
+                src={`${pdfPreviewUrl}#toolbar=0`}
+                className="w-full h-full rounded-xl bg-white shadow-sm border border-gray-200"
+                title="PDF Preview"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
-}
+};
+
+export default CvStatusManager;

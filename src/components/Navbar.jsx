@@ -24,10 +24,9 @@ export default function Navbar() {
   const handleLogout = () => {
     logout();
     setMenuOpen(false);
+    window.location.href = "/";
   };
 
-  // GIỮ NGUYÊN LOGIC ĐỔI MÀU CỦA BẠN
-  // Thêm active:!bg-gray-200 để khi nhấn đè nó hiện màu xám nhẹ thay vì màu đen kịt
   const menuLinkStyles = `
         px-4 py-2 rounded-xl transition-all duration-300 font-semibold
         ${scrolled ? "text-black hover:text-gray-600" : "text-gray-700 hover:text-gray-900"}
