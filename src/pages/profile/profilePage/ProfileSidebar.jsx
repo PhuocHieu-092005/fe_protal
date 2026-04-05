@@ -27,12 +27,11 @@ const ProfileSidebar = ({ activeTab, setActiveTab }) => {
   });
 
   const handleLogout = () => {
-    // 1. Xóa token khỏi localStorage
     localStorage.removeItem("accessToken");
-    navigate("/");
+    localStorage.removeItem("user");
+    navigate("/", { replace: true });
     window.location.reload();
   };
-
   const toggleMenu = (menu) => {
     setOpenMenus({ ...openMenus, [menu]: !openMenus[menu] });
   };

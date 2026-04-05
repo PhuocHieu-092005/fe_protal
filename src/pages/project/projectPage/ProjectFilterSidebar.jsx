@@ -1,110 +1,97 @@
-import React from "react";
-import { RotateCcw, Filter, SlidersHorizontal } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { RotateCcw, CheckCircle2 } from "lucide-react";
 
 export default function ProjectFilterSidebar({
   filters,
-  technologies,
-  onChange,
+  technologies = [],
+  onApply,
   onReset,
 }) {
+  const [tempFilters, setTempFilters] = useState(filters);
+
+  useEffect(() => {
+    setTempFilters(filters);
+  }, [filters]);
+
+  const handleLocalChange = (field, value) => {
+    setTempFilters((prev) => ({ ...prev, [field]: value }));
+  };
+
   const categories = [
-    { label: "Tất cả công việc", value: "" },
-    { label: "Thực tập", value: "FREE" },
-    { label: "Bán thời gian", value: "PAID" },
-    { label: "Toàn thời gian", value: "FULLTIME" },
+    { label: "Tất cả đồ án", value: "" },
+    { label: "Đồ án miễn phí", value: "FREE" },
+    { label: "Đồ án có phí", value: "PAID" },
   ];
 
   return (
-    <div className="sticky top-24 space-y-6">
-      {/* Section 1: Danh mục (Price Type) */}
-      <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
-        <div className="mb-6 border-l-4 border-black pl-3">
-          <h3 className="text-sm font-bold uppercase tracking-widest text-slate-900">
-            DANH MỤC
+    <div className="space-y-6">
+      {/* Loại đồ án */}
+      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="mb-6">
+          <div className="mb-3 h-1 w-12 rounded-full bg-blue-600"></div>
+          <h3 className="text-sm font-extrabold uppercase tracking-widest text-[#0f172a]">
+            Danh mục
           </h3>
         </div>
-        <div className="space-y-1">
-          {categories.map((cat) => (
-            <button
-              key={cat.label}
-              onClick={() => onChange("priceType", cat.value)}
-              className={`w-full rounded-xl px-4 py-3 text-left text-sm font-bold transition-all ${
-                filters.priceType === cat.value
-                  ? "bg-black text-white shadow-lg"
-                  : "text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
+
+        <div className="space-y-3">
+          {categories.map((item) => {
+            const isActive = tempFilters.priceType === item.value;
+
+            return (
+              <button
+                key={item.value}
+                onClick={() => handleLocalChange("priceType", item.value)}
+                className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-sm font-semibold transition-all ${
+                  isActive
+                    ? "border-[#0f172a] bg-[#0f172a] text-white shadow-md"
+                    : "border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100"
+                }`}
+              >
+                <span>{item.label}</span>
+                {isActive && <CheckCircle2 size={18} className="text-white" />}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Section 2: Lọc nâng cao (Công nghệ, Sắp xếp, Size) */}
-      <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
-        <div className="mb-6 border-l-4 border-black pl-3 flex items-center gap-2">
-          <h3 className="text-sm font-bold uppercase tracking-widest text-slate-900">
-            BỘ LỌC NÂNG CAO
+      {/* Công nghệ */}
+      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="mb-6">
+          <div className="mb-3 h-1 w-12 rounded-full bg-blue-600"></div>
+          <h3 className="text-sm font-extrabold uppercase tracking-widest text-[#0f172a]">
+            Công nghệ
           </h3>
         </div>
 
-        <div className="space-y-5">
-          {/* Lọc Công nghệ */}
-          <div>
-            <label className="mb-2 block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-              Công nghệ
-            </label>
-            <select
-              value={filters.technologyId}
-              onChange={(e) => onChange("technologyId", e.target.value)}
-              className="w-full rounded-xl border-slate-200 bg-slate-50 py-3 text-sm focus:border-black focus:ring-0"
-            >
-              <option value="">Tất cả công nghệ</option>
-              {technologies.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
-                </option>
-              ))}
-            </select>
-          </div>
+        <select
+          value={tempFilters.technologyId || ""}
+          onChange={(e) => handleLocalChange("technologyId", e.target.value)}
+          className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700 outline-none transition-all focus:border-[#0f172a] focus:bg-white focus:ring-0"
+        >
+          <option value="">Tất cả công nghệ</option>
+          {technologies.map((t) => (
+            <option key={t.id} value={t.id}>
+              {t.name}
+            </option>
+          ))}
+        </select>
 
-          {/* Sắp xếp */}
-          <div>
-            <label className="mb-2 block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-              Sắp xếp theo
-            </label>
-            <select
-              value={filters.sortBy}
-              onChange={(e) => onChange("sortBy", e.target.value)}
-              className="w-full rounded-xl border-slate-200 bg-slate-50 py-3 text-sm focus:border-black focus:ring-0"
-            >
-              <option value="latest">Mới nhất</option>
-              <option value="mostViewed">Xem nhiều nhất</option>
-              <option value="nameAsc">Tên A - Z</option>
-            </select>
-          </div>
-
-          {/* Số lượng hiển thị */}
-          <div>
-            <label className="mb-2 block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-              Hiển thị
-            </label>
-            <select
-              value={filters.size}
-              onChange={(e) => onChange("size", Number(e.target.value))}
-              className="w-full rounded-xl border-slate-200 bg-slate-50 py-3 text-sm focus:border-black focus:ring-0"
-            >
-              <option value={6}>6 đồ án / trang</option>
-              <option value={9}>9 đồ án / trang</option>
-              <option value={12}>12 đồ án / trang</option>
-            </select>
-          </div>
+        <div className="mt-8 grid grid-cols-2 gap-3">
+          <button
+            onClick={() => onApply(tempFilters)}
+            className="rounded-2xl bg-[#0f172a] py-3 text-sm font-bold text-white transition-all hover:bg-slate-800"
+          >
+            Áp dụng
+          </button>
 
           <button
             onClick={onReset}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 py-3.5 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors"
+            className="flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white py-3 text-sm font-bold text-slate-600 transition-all hover:bg-slate-50"
           >
-            <RotateCcw size={14} /> Đặt lại bộ lọc
+            <RotateCcw size={16} />
+            Đặt lại
           </button>
         </div>
       </div>
