@@ -8,8 +8,10 @@ import {
   Clock,
   Plus,
   X,
+  XCircle,
 } from "lucide-react";
 import cvService from "../../../services/cvService";
+
 const CvStatusManager = () => {
   const [cvs, setCvs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +33,10 @@ const CvStatusManager = () => {
         console.log("Danh sách CV của tôi:", response.data);
       }
     } catch (error) {
-      console.error("Lỗi khi lấy danh sách CV:", error.response.data);
+      console.error(
+        "Lỗi khi lấy danh sách CV:",
+        error.response?.data || error.message,
+      );
     } finally {
       setLoading(false);
     }
@@ -53,10 +58,11 @@ const CvStatusManager = () => {
       setCvs(cvs.filter((cv) => cv.id !== id));
       alert("Xóa CV thành công!");
     } catch (error) {
-      console.error("Lỗi khi xóa CV:", error.response.data);
+      console.error("Lỗi khi xóa CV:", error.response?.data || error.message);
       alert("Có lỗi xảy ra khi xóa CV.");
     }
   };
+
   // Xử lý xem chi tiết
   const handlePreview = (cv) => {
     if (cv.type === "FORM") {
@@ -72,20 +78,29 @@ const CvStatusManager = () => {
     }
   };
 
-  // Chỉ còn 2 trạng thái dựa vào isApproved (hoặc is_approved)
-  const renderStatus = (isApproved) => {
-    if (isApproved) {
-      return (
-        <span className="badge badge-success gap-1 bg-green-100 text-green-700 border-green-200 px-2 py-1 rounded-full text-xs font-medium flex items-center">
-          <CheckCircle size={14} /> Đã duyệt
-        </span>
-      );
+  // CẬP NHẬT LẠI: renderStatus dựa trên chuỗi status ("APPROVED", "PENDING", "REJECTED")
+  const renderStatus = (status) => {
+    switch (status) {
+      case "APPROVED":
+        return (
+          <span className="badge gap-1 bg-green-100 text-green-700 border-green-200 px-2.5 py-1 rounded-full text-xs font-semibold flex items-center shadow-sm">
+            <CheckCircle size={14} /> Đã duyệt
+          </span>
+        );
+      case "REJECTED":
+        return (
+          <span className="badge gap-1 bg-rose-100 text-rose-700 border-rose-200 px-2.5 py-1 rounded-full text-xs font-semibold flex items-center shadow-sm">
+            <XCircle size={14} /> Bị từ chối
+          </span>
+        );
+      case "PENDING":
+      default:
+        return (
+          <span className="badge gap-1 bg-yellow-100 text-yellow-700 border-yellow-200 px-2.5 py-1 rounded-full text-xs font-semibold flex items-center shadow-sm">
+            <Clock size={14} /> Đang chờ duyệt
+          </span>
+        );
     }
-    return (
-      <span className="badge badge-warning gap-1 bg-yellow-100 text-yellow-700 border-yellow-200 px-2 py-1 rounded-full text-xs font-medium flex items-center">
-        <Clock size={14} /> Đang chờ duyệt
-      </span>
-    );
   };
 
   return (
@@ -110,7 +125,7 @@ const CvStatusManager = () => {
             disabled={cvs.length >= 2}
             className={`flex items-center gap-2 px-6 py-3 font-medium rounded-xl transition-all duration-300 ${
               cvs.length >= 2
-                ? "bg-gray-200 text-gray-500 cursor-not-allowed pointer-events-none" // Thêm pointer-events-none để tắt mọi tương tác chuột
+                ? "bg-gray-200 text-gray-500 cursor-not-allowed pointer-events-none"
                 : "bg-slate-900 text-white hover:bg-indigo-600 hover:shadow-lg active:scale-95"
             }`}
           >
@@ -131,7 +146,7 @@ const CvStatusManager = () => {
         ) : (
           <div className="grid grid-cols-1 gap-4">
             {cvs.map((cv) => {
-              const isApproved = cv.is_approved;
+              const currentStatus = cv.status;
               const viewCount = cv.view_count ?? 0;
               const createdAt = cv.created_at;
 
@@ -145,7 +160,7 @@ const CvStatusManager = () => {
                       className={`p-4 rounded-xl ${
                         cv.type === "FORM"
                           ? "bg-indigo-50 text-indigo-600"
-                          : "bg-rose-50 text-rose-600"
+                          : "bg-orange-50 text-orange-600"
                       }`}
                     >
                       <FileText size={24} />
@@ -155,7 +170,7 @@ const CvStatusManager = () => {
                         <h3 className="font-bold text-gray-800 text-lg">
                           {cv.title || "CV Chưa có tiêu đề"}
                         </h3>
-                        {renderStatus(isApproved)}
+                        {renderStatus(currentStatus)}
                       </div>
                       <div className="flex items-center gap-4 text-sm text-gray-500">
                         <span className="bg-gray-100 px-2 py-0.5 rounded-md text-xs font-semibold">

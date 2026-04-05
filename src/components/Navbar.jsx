@@ -24,6 +24,7 @@ export default function Navbar() {
   const handleLogout = () => {
     logout();
     setMenuOpen(false);
+    window.location.href = "/";
   };
 
   const menuLinkStyles = `
