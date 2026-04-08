@@ -7,12 +7,20 @@ import JobCategory from "./pages/job/jobPage/JobCategory";
 import JobDetail from "./pages/job/jobDetail/JobDetail";
 import ProjectCategory from "./pages/project/projectPage/ProjectCategory";
 import ProjectDetail from "./pages/project/projectDetail/ProjectDetail";
-// Import
+// Import Profile
 import ProfileCategory from "./pages/profile/profilesDetail/ProfileCategory";
 import OAuthSuccess from "./pages/OAuthSuccess";
-// template
+// Template
 import CvEdit from "./pages/template/CvEdit";
 import TemplateCategory from "./pages/template/templatePage/TemplateCategory";
+
+// Các trang dành cho Doanh nghiệp
+import JobManage from "./pages/job/company/JobManage";
+import CreateJob from "./pages/job/company/CreateJob";
+
+// Import quản lý project sinhvien
+import CreateProject from "./pages/project/projectManage/CreateProject";
+import MyProjects from "./pages/project/projectManage/MyProjects";
 
 function App() {
   return (
@@ -28,6 +36,9 @@ function App() {
 
         {/*============ Job ====================== */}
         <Route path="/job" element={<JobCategory />} />
+        {/* ĐẶT CÁC ROUTE CỐ ĐỊNH TRÊN ROUTE BIẾN SỐ (:id) */}
+        <Route path="/job/manage" element={<JobManage />} />
+        <Route path="/job/create" element={<CreateJob />} />
         <Route path="/job/:id" element={<JobDetail />} />
 
         {/*============ Project ====================== */}
@@ -36,12 +47,15 @@ function App() {
 
         {/*============ Profile ====================== */}
         <Route path="/profile" element={<ProfileCategory />} />
-
         <Route path="/oauth2-success" element={<OAuthSuccess />} />
 
         {/*============ Template ====================== */}
         <Route path="/template" element={<TemplateCategory />} />
         <Route path="/template/edit" element={<CvEdit />} />
+
+        {/*============ project student ====================== */}
+        <Route path="/my-projects" element={<MyProjects />} />
+        <Route path="/project/create" element={<CreateProject />} />
       </Routes>
     </Router>
   );
