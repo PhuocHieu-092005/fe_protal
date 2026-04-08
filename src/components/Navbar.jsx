@@ -152,7 +152,10 @@ export default function Navbar() {
               }`}
             >
               <img
-                src={user?.avatar_url}
+                src={
+                  user?.avatar_url ||
+                  "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200"
+                }
                 className="w-8 h-8 rounded-full object-cover"
                 alt="avatar"
               />
@@ -176,7 +179,10 @@ export default function Navbar() {
           >
             <div className="flex items-center gap-4 mb-8 pb-6 border-b border-zinc-100">
               <img
-                src={user?.avatar_url}
+                src={
+                  user?.avatar_url ||
+                  "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200"
+                }
                 className="w-12 h-12 rounded-xl object-cover border border-zinc-100"
                 alt="avatar"
               />
