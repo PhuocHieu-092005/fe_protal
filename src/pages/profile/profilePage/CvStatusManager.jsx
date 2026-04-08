@@ -185,6 +185,12 @@ const CvStatusManager = () => {
                         <span className="flex items-center gap-1.5">
                           <Eye size={14} /> {viewCount} lượt xem
                         </span>
+                        {/* KHỐI UI HIỂN THỊ LÝ DO TỪ CHỐI BỞI ADMIN */}
+                        {currentStatus === "REJECTED" && cv.admin_note && (
+                          <p className="mt-2 text-sm text-slate-400 italic">
+                            * Lý do từ chối: {cv.admin_note}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
