@@ -50,6 +50,8 @@ function App() {
         {/*============ Template ====================== */}
         <Route path="/template" element={<TemplateCategory />} />
         <Route path="/template/edit" element={<CvEdit />} />
+        <Route path="/template/edit/:id" element={<CvEdit />} />{" "}
+        {/* Chỉnh sửa */}
         {/*============ project student ====================== */}
         <Route path="/my-projects" element={<MyProjects />} />
         <Route path="/project/create" element={<CreateProject />} />

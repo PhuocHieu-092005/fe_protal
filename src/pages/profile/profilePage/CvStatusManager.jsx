@@ -9,6 +9,7 @@ import {
   Plus,
   X,
   XCircle,
+  Edit, //
 } from "lucide-react";
 import cvService from "../../../services/cvService";
 
@@ -30,7 +31,6 @@ const CvStatusManager = () => {
       const response = await cvService.getMyCvs();
       if (response.code === 200 && response.data) {
         setCvs(response.data);
-        console.log("Danh sách CV của tôi:", response.data);
       }
     } catch (error) {
       console.error(
@@ -54,7 +54,6 @@ const CvStatusManager = () => {
 
     try {
       await cvService.deleteCv(id);
-      // Xóa thành công thì lọc CV đó ra khỏi state hiện tại
       setCvs(cvs.filter((cv) => cv.id !== id));
       alert("Xóa CV thành công!");
     } catch (error) {
@@ -63,12 +62,11 @@ const CvStatusManager = () => {
     }
   };
 
-  // Xử lý xem chi tiết
+  // 1. Xử lý Xem Chi Tiết (Nút Mắt)
   const handlePreview = (cv) => {
     if (cv.type === "FORM") {
-      navigate(`/cv/${cv.id}`);
+      navigate(`/cv/${cv.id}`); // Mở trang xem chi tiết CV (không phải edit)
     } else if (cv.type === "UPLOAD") {
-      // Mở Modal xem file PDF
       const fileObj = cv.cv_file;
       if (fileObj && fileObj.file_path) {
         setPdfPreviewUrl(fileObj.file_path);
@@ -78,7 +76,12 @@ const CvStatusManager = () => {
     }
   };
 
-  // CẬP NHẬT LẠI: renderStatus dựa trên chuỗi status ("APPROVED", "PENDING", "REJECTED")
+  // 2. Xử lý Sửa CV (Nút Bút - CHỈ DÀNH CHO FORM)
+  const handleEdit = (cvId) => {
+    navigate(`/template/edit/${cvId}`); // Chuyển sang trang Edit
+  };
+
+  // Render Status
   const renderStatus = (status) => {
     switch (status) {
       case "APPROVED":
@@ -119,7 +122,7 @@ const CvStatusManager = () => {
           <button
             onClick={() => {
               if (cvs.length < 2) {
-                navigate("/template"); // Chuyển trang nếu chưa đủ 2 CV
+                navigate("/template");
               }
             }}
             disabled={cvs.length >= 2}
@@ -185,7 +188,6 @@ const CvStatusManager = () => {
                         <span className="flex items-center gap-1.5">
                           <Eye size={14} /> {viewCount} lượt xem
                         </span>
-                        {/* KHỐI UI HIỂN THỊ LÝ DO TỪ CHỐI BỞI ADMIN */}
                         {currentStatus === "REJECTED" && cv.admin_note && (
                           <p className="mt-2 text-sm text-slate-400 italic">
                             * Lý do từ chối: {cv.admin_note}
@@ -195,7 +197,20 @@ const CvStatusManager = () => {
                     </div>
                   </div>
 
+                  {/* KHỐI NÚT HÀNH ĐỘNG */}
                   <div className="flex gap-2">
+                    {/* CHỈ HIỂN THỊ NÚT SỬA NẾU LÀ LOẠI FORM */}
+                    {cv.type === "FORM" && (
+                      <button
+                        onClick={() => handleEdit(cv.id)}
+                        className="p-2.5 rounded-lg text-emerald-600 hover:bg-emerald-50 transition-colors"
+                        title="Chỉnh sửa CV"
+                      >
+                        <Edit size={20} />
+                      </button>
+                    )}
+
+                    {/* Nút Xem (Mắt) */}
                     <button
                       onClick={() => handlePreview(cv)}
                       className="p-2.5 rounded-lg text-indigo-600 hover:bg-indigo-50 transition-colors"
@@ -203,6 +218,8 @@ const CvStatusManager = () => {
                     >
                       <Eye size={20} />
                     </button>
+
+                    {/* Nút Xóa */}
                     <button
                       onClick={() => handleDelete(cv.id)}
                       className="p-2.5 rounded-lg text-rose-500 hover:bg-rose-50 transition-colors"
@@ -218,11 +235,10 @@ const CvStatusManager = () => {
         )}
       </section>
 
-      {/* MODAL HIỂN THỊ FILE PDF CHO LOẠI UPLOAD */}
+      {/* Modal PDF giữ nguyên ... */}
       {pdfPreviewUrl && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white w-full max-w-5xl h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
-            {/* Modal Header */}
             <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
               <h3 className="font-bold text-lg text-slate-800">
                 Xem trước CV PDF
@@ -234,7 +250,6 @@ const CvStatusManager = () => {
                 <X size={20} />
               </button>
             </div>
-            {/* (Iframe) */}
             <div className="flex-1 w-full bg-gray-100 p-2 sm:p-4">
               <iframe
                 src={`${pdfPreviewUrl}#toolbar=0`}
