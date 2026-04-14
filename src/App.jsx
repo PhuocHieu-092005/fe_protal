@@ -44,6 +44,7 @@ function App() {
 
         <Route path="/template" element={<TemplateCategory />} />
         <Route path="/template/edit" element={<CvEdit />} />
+        <Route path="/template/edit/:id" element={<CvEdit />} />
 
         <Route path="/my-projects" element={<MyProjects />} />
         <Route path="/project/create" element={<CreateProject />} />
