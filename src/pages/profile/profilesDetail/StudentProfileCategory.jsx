@@ -6,6 +6,7 @@ import ProfileForm from "../profilePage/ProfileForm";
 import TeacherEvaluations from "../profilePage/TeacherEvaluations";
 import CvStatusManager from "../profilePage/CvStatusManager";
 import ChangePasswordForm from "../profilePage/ChangePasswordForm";
+import MyProjects from "../profilePage/MyProjects";
 
 export default function StudentProfileCategory() {
   const [profile, setProfile] = useState(null);
@@ -52,6 +53,8 @@ export default function StudentProfileCategory() {
         {activeTab === "evaluations" && <TeacherEvaluations />}
 
         {activeTab === "cv-manager" && <CvStatusManager />}
+
+        {activeTab === "project-stats" && <MyProjects />}
 
         {activeTab === "change-password" && <ChangePasswordForm />}
       </main>

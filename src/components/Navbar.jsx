@@ -291,20 +291,6 @@ export default function Navbar() {
                 </Link>
               )}
 
-              {/* CÀI ĐẶT */}
-              <Link
-                to="/settings"
-                onClick={() => setMenuOpen(false)}
-                className={`px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 mt-1 ${
-                  location.pathname === "/settings"
-                    ? "bg-zinc-900 text-white shadow-lg shadow-zinc-200"
-                    : "text-zinc-700 hover:bg-zinc-50"
-                }`}
-              >
-                <Settings size={20} />
-                <span>Cài đặt</span>
-              </Link>
-
               <div className="my-4 border-t border-zinc-100"></div>
 
               {/* ĐĂNG XUẤT */}

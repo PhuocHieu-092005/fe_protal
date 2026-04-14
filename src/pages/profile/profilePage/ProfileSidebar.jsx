@@ -11,7 +11,6 @@ import {
   LogOut,
   ChevronDown,
   ChevronUp,
-  Edit3,
   UserRoundPen,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +18,6 @@ import { useNavigate } from "react-router-dom";
 const ProfileSidebar = ({ activeTab, setActiveTab }) => {
   const navigate = useNavigate();
 
-  // Quản lý trạng thái đóng/mở
   const [openMenus, setOpenMenus] = useState({
     profile: true,
     job: true,
@@ -32,14 +30,17 @@ const ProfileSidebar = ({ activeTab, setActiveTab }) => {
     navigate("/", { replace: true });
     window.location.reload();
   };
+
   const toggleMenu = (menu) => {
-    setOpenMenus({ ...openMenus, [menu]: !openMenus[menu] });
+    setOpenMenus((prev) => ({
+      ...prev,
+      [menu]: !prev[menu],
+    }));
   };
 
   return (
     <aside className="w-1/4 bg-white rounded-lg shadow-sm p-4 h-fit border border-gray-100 select-none">
       <nav className="flex flex-col gap-4">
-        {/* NHÓM 1: HỒ SƠ ỨNG VIÊN */}
         <div className="flex flex-col">
           <div
             onClick={() => toggleMenu("profile")}
@@ -67,9 +68,11 @@ const ProfileSidebar = ({ activeTab, setActiveTab }) => {
                       : "text-gray-600 hover:bg-gray-50"
                   }`}
                 >
-                  <UserRoundPen size={16} /> Cập nhật hồ sơ
+                  <UserRoundPen size={16} />
+                  Cập nhật hồ sơ
                 </button>
               </li>
+
               <li>
                 <button
                   onClick={() => setActiveTab("cv-manager")}
@@ -79,9 +82,11 @@ const ProfileSidebar = ({ activeTab, setActiveTab }) => {
                       : "text-gray-600 hover:bg-gray-50"
                   }`}
                 >
-                  <FileText size={16} /> Quản lý CV & Trạng thái
+                  <FileText size={16} />
+                  Quản lý CV & Trạng thái
                 </button>
               </li>
+
               <li>
                 <button
                   onClick={() => setActiveTab("evaluations")}
@@ -91,26 +96,28 @@ const ProfileSidebar = ({ activeTab, setActiveTab }) => {
                       : "text-gray-600 hover:bg-gray-50"
                   }`}
                 >
-                  <ClipboardCheck size={16} /> Đánh giá của giảng viên
+                  <ClipboardCheck size={16} />
+                  Đánh giá của giảng viên
                 </button>
               </li>
+
               <li>
                 <button
-                  onClick={() => setActiveTab("statistics")}
+                  onClick={() => setActiveTab("project-stats")}
                   className={`flex items-center gap-3 p-2 text-sm w-full rounded-md transition-all ${
-                    activeTab === "statistics"
+                    activeTab === "project-stats"
                       ? "text-blue-600 font-semibold bg-blue-50"
                       : "text-gray-600 hover:bg-gray-50"
                   }`}
                 >
-                  <BarChart3 size={16} /> Thống kê đồ án
+                  <BarChart3 size={16} />
+                  Thống kê đồ án
                 </button>
               </li>
             </ul>
           )}
         </div>
 
-        {/* NHÓM 2: QUẢN LÝ CÔNG VIỆC */}
         <div className="flex flex-col">
           <div
             onClick={() => toggleMenu("job")}
@@ -138,9 +145,11 @@ const ProfileSidebar = ({ activeTab, setActiveTab }) => {
                       : "text-gray-600 hover:bg-gray-50"
                   }`}
                 >
-                  <Star size={16} /> CV đã ứng tuyển
+                  <Star size={16} />
+                  CV đã ứng tuyển
                 </button>
               </li>
+
               <li>
                 <button
                   onClick={() => setActiveTab("favorite-jobs")}
@@ -150,14 +159,14 @@ const ProfileSidebar = ({ activeTab, setActiveTab }) => {
                       : "text-gray-600 hover:bg-gray-50"
                   }`}
                 >
-                  <Heart size={16} /> Công việc yêu thích
+                  <Heart size={16} />
+                  Công việc yêu thích
                 </button>
               </li>
             </ul>
           )}
         </div>
 
-        {/* NHÓM 3: TÀI KHOẢN */}
         <div className="flex flex-col">
           <div
             onClick={() => toggleMenu("account")}
@@ -188,12 +197,14 @@ const ProfileSidebar = ({ activeTab, setActiveTab }) => {
                   Thay đổi mật khẩu
                 </button>
               </li>
+
               <li>
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-3 p-2 text-sm text-red-500 hover:bg-red-50 rounded-md transition-all w-full text-left mt-1"
                 >
-                  <LogOut size={16} /> Đăng xuất
+                  <LogOut size={16} />
+                  Đăng xuất
                 </button>
               </li>
             </ul>

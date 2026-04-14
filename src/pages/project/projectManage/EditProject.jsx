@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
   ArrowLeft,
@@ -11,20 +11,28 @@ import {
   X,
   BookOpen,
   Info,
-  Rocket,
+  PencilLine,
 } from "lucide-react";
 
 import projectService from "../../../services/projectService";
 import technologyService from "../../../services/technologyService";
 import courseService from "../../../services/courseService";
 
-export default function CreateProject() {
+export default function EditProject() {
   const navigate = useNavigate();
+  const { id } = useParams();
 
-  const [images, setImages] = useState([]);
-  const [previews, setPreviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
   const [availableTechs, setAvailableTechs] = useState([]);
   const [availableCourses, setAvailableCourses] = useState([]);
+
+  const [existingImages, setExistingImages] = useState([]);
+  const [removedImageIds, setRemovedImageIds] = useState([]);
+  const [newImages, setNewImages] = useState([]);
+  const [newPreviews, setNewPreviews] = useState([]);
+
   const [selectedTechs, setSelectedTechs] = useState([]);
 
   const [formData, setFormData] = useState({
@@ -40,10 +48,15 @@ export default function CreateProject() {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const [techRes, courseRes] = await Promise.all([
+        setLoading(true);
+
+        const [projectRes, techRes, courseRes] = await Promise.all([
+          projectService.getProjectById(id),
           technologyService.getAllTechnologies(),
           courseService.getAllCourses(),
         ]);
+
+        const project = projectRes?.data;
 
         const techs = Array.isArray(techRes)
           ? techRes
@@ -59,15 +72,40 @@ export default function CreateProject() {
 
         setAvailableTechs(techs);
         setAvailableCourses(courses);
+
+        if (project) {
+          setFormData({
+            title: project.title || "",
+            description: project.description || "",
+            course_id: project.courseId || project.course_id || "",
+            source_code_url:
+              project.sourceCodeUrl || project.source_code_url || "",
+            demo_url: project.demoUrl || project.demo_url || "",
+            price_type: project.priceType || project.price_type || "FREE",
+            price_download: String(
+              project.priceDownload ?? project.price_download ?? "",
+            ),
+          });
+
+          setSelectedTechs(project.technologies || []);
+          setExistingImages(project.images || []);
+        }
       } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu khởi tạo:", error);
-        setAvailableTechs([]);
-        setAvailableCourses([]);
+        console.error("Lỗi khi lấy dữ liệu edit project:", error);
+        Swal.fire("Lỗi", "Không thể tải dữ liệu đồ án để chỉnh sửa", "error");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchInitialData();
-  }, []);
+  }, [id]);
+
+  const visibleExistingImages = useMemo(() => {
+    return existingImages.filter((img) => !removedImageIds.includes(img.id));
+  }, [existingImages, removedImageIds]);
+
+  const totalVisibleImages = visibleExistingImages.length + newImages.length;
 
   const formatNumber = (value) => {
     if (!value) return "";
@@ -96,21 +134,6 @@ export default function CreateProject() {
     }));
   };
 
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
-
-    const newPreviews = files.map((file) => URL.createObjectURL(file));
-
-    setImages((prev) => [...prev, ...files]);
-    setPreviews((prev) => [...prev, ...newPreviews]);
-  };
-
-  const removeImage = (index) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
-    setPreviews((prev) => prev.filter((_, i) => i !== index));
-  };
-
   const handleTechSelect = (e) => {
     const techId = Number(e.target.value);
     if (!techId) return;
@@ -126,6 +149,41 @@ export default function CreateProject() {
 
   const removeTech = (techId) => {
     setSelectedTechs((prev) => prev.filter((tech) => tech.id !== techId));
+  };
+
+  const handleRemoveExistingImage = (imageId) => {
+    setRemovedImageIds((prev) => [...prev, imageId]);
+  };
+
+  const handleAddNewImages = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    const remainSlots = 3 - totalVisibleImages;
+
+    if (remainSlots <= 0) {
+      Swal.fire("Lưu ý", "Bạn chỉ được giữ đúng 3 ảnh minh họa.", "warning");
+      return;
+    }
+
+    const acceptedFiles = files.slice(0, remainSlots);
+    const previews = acceptedFiles.map((file) => URL.createObjectURL(file));
+
+    setNewImages((prev) => [...prev, ...acceptedFiles]);
+    setNewPreviews((prev) => [...prev, ...previews]);
+
+    if (files.length > remainSlots) {
+      Swal.fire(
+        "Lưu ý",
+        `Chỉ thêm được ${remainSlots} ảnh để tổng đủ đúng 3 ảnh.`,
+        "warning",
+      );
+    }
+  };
+
+  const removeNewImage = (index) => {
+    setNewImages((prev) => prev.filter((_, i) => i !== index));
+    setNewPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -151,6 +209,14 @@ export default function CreateProject() {
       return Swal.fire("Lưu ý", "Vui lòng nhập giá bán code!", "warning");
     }
 
+    if (totalVisibleImages !== 3) {
+      return Swal.fire(
+        "Lưu ý",
+        "Đồ án bắt buộc phải có đúng 3 ảnh minh họa.",
+        "warning",
+      );
+    }
+
     const data = new FormData();
 
     data.append("courseId", String(formData.course_id));
@@ -171,28 +237,35 @@ export default function CreateProject() {
       data.append("technologyIds", String(tech.id));
     });
 
-    images.forEach((file) => {
-      data.append("images", file);
+    visibleExistingImages.forEach((img) => {
+      data.append("retainedImageIds", String(img.id));
     });
 
-    console.log("===== FORM DATA SEND =====");
+    newImages.forEach((file) => {
+      data.append("newImages", file);
+    });
+
+    console.log("===== UPDATE FORM DATA SEND =====");
     for (const pair of data.entries()) {
       console.log(pair[0], pair[1]);
     }
 
-    Swal.fire({
-      title: "Đang xử lý...",
-      text: "Vui lòng chờ trong giây lát",
-      allowOutsideClick: false,
-      didOpen: () => Swal.showLoading(),
-    });
-
     try {
-      await projectService.createProject(data);
-      await Swal.fire("Thành công!", "Đồ án đã được gửi duyệt.", "success");
+      setSubmitting(true);
+
+      Swal.fire({
+        title: "Đang cập nhật...",
+        text: "Vui lòng chờ trong giây lát",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      await projectService.updateProject(id, data);
+
+      await Swal.fire("Thành công!", "Đồ án đã được cập nhật.", "success");
       navigate("/my-projects");
     } catch (error) {
-      console.log("Lỗi chi tiết từ Server:", error.response?.data);
+      console.error("Lỗi cập nhật project:", error.response?.data);
 
       const errorMsg =
         error.response?.data?.data ||
@@ -200,8 +273,22 @@ export default function CreateProject() {
         "Lỗi hệ thống!";
 
       Swal.fire("Thất bại", errorMsg, "error");
+    } finally {
+      setSubmitting(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50/50 px-4 pb-16 pt-24 md:px-10">
+        <div className="mx-auto max-w-6xl rounded-[2rem] bg-white p-12 text-center shadow-sm">
+          <p className="text-lg font-bold text-slate-500">
+            Đang tải dữ liệu đồ án...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50/50 px-4 pb-16 pt-24 font-sans text-left text-zinc-900 md:px-10">
@@ -214,12 +301,12 @@ export default function CreateProject() {
               className="mb-4 flex items-center gap-2 text-sm font-bold text-slate-500 transition-all hover:text-blue-600"
             >
               <ArrowLeft size={18} />
-              Quay lại danh sách
+              Quay lại
             </button>
 
             <h1 className="flex items-center gap-3 text-4xl font-black tracking-tight">
-              <Rocket className="text-blue-600" size={36} />
-              Đăng Đồ Án Mới
+              <PencilLine className="text-blue-600" size={36} />
+              Chỉnh Sửa Đồ Án
             </h1>
           </div>
 
@@ -229,15 +316,16 @@ export default function CreateProject() {
               onClick={() => navigate(-1)}
               className="rounded-2xl px-6 py-3 font-bold text-slate-400 hover:bg-slate-100"
             >
-              Hủy bỏ
+              Hủy
             </button>
 
             <button
               type="button"
               onClick={handleSubmit}
-              className="rounded-2xl bg-zinc-900 px-8 py-3 font-bold text-white shadow-xl shadow-zinc-200 transition-all hover:bg-blue-600"
+              disabled={submitting}
+              className="rounded-2xl bg-zinc-900 px-8 py-3 font-bold text-white shadow-xl shadow-zinc-200 transition-all hover:bg-blue-600 disabled:opacity-60"
             >
-              Gửi duyệt đồ án
+              Lưu thay đổi
             </button>
           </div>
         </div>
@@ -356,26 +444,40 @@ export default function CreateProject() {
             </section>
 
             <section className="rounded-[2.5rem] border border-slate-200 bg-white p-8 shadow-sm">
-              <h2 className="mb-8 flex items-center gap-2 text-xl font-black">
-                <ImageIcon size={22} className="text-emerald-500" />
-                2. Hình ảnh minh họa
-              </h2>
+              <div className="mb-3 flex items-center justify-between">
+                <h2 className="flex items-center gap-2 text-xl font-black">
+                  <ImageIcon size={22} className="text-emerald-500" />
+                  2. Hình ảnh minh họa
+                </h2>
+
+                <span className="text-sm font-bold text-slate-500">
+                  Tổng ảnh hiện tại: {totalVisibleImages}/3
+                </span>
+              </div>
+
+              <p className="mb-6 text-sm text-slate-400">
+                Bắt buộc phải giữ đúng 3 ảnh. Bạn có thể xóa ảnh cũ và thêm ảnh
+                mới.
+              </p>
 
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                {previews.map((src, index) => (
+                {visibleExistingImages.map((img) => (
                   <div
-                    key={index}
+                    key={img.id}
                     className="group relative aspect-video overflow-hidden rounded-3xl border-2 border-slate-100 shadow-md"
                   >
                     <img
-                      src={src}
-                      alt="preview"
+                      src={img.imageUrl}
+                      alt="existing"
                       className="h-full w-full object-cover"
                     />
+                    <div className="absolute left-3 top-3 rounded-full bg-black/60 px-3 py-1 text-xs font-bold text-white">
+                      Ảnh cũ
+                    </div>
                     <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-all group-hover:opacity-100">
                       <button
                         type="button"
-                        onClick={() => removeImage(index)}
+                        onClick={() => handleRemoveExistingImage(img.id)}
                         className="rounded-full bg-white p-2 text-rose-500 shadow-xl hover:scale-110"
                       >
                         <X size={20} />
@@ -384,21 +486,48 @@ export default function CreateProject() {
                   </div>
                 ))}
 
-                <label className="group flex aspect-video cursor-pointer flex-col items-center justify-center gap-3 rounded-3xl border-2 border-dashed border-slate-200 text-slate-400 transition-all hover:border-blue-300 hover:bg-blue-50">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 transition-all group-hover:bg-blue-100 group-hover:text-blue-600">
-                    <Upload size={24} />
+                {newPreviews.map((src, index) => (
+                  <div
+                    key={`new-${index}`}
+                    className="group relative aspect-video overflow-hidden rounded-3xl border-2 border-slate-100 shadow-md"
+                  >
+                    <img
+                      src={src}
+                      alt="new-preview"
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute left-3 top-3 rounded-full bg-blue-600/90 px-3 py-1 text-xs font-bold text-white">
+                      Ảnh mới
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-all group-hover:opacity-100">
+                      <button
+                        type="button"
+                        onClick={() => removeNewImage(index)}
+                        className="rounded-full bg-white p-2 text-rose-500 shadow-xl hover:scale-110"
+                      >
+                        <X size={20} />
+                      </button>
+                    </div>
                   </div>
-                  <span className="text-[11px] font-black uppercase tracking-widest">
-                    Tải ảnh
-                  </span>
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageChange}
-                  />
-                </label>
+                ))}
+
+                {totalVisibleImages < 3 && (
+                  <label className="group flex aspect-video cursor-pointer flex-col items-center justify-center gap-3 rounded-3xl border-2 border-dashed border-slate-200 text-slate-400 transition-all hover:border-blue-300 hover:bg-blue-50">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 transition-all group-hover:bg-blue-100 group-hover:text-blue-600">
+                      <Upload size={24} />
+                    </div>
+                    <span className="text-[11px] font-black uppercase tracking-widest">
+                      Tải ảnh mới
+                    </span>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleAddNewImages}
+                    />
+                  </label>
+                )}
               </div>
             </section>
           </div>

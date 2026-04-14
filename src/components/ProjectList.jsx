@@ -1,100 +1,175 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ProjectCard from "./ProjectCard";
+import projectService from "../services/projectService";
 
-// Giả lập dữ liệu đồ án (6 projects)
-const projectsData = [
-  {
-    id: 1,
-    title: "Hệ thống Quản lý Bệnh viện",
-    author: "Nguyễn Văn A",
-    techStack: ["ASP.NET Core", "ReactJS", "SQL Server"],
-    views: 1250,
-    downloads: 45,
-    image:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
-    description:
-      "Nền tảng quản lý hồ sơ bệnh nhân, lịch hẹn bác sĩ và quy trình khám chữa bệnh trực tuyến.",
-  },
-  {
-    id: 2,
-    title: "AI Nhận Diện Phương Tiện Giao Thông",
-    author: "Trần Thị B",
-    techStack: ["Python", "PyTorch", "FastAPI", "Docker"],
-    views: 980,
-    downloads: 30,
-    image:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
-    description:
-      "Ứng dụng trí tuệ nhân tạo phát hiện và phân loại phương tiện từ camera giao thông.",
-  },
-  {
-    id: 3,
-    title: "E-commerce Nền tảng Bán Hàng Trực Tuyến",
-    author: "Lê Văn C",
-    techStack: ["Spring Boot", "Angular", "PostgreSQL", "AWS"],
-    views: 1520,
-    downloads: 55,
-    image:
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80",
-    description:
-      "Website thương mại điện tử tích hợp thanh toán trực tuyến và quản lý đơn hàng.",
-  },
-  {
-    id: 4,
-    title: "Ứng dụng Đặt Vé Xe Khách Chuyên Nghiệp",
-    author: "Phạm Thị D",
-    techStack: ["Node.js", "Express", "MongoDB", "Flutter"],
-    views: 870,
-    downloads: 25,
-    image:
-      "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80",
-    description:
-      "Hệ thống đặt vé xe khách theo thời gian thực với bản đồ chỗ ngồi tương tác.",
-  },
-  {
-    id: 5,
-    title: "Blockchain Tracking Tài Sản Công Nghiệp",
-    author: "Hoàng Văn E",
-    techStack: ["Solidity", "Truffle", "ReactJS", "Web3.js"],
-    views: 1100,
-    downloads: 38,
-    image:
-      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80",
-    description:
-      "Hệ thống theo dõi nguồn gốc và quản lý chuỗi cung ứng dựa trên Blockchain.",
-  },
-  {
-    id: 6,
-    title: "Data Analytics Dashboard Dữ Liệu Lớn",
-    author: "Đỗ Thị F",
-    techStack: ["Grafana", "Prometheus", "InfluxDB", "Docker"],
-    views: 750,
-    downloads: 18,
-    image:
-      "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=800&q=80",
-    description:
-      "Bảng điều khiển trực quan hóa dữ liệu hiệu suất hệ thống từ nhiều nguồn.",
-  },
-];
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80";
 
-// Component chính ProjectList
+function normalizeProjectsResponse(res) {
+  if (Array.isArray(res)) return res;
+  if (Array.isArray(res?.data)) return res.data;
+  if (Array.isArray(res?.content)) return res.content;
+  if (Array.isArray(res?.data?.content)) return res.data.content;
+  if (Array.isArray(res?.data?.data)) return res.data.data;
+  if (Array.isArray(res?.data?.data?.content)) return res.data.data.content;
+  return [];
+}
+
+function mapProjectForCard(project) {
+  const technologies = Array.isArray(project?.technologies)
+    ? project.technologies.map((tech) => tech?.name).filter(Boolean)
+    : [];
+
+  const firstImage =
+    project?.images?.[0]?.imageUrl ||
+    project?.images?.[0]?.image_url ||
+    project?.projectImages?.[0]?.imageUrl ||
+    project?.projectImages?.[0]?.image_url ||
+    project?.thumbnailUrl ||
+    project?.thumbnail_url ||
+    project?.image ||
+    FALLBACK_IMAGE;
+
+  const author =
+    project?.student_name ||
+    project?.studentName ||
+    project?.student?.full_name ||
+    project?.student?.fullName ||
+    project?.student?.user?.full_name ||
+    project?.student?.user?.fullName ||
+    "Sinh viên";
+
+  return {
+    id: project?.id,
+    title: project?.title || "Chưa có tiêu đề",
+    author,
+    techStack: technologies,
+    views: project?.viewCount ?? project?.view_count ?? 0,
+    downloads: project?.downloadCount ?? project?.download_count ?? 0,
+    image: firstImage,
+    description: project?.description || "Chưa có mô tả",
+    raw: project,
+  };
+}
+
 const ProjectList = () => {
-  // Hàng 1: 4 project đầu
-  const row1 = [...projectsData.slice(0, 4), ...projectsData.slice(0, 4)];
-  // Hàng 2: 2 project còn lại
-  const row2 = [
-    ...projectsData.slice(4, 6),
-    ...projectsData.slice(4, 6),
-    ...projectsData.slice(4, 6),
-  ];
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [errorText, setErrorText] = useState("");
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        setErrorText("");
+
+        const res = await projectService.getPublicProjects({
+          page: 0,
+          size: 8,
+        });
+
+        const list = normalizeProjectsResponse(res);
+        const mapped = list.map(mapProjectForCard);
+
+        setProjects(mapped);
+      } catch (error) {
+        console.error(
+          "Lỗi lấy danh sách đồ án public:",
+          error?.response?.data || error,
+        );
+        setErrorText("Không thể tải danh sách đồ án.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  const { row1, row2 } = useMemo(() => {
+    if (!projects.length) {
+      return { row1: [], row2: [] };
+    }
+
+    const midpoint = Math.ceil(projects.length / 2);
+    const firstHalf = projects.slice(0, midpoint);
+    const secondHalf = projects.slice(midpoint);
+
+    const safeRow1 = firstHalf.length ? firstHalf : projects;
+    const safeRow2 = secondHalf.length ? secondHalf : safeRow1;
+
+    return {
+      row1: [...safeRow1, ...safeRow1],
+      row2: [...safeRow2, ...safeRow2],
+    };
+  }, [projects]);
+
+  if (loading) {
+    return (
+      <div className="mx-auto w-full max-w-7xl bg-white py-20">
+        <div className="mb-12 px-4 text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+            Đồ án sinh viên nổi bật
+          </h1>
+          <p className="mx-auto mt-2 max-w-2xl italic text-gray-500">
+            Các giải pháp công nghệ sáng tạo được đánh giá cao bởi Khoa.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 px-4 md:grid-cols-2 xl:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div
+              key={index}
+              className="h-[430px] animate-pulse rounded-[28px] bg-slate-100"
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (errorText) {
+    return (
+      <div className="mx-auto w-full max-w-7xl bg-white py-20">
+        <div className="mb-12 px-4 text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+            Đồ án sinh viên nổi bật
+          </h1>
+          <p className="mx-auto mt-2 max-w-2xl italic text-gray-500">
+            Các giải pháp công nghệ sáng tạo được đánh giá cao bởi Khoa.
+          </p>
+        </div>
+
+        <div className="px-4 text-center text-red-500">{errorText}</div>
+      </div>
+    );
+  }
+
+  if (!projects.length) {
+    return (
+      <div className="mx-auto w-full max-w-7xl bg-white py-20">
+        <div className="mb-12 px-4 text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+            Đồ án sinh viên nổi bật
+          </h1>
+          <p className="mx-auto mt-2 max-w-2xl italic text-gray-500">
+            Các giải pháp công nghệ sáng tạo được đánh giá cao bởi Khoa.
+          </p>
+        </div>
+
+        <div className="px-4 text-center text-slate-500">
+          Hiện chưa có đồ án nào để hiển thị.
+        </div>
+      </div>
+    );
+  }
 
   return (
-    // Thêm py-20 để có không gian cho card scale lên không bị chạm biên trên/dưới
-    <div className="mx-auto w-full max-w-7xl py-20 bg-white relative">
+    <div className="relative mx-auto w-full max-w-7xl bg-white py-20">
       <style>{`
         .marquee-forward { animation: scrollForward 23s linear infinite; }
         .marquee-reverse { animation: scrollReverse 23s linear infinite; }
-        
+
         @keyframes scrollForward {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
@@ -110,23 +185,22 @@ const ProjectList = () => {
         }
       `}</style>
 
-      {/* Header */}
-      <div className="text-center mb-12 px-4">
-        <h1 className="text-3xl text-slate-900 font-bold tracking-tight">
+      <div className="mb-12 px-4 text-center">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
           Đồ án sinh viên nổi bật
         </h1>
-        <p className="text-gray-500 mt-2 max-w-2xl mx-auto italic">
+        <p className="mx-auto mt-2 max-w-2xl italic text-gray-500">
           Các giải pháp công nghệ sáng tạo được đánh giá cao bởi Khoa.
         </p>
       </div>
 
       <div className="flex flex-col gap-10 overflow-hidden py-4">
         <div className="marquee-container relative flex overflow-visible group">
-          <div className="flex marquee-forward marquee-inner">
+          <div className="marquee-inner marquee-forward flex">
             {row1.map((project, index) => (
               <div
-                key={`row1-${index}`}
-                className="w-[310px] mx-4 flex-shrink-0 transition-all duration-300 hover:scale-105 hover:z-50"
+                key={`row1-${project.id || index}-${index}`}
+                className="mx-4 w-[310px] flex-shrink-0 transition-all duration-300 hover:z-50 hover:scale-105"
               >
                 <ProjectCard project={project} />
               </div>
@@ -134,13 +208,12 @@ const ProjectList = () => {
           </div>
         </div>
 
-        {/* Hàng 2 */}
         <div className="marquee-container relative flex overflow-visible group">
-          <div className="flex marquee-reverse marquee-inner">
+          <div className="marquee-inner marquee-reverse flex">
             {row2.map((project, index) => (
               <div
-                key={`row2-${index}`}
-                className="w-[310px] mx-4 flex-shrink-0 transition-all duration-300 hover:scale-105 hover:z-50"
+                key={`row2-${project.id || index}-${index}`}
+                className="mx-4 w-[310px] flex-shrink-0 transition-all duration-300 hover:z-50 hover:scale-105"
               >
                 <ProjectCard project={project} />
               </div>
@@ -149,9 +222,8 @@ const ProjectList = () => {
         </div>
       </div>
 
-      {/* Hiệu ứng mờ biên: Nâng z-index cao hơn card thường nhưng thấp hơn card đang hover */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white via-white/80 to-transparent z-20" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white via-white/80 to-transparent z-20" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-32 bg-gradient-to-r from-white via-white/80 to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-32 bg-gradient-to-l from-white via-white/80 to-transparent" />
     </div>
   );
 };

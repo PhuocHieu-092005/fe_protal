@@ -25,7 +25,6 @@ export default function ProjectFilterSidebar({
 
   return (
     <div className="space-y-6">
-      {/* Loại đồ án */}
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="mb-6">
           <div className="mb-3 h-1 w-12 rounded-full bg-blue-600"></div>
@@ -41,6 +40,7 @@ export default function ProjectFilterSidebar({
             return (
               <button
                 key={item.value}
+                type="button"
                 onClick={() => handleLocalChange("priceType", item.value)}
                 className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-sm font-semibold transition-all ${
                   isActive
@@ -56,7 +56,6 @@ export default function ProjectFilterSidebar({
         </div>
       </div>
 
-      {/* Công nghệ */}
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="mb-6">
           <div className="mb-3 h-1 w-12 rounded-full bg-blue-600"></div>
@@ -80,6 +79,7 @@ export default function ProjectFilterSidebar({
 
         <div className="mt-8 grid grid-cols-2 gap-3">
           <button
+            type="button"
             onClick={() => onApply(tempFilters)}
             className="rounded-2xl bg-[#0f172a] py-3 text-sm font-bold text-white transition-all hover:bg-slate-800"
           >
@@ -87,6 +87,7 @@ export default function ProjectFilterSidebar({
           </button>
 
           <button
+            type="button"
             onClick={onReset}
             className="flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white py-3 text-sm font-bold text-slate-600 transition-all hover:bg-slate-50"
           >

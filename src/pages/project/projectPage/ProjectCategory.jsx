@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Footer from "../../../layouts/Footer";
 import ProjectHero from "./ProjectHero";
 import ProjectFilterSidebar from "./ProjectFilterSidebar";
 import ProjectCard from "./ProjectCard";
 import { getPublicProjects } from "../../../services/projectService";
+import technologyService from "../../../services/technologyService";
 import Pagination from "../../../components/common/Pagination";
 
 export default function ProjectCategory() {
-  // 1. State quản lý bộ lọc chính
   const [filters, setFilters] = useState({
     title: "",
     priceType: "",
@@ -16,7 +16,9 @@ export default function ProjectCategory() {
     size: 9,
   });
 
+  const [keyword, setKeyword] = useState("");
   const [projects, setProjects] = useState([]);
+  const [technologies, setTechnologies] = useState([]);
   const [pageInfo, setPageInfo] = useState({
     totalElements: 0,
     totalPages: 0,
@@ -24,13 +26,20 @@ export default function ProjectCategory() {
   });
   const [loading, setLoading] = useState(false);
 
-  // 2. Hàm gọi API lấy danh sách đồ án
-  const fetchProjects = async () => {
+  const fetchProjects = async (customFilters = filters) => {
     setLoading(true);
     try {
-      // Gửi toàn bộ object filters lên API
-      const res = await getPublicProjects(filters);
-      setProjects(res?.data?.content || []);
+      const params = {
+        title: customFilters.title || "",
+        technologyId: customFilters.technologyId || "",
+        page: customFilters.page ?? 0,
+        size: customFilters.size ?? 9,
+      };
+
+      const res = await getPublicProjects(params);
+      const content = res?.data?.content || [];
+
+      setProjects(content);
       setPageInfo({
         totalElements: res?.data?.totalElements || 0,
         totalPages: res?.data?.totalPages || 0,
@@ -38,68 +47,106 @@ export default function ProjectCategory() {
       });
     } catch (err) {
       console.error("Lỗi fetch projects:", err);
+      setProjects([]);
+      setPageInfo({
+        totalElements: 0,
+        totalPages: 0,
+        number: 0,
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  // 3. Effect theo dõi sự thay đổi của filters để gọi lại API
-  // (Khi nhấn Áp dụng hoặc chuyển trang, filters thay đổi -> fetchProjects chạy)
+  const fetchTechnologies = async () => {
+    try {
+      const res = await technologyService.getAllTechnologies();
+      const techs = Array.isArray(res)
+        ? res
+        : Array.isArray(res?.data)
+          ? res.data
+          : [];
+      setTechnologies(techs);
+    } catch (err) {
+      console.error("Lỗi fetch technologies:", err);
+      setTechnologies([]);
+    }
+  };
+
   useEffect(() => {
-    fetchProjects();
-    // Cuộn lên đầu trang khi chuyển trang hoặc lọc
+    fetchTechnologies();
+  }, []);
+
+  useEffect(() => {
+    fetchProjects(filters);
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [filters.page, filters.priceType, filters.technologyId, filters.size]);
+  }, [filters.page, filters.technologyId, filters.size]);
 
-  // 4. Xử lý khi nhấn nút "Tìm kiếm" ở Hero
-  const handleSearch = () => {
-    setFilters((prev) => ({ ...prev, page: 0 }));
-    fetchProjects();
-  };
+  const filteredProjects = useMemo(() => {
+    if (!filters.priceType) return projects;
 
-  // 5. Xử lý khi nhấn nút "Áp dụng" ở Sidebar (Nhận toàn bộ filter tạm thời từ con)
-  const handleApplyFilters = (tempFilters) => {
-    setFilters({
-      ...tempFilters,
-      page: 0, // Reset về trang 1 khi áp dụng bộ lọc mới
+    return projects.filter((project) => {
+      const projectPriceType = project.priceType || project.price_type || "";
+      return projectPriceType === filters.priceType;
     });
+  }, [projects, filters.priceType]);
+
+  const handleSearch = () => {
+    const nextFilters = {
+      ...filters,
+      title: keyword.trim(),
+      page: 0,
+    };
+
+    setFilters(nextFilters);
+    fetchProjects(nextFilters);
   };
 
-  // 6. Xử lý khi nhấn nút "Đặt lại"
+  const handleApplyFilters = (tempFilters) => {
+    const nextFilters = {
+      ...filters,
+      ...tempFilters,
+      title: keyword.trim(),
+      technologyId: tempFilters.technologyId
+        ? Number(tempFilters.technologyId)
+        : "",
+      page: 0,
+    };
+
+    setFilters(nextFilters);
+  };
+
   const handleResetFilters = () => {
-    setFilters({
+    const resetFilters = {
       title: "",
       priceType: "",
       technologyId: "",
       page: 0,
       size: 9,
-    });
+    };
+
+    setKeyword("");
+    setFilters(resetFilters);
   };
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f8fafc]">
-      {/* mt-16 hoặc mt-20 tùy vào độ cao Header của bạn để sát khít */}
       <main className="mt-16 flex-grow pb-20">
-        {/* Phần Hero: Tìm kiếm theo Title */}
         <ProjectHero
-          filters={filters}
-          onChange={(field, value) =>
-            setFilters((prev) => ({ ...prev, [field]: value }))
-          }
+          keyword={keyword}
+          onKeywordChange={setKeyword}
           onSearch={handleSearch}
         />
 
-        <div className="mx-auto max-w-7xl px-6 mt-12">
+        <div className="mx-auto mt-12 max-w-7xl px-6">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-[300px_1fr]">
-            {/* Sidebar: Lọc theo PriceType và Technology */}
             <ProjectFilterSidebar
               filters={filters}
               onApply={handleApplyFilters}
               onReset={handleResetFilters}
-              technologies={[]} // Bạn hãy truyền list technologies lấy từ API vào đây
+              technologies={technologies}
             />
 
-            {/* Danh sách kết quả */}
             <div>
               <div className="mb-8 flex items-center justify-between">
                 <div>
@@ -108,39 +155,40 @@ export default function ProjectCategory() {
                   </h2>
                   <div className="mt-2 h-1 w-12 bg-blue-600"></div>
                 </div>
-                <p className="text-sm text-slate-500 font-medium">
+
+                <p className="text-sm font-medium text-slate-500">
                   Tìm thấy{" "}
                   <span className="text-blue-600">
-                    {pageInfo.totalElements}
+                    {filters.priceType
+                      ? filteredProjects.length
+                      : pageInfo.totalElements}
                   </span>{" "}
                   đồ án
                 </p>
               </div>
 
               {loading ? (
-                // Skeleton Loading
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
                   {[...Array(6)].map((_, i) => (
                     <div
                       key={i}
-                      className="h-[380px] animate-pulse bg-white rounded-2xl border border-slate-100 shadow-sm"
+                      className="h-[380px] animate-pulse rounded-2xl border border-slate-100 bg-white shadow-sm"
                     />
                   ))}
                 </div>
               ) : (
                 <>
-                  {projects.length > 0 ? (
+                  {filteredProjects.length > 0 ? (
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-                      {projects.map((p) => (
+                      {filteredProjects.map((p) => (
                         <ProjectCard key={p.id} project={p} />
                       ))}
                     </div>
                   ) : (
-                    // Empty State
-                    <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed border-slate-300">
-                      <div className="text-slate-300 mb-4">
+                    <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white py-20">
+                      <div className="mb-4 text-slate-300">
                         <svg
-                          className="w-16 h-16"
+                          className="h-16 w-16"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -153,12 +201,14 @@ export default function ProjectCategory() {
                           />
                         </svg>
                       </div>
-                      <p className="text-slate-500 font-medium">
+
+                      <p className="font-medium text-slate-500">
                         Không tìm thấy đồ án nào phù hợp với bộ lọc.
                       </p>
+
                       <button
                         onClick={handleResetFilters}
-                        className="mt-4 text-blue-600 font-bold hover:underline"
+                        className="mt-4 font-bold text-blue-600 hover:underline"
                       >
                         Xóa tất cả bộ lọc
                       </button>
@@ -167,8 +217,7 @@ export default function ProjectCategory() {
                 </>
               )}
 
-              {/* Phân trang */}
-              {pageInfo.totalPages > 1 && (
+              {pageInfo.totalPages > 1 && !filters.priceType && (
                 <div className="mt-12 flex justify-center">
                   <Pagination
                     currentPage={pageInfo.number + 1}

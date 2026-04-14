@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Footer from "../../../layouts/Footer";
 import CompanyProfileSidebar from "../profilePage/CompanyProfileSidebar";
 import ChangePasswordForm from "../profilePage/ChangePasswordForm";
+import CompanyProfileForm from "../profilePage/CompanyProfileForm";
 
 function CompanyProfilePlaceholder({ title, description }) {
   return (
@@ -23,24 +24,19 @@ export default function CompanyProfileCategory() {
           setActiveTab={setActiveTab}
         />
 
-        {activeTab === "company-profile" && (
-          <CompanyProfilePlaceholder
-            title="Thông tin công ty"
-            description="API"
-          />
-        )}
+        {activeTab === "company-profile" && <CompanyProfileForm />}
 
         {activeTab === "posted-jobs" && (
           <CompanyProfilePlaceholder
             title="Tin tuyển dụng đã đăng"
-            description="Khu vực quản lý các bài tuyển dụng của công ty."
+            description="Tạm thời chưa nối được đầy đủ vì backend chưa có API lấy danh sách job của chính công ty."
           />
         )}
 
         {activeTab === "applicants" && (
           <CompanyProfilePlaceholder
             title="Ứng viên đã ứng tuyển"
-            description="Khu vực xem danh sách ứng viên đã nộp CV."
+            description="Phần này sẽ làm sau khi chốt được luồng danh sách bài tuyển dụng của công ty."
           />
         )}
 
