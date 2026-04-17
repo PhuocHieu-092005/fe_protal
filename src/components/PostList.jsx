@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import PostCard from "./PostCard";
-import PostAside from "./PostAside";
 import Pagination from "./common/Pagination";
 
 export default function PostList() {
@@ -30,7 +29,6 @@ export default function PostList() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] py-12 px-4 md:px-8 font-sans">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-8">
-        <PostAside />
         <div className="flex-1">
           {/* Header */}
           <div className="mb-8">
