@@ -1,32 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PostCard from "./PostCard";
 import PostAside from "./PostAside";
 import Pagination from "./common/Pagination";
+import jobService from "../services/jobService";
 
 export default function PostList() {
-  const jobs = [
-    ...Array.from({ length: 15 }, (_, i) => ({
-      id: i + 1,
-      company: "FPT Software",
-      title: `Job ${i + 1} - Laravel Developer`,
-      salary: "5 - 8 Triệu",
-      description: "Mô tả công việc backend với Laravel, REST API.",
-      tags: ["PHP", "Laravel"],
-      logo: "https://vieclam.ueh.edu.vn/images/company/avatar/y7QP7gxQ0d_453076304-910349481138219-1377419910091349711-n.jpg",
-      view_count: 1000 + i * 100,
-      applied_count: i * 2,
-      start_day: "20/03/2026",
-      end_day: "15/04/2026",
-    })),
-  ];
-  const itemsPerPage = 6;
+  const [jobs, setJobs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(jobs.length / itemsPerPage);
-  const currentJobs = jobs.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
-
+  const itemsPerPage = 6;
+  useEffect(() => {
+    const fetchActiveJobs = async () => {
+      try {
+        const response = await jobService.getAllJobs();
+        const data = response.data || [];
+        setJobs(data);
+      } catch (err) {
+        console.error("Lỗi, ", err);
+      }
+    };
+    fetchActiveJobs();
+  }, []);
+  const totalPages = Math.floor((jobs.length + 5) / 6);
+  let currentJobs = [];
+  if (jobs.length > 0) {
+    currentJobs = jobs.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage,
+    );
+  }
   return (
     <div className="min-h-screen bg-[#F8FAFC] py-12 px-4 md:px-8 font-sans">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-8">
@@ -45,9 +46,13 @@ export default function PostList() {
 
           {/* Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentJobs.map((job, index) => (
-              <PostCard key={index} job={job} />
-            ))}
+            {currentJobs.length > 0 ? (
+              currentJobs.map((job) => <PostCard key={job.id} job={job} />)
+            ) : (
+              <p className="col-span-full text-center text-gray-400">
+                Đang tải hoặc không có dữ liệu...
+              </p>
+            )}
           </div>
           {/* Pagination */}
           <Pagination

@@ -24,6 +24,11 @@ import MyProjects from "./pages/project/projectManage/MyProjects";
 
 // import my-wallets
 import MyWallet from "./pages/wallet/MyWallet";
+import EditJob from "./pages/job/company/EditJob";
+import ApplicationList from "./pages/job/company/ApplicationList";
+import FavoriteJobs from "./pages/job/student/FavoriteJobs";
+import ApprovedApplicants from "./pages/job/company/ApplicationApproved";
+
 
 function App() {
   return (
@@ -37,6 +42,10 @@ function App() {
         <Route path="/cv/:id" element={<CvDetail />} />
         {/*============ Job ====================== */}
         <Route path="/job" element={<JobCategory />} />
+        <Route path="/job/edit/:id" element={<EditJob />} />
+        <Route path="/companies/jobs/:id/applications" element={<ApplicationList/>} />
+        <Route path="/students/job/favorites" element={<FavoriteJobs/>} />
+        <Route path="/company/applications/approved" element={<ApprovedApplicants/>} />
         {/* ĐẶT CÁC ROUTE CỐ ĐỊNH TRÊN ROUTE BIẾN SỐ (:id) */}
         <Route path="/job/manage" element={<JobManage />} />
         <Route path="/job/create" element={<CreateJob />} />

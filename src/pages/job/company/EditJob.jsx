@@ -1,26 +1,44 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import jobService from "../../../services/jobService";
-export default function CreateJob() {
+
+export default function EditJob() {
+  const { id } = useParams();
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     requirements: "",
     salary: "",
-    jobType: "", // Giá trị mặc định
+    jobType: "",
     workLocation: "",
     startDay: "",
     endDay: "",
     jdFile: null,
     tags: "",
   });
+  useEffect(() => {
+    const fetchJobDetal = async () => {
+      try {
+        const response = await jobService.getJobDetail(id);
+        const job = response.data;
+        setFormData({
+          ...job,
+          jdFile: null,
+          startDay: job.startDay ? job.startDay.substring(0, 10) : "",
+          endDay: job.endDay ? job.endDay.substring(0, 10) : "",
+        });
+      } catch (err) {
+        console.error("Lỗi lấy chi tiết bài viết:", err);
+        window.alert("Không tìm thấy thông tin bài viết");
+      }
+    };
+    fetchJobDetal();
+  }, [id]);
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
   const handleFileChange = (e) => {
     setFormData((prev) => ({
@@ -30,6 +48,7 @@ export default function CreateJob() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const data = new FormData();
     data.append("title", formData.title);
     data.append("description", formData.description);
@@ -48,12 +67,12 @@ export default function CreateJob() {
       data.append("endDay", `${formData.endDay}T23:59:59`);
     }
     try {
-      const response = await jobService.createJob(data);
-      window.alert(response.message || "Đăng tin thành công ");
+      const response = await jobService.updateJob(id,data);
+      window.alert(response.message || "Sửa thành công ");
       navigate("/job/manage");
     } catch (err) {
       console.log(err);
-      window.alert("Có lỗi khi đăng bài");
+      window.alert("Có lỗi khi sửa bài");
     }
   };
   return (
@@ -62,7 +81,7 @@ export default function CreateJob() {
         {/* Header */}
         <div className="mb-8 border-b border-slate-200 pb-4">
           <h1 className="text-2xl font-bold text-slate-900">
-            Tạo Bài Tuyển Dụng Mới (Create New Job)
+            Sửa Bài Tuyển Dụng
           </h1>
           <p className="text-sm text-slate-500 mt-1">
             Cung cấp thông tin chi tiết để tìm kiếm ứng viên phù hợp nhất.
@@ -112,71 +131,27 @@ export default function CreateJob() {
                 Loại hình
               </label>
               <div className="md:col-span-3">
-                <select
+                <input
                   name="jobType"
+                  type="text"
                   value={formData.jobType}
                   onChange={handleChange}
-                  className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all cursor-pointer"
-                >
-                  <option value="" disabled>
-                    -- Chọn loại hình công việc --
-                  </option>
-                  <option value="INTERNSHIP">Thực tập (Internship)</option>
-                  <option value="PARTTIME">Bán thời gian (Part-time)</option>
-                  <option value="FULLTIME">Toàn thời gian (Full-time)</option>
-                  <option value="FREELANCE">Tự do (Freelance)</option>
-                </select>
+                  placeholder="VD: fulltime, parttime,..."
+                  className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                />
               </div>
-
               <label className="text-sm font-semibold text-slate-600">
                 Địa điểm
               </label>
               <div className="md:col-span-3">
-                <select
+                <input
                   name="workLocation"
+                  type="text"
                   value={formData.workLocation}
                   onChange={handleChange}
-                  className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all cursor-pointer"
-                >
-                  <option value="" disabled>
-                    -- Chọn tỉnh/thành phố --
-                  </option>
-                  <option value="TUYENQUANG">Tuyên Quang </option>
-                  <option value="LAOCAI">Lào Cai </option>
-                  <option value="THAINGUYEN">Thái Nguyên </option>
-                  <option value="PHUTHO">Phú Thọ </option>
-                  <option value="BACNINH">Bắc Ninh </option>
-                  <option value="HUNGYEN">Hưng Yên </option>
-                  <option value="HAIPHONG">Hải Phòng </option>
-                  <option value="NINHBINH">Ninh Bình </option>
-                  <option value="QUANGTRI">Quảng Trị </option>
-                  <option value="DANANG">Đà Nẵng </option>
-                  <option value="QUANGNGAI">Quảng Ngãi </option>
-                  <option value="GIALAI">Gia Lai </option>
-                  <option value="KHANHHOA">Khánh Hòa </option>
-                  <option value="LAMDONG">Lâm Đồng </option>
-                  <option value="DAKLAK">Đắk Lắk </option>
-                  <option value="HOCHIMINH">TP. Hồ Chí Minh </option>
-                  <option value="DONGNAI">Đồng Nai </option>
-                  <option value="TAYNINH">Tây Ninh</option>
-                  <option value="CANTHO">Cần Thơ </option>
-                  <option value="VINHLONG">Vĩnh Long </option>
-                  <option value="DONGTHAP">Đồng Tháp </option>
-                  <option value="CAMAU">Cà Mau </option>
-                  <option value="ANGIANG">An Giang </option>
-                  <option value="HANOI">Hà Nội</option>
-                  <option value="HUE">Huế</option>
-                  <option value="LAICHAU">Lai Châu</option>
-                  <option value="DIENBIEN">Điện Biên</option>
-                  <option value="SONLA">Sơn La</option>
-                  <option value="LANGSON">Lạng Sơn</option>
-                  <option value="QUANGNINH">Quảng Ninh</option>
-                  <option value="THANHHOA">Thanh Hóa</option>
-                  <option value="NGHEAN">Nghệ An</option>
-                  <option value="HATINH">Hà Tĩnh</option>
-                  <option value="CAOBANG">Cao Bằng</option>
-                  <option value="REMOTE">Làm việc từ xa (Remote)</option>
-                </select>
+                  placeholder="VD: Đà nẵng"
+                  className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                />
               </div>
 
               <label className="text-sm font-semibold text-slate-600">
@@ -269,13 +244,6 @@ export default function CreateJob() {
             </div>
           </section>
 
-          {/* <div className="md:col-span-3 border-2 border-dashed border-slate-200 rounded-2xl p-8 flex flex-col items-center justify-center bg-slate-50 hover:bg-slate-100 hover:border-blue-400 transition-all cursor-pointer">
-                <span className="text-3xl text-slate-400 mb-2">📁</span>
-                <p className="text-xs text-slate-500 font-medium text-center">
-                  Nhấn để chọn file hoặc kéo thả tại đây (PDF, DOCX)
-                </p>
-              </div> */}
-
           {/* 4. Thời hạn */}
           <section className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
             <h2 className="text-lg font-bold text-blue-600 flex items-center gap-2">
@@ -328,7 +296,7 @@ export default function CreateJob() {
               type="submit"
               className="bg-slate-900 hover:bg-blue-700 text-white px-10 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-blue-200"
             >
-              Đăng Bài Tuyển Dụng (Submit Job)
+              Gửi
             </button>
           </div>
         </form>
