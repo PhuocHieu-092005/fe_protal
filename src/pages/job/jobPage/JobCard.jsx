@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
 export default function JobCard({ job }) {
   // state trạng thái yêu thích
-  const [isFavorite, setIsFavorite] = useState(false);
+  // const [isFavorite, setIsFavorite] = useState(false);
 
-  const handleFavoriteClick = (e) => {
-    e.preventDefault(); // Tránh bị chuyển trang khi bấm tim
-    setIsFavorite(!isFavorite);
-  };
+  // const handleFavoriteClick = (e) => {
+  //   e.preventDefault(); // Tránh bị chuyển trang khi bấm tim
+  //   setIsFavorite(!isFavorite);
+  // };
 
   return (
     /* SỬA TẠI ĐÂY: Thêm h-fit để card không bao giờ cao hơn nội dung của chính nó */
@@ -17,8 +17,8 @@ export default function JobCard({ job }) {
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-4">
           <img
-            src={job.logo}
-            alt={job.company}
+            src={job.companyLogo}
+            alt={job.companyName}
             className="h-14 w-14 rounded-2xl border border-slate-100 object-cover p-2 flex-shrink-0"
           />
           <div className="min-w-0">
@@ -29,7 +29,7 @@ export default function JobCard({ job }) {
           </div>
         </div>
 
-        <button
+        {/* <button
           onClick={handleFavoriteClick}
           className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border transition-all duration-300 text-xl leading-none ${
             isFavorite
@@ -38,26 +38,24 @@ export default function JobCard({ job }) {
           }`}
         >
           ♥
-        </button>
+        </button> */}
       </div>
 
       {/* Info Badges */}
       <div className="mt-5 flex flex-wrap gap-2 text-sm text-slate-600">
         <span className="rounded-full bg-slate-100 px-3 py-1.5 whitespace-nowrap">
-          {job.location}
+          {job.workLocation}
         </span>
         <span className="rounded-full bg-slate-100 px-3 py-1.5 whitespace-nowrap">
-          {job.type}
+          {job.jobType}
         </span>
-        <span className="rounded-full bg-slate-100 px-3 py-1.5 whitespace-nowrap">
-          {job.level}
-        </span>
+     
       </div>
 
       {/* Salary & Time */}
       <div className="mt-5">
         <p className="text-lg font-bold text-slate-900">{job.salary}</p>
-        <p className="mt-1 text-sm text-slate-500">Đăng {job.postedAt}</p>
+        <p className="mt-1 text-sm text-slate-500">Đăng {job.startDay}</p>
       </div>
 
       {/* Tags */}
@@ -77,14 +75,12 @@ export default function JobCard({ job }) {
       <div className="mt-6 flex items-center gap-3">
         <Link
           to={`/job/${job.id}`}
-          className="flex-1 rounded-2xl border border-slate-200 px-4 py-3 text-center text-sm font-medium text-slate-700 transition hover:border-slate-900 hover:text-slate-900"
+          className="flex-1 rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800flex-1 rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 text-center"
         >
           Xem chi tiết
         </Link>
 
-        <button className="flex-1 rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
-          Ứng tuyển ngay
-        </button>
+       
       </div>
     </div>
   );

@@ -1,26 +1,31 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function PostCard({ job }) {
+    const navigate = useNavigate();
   const shortDesc =
     job.description?.length > 60
       ? job.description.substring(0, 60) + "..."
       : job.description;
-
+  const formatDate = (dateString) => {
+    if (!dateString) return "---";
+    return new Date(dateString).toLocaleDateString("vi-VN");
+  };
   return (
     <div className="group bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-[360px]">
       {/* Header */}
       <div className="flex items-center gap-2 mb-3">
         <div className="w-14 h-14 rounded-md border border-slate-100 flex items-center justify-center p-1">
           <img
-            src={job.logo}
-            alt={job.company}
+            src={job.companyLogo}
+            alt={job.companyName}
             className="w-full h-full object-contain"
           />
         </div>
 
         <div className="flex-1 min-w-0">
           <h4 className="text-[11px] font-semibold text-slate-500 uppercase truncate">
-            {job.company}
+            {job.companyName}
           </h4>
 
           {/* FIX badge */}
@@ -38,11 +43,12 @@ export default function PostCard({ job }) {
         </h3>
 
         <p className="text-[13px] font-semibold text-blue-600 mb-1">
-          {job.salary}
+        {job.salary ? `${job.salary.toLocaleString()} VNĐ` : "Thỏa thuận"}
         </p>
 
         <p className="text-[11px] text-slate-500 italic mb-2 line-clamp-2">
-          {shortDesc}
+          {job.description!="undefined"? shortDesc:"Chưa có mô tả công việc "}
+         
         </p>
 
         <div className="flex flex-wrap gap-1">
@@ -59,24 +65,25 @@ export default function PostCard({ job }) {
 
       {/* Stats */}
       <div className="flex justify-between text-[11px] text-slate-500 py-2 border-t mt-2">
-        <span>👁 {job.view_count.toLocaleString()}</span>
-        <span>👤 {job.applied_count} ứng viên</span>
+        <span>{job.viewCount?.toLocaleString()||0}</span>
+        <span> {job.workLocation || "Toàn quốc"}</span>
       </div>
 
       {/* Time */}
       <div className="flex justify-between text-[10px] mt-1">
-        <span className="text-slate-400">Bắt đầu: {job.start_day}</span>
-        <span className="text-rose-500">Hạn nộp: {job.end_day}</span>
+        <span className="text-slate-400">
+          Bắt đầu: {formatDate(job.startDay)}
+        </span>
+        <span className="text-rose-500">Hạn: {formatDate(job.endDay)}</span>
       </div>
 
       {/* Actions */}
       <div className="flex gap-2 mt-2">
-        <button className="flex-1 py-1.5 text-[11px] font-medium border border-slate-200 rounded-lg hover:bg-slate-50">
+        <button onClick={()=>navigate(`/job/${job.id}`)}
+         className="flex-1 py-1.5 text-[11px] font-medium bg-black text-white border border-black rounded-lg hover:bg-white hover:text-black transition-all duration-200">
           Chi tiết
         </button>
-        <button className="flex-1 py-1.5 text-[11px] font-medium bg-black text-white border border-black rounded-lg hover:bg-white hover:text-black transition-all duration-200">
-          Ứng tuyển
-        </button>
+    
       </div>
     </div>
   );

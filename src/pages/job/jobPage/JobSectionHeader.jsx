@@ -12,14 +12,14 @@ export default function JobSectionHeader() {
         </p>
       </div>
 
-      <div className="flex items-center gap-3">
+      {/* <div className="flex items-center gap-3">
         <span className="text-sm text-slate-500">Sắp xếp theo</span>
         <select className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 outline-none">
           <option>Mới nhất</option>
           <option>Lương cao nhất</option>
           <option>Cũ nhất</option>
         </select>
-      </div>
+      </div> */}
     </div>
   );
 }
