@@ -4,7 +4,7 @@ import CompanyProfileSidebar from "../profilePage/CompanyProfileSidebar";
 import ChangePasswordForm from "../profilePage/ChangePasswordForm";
 import CompanyProfileForm from "../profilePage/CompanyProfileForm";
 import CompanyJobs from "../profilePage/CompanyJobs";
-import ProjectFavorite from "../profilePage/ProjectFavorite"
+import ProjectFavorite from "../profilePage/ProjectFavorite";
 function CompanyProfilePlaceholder({ title, description }) {
   return (
     <section className="flex-1 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
