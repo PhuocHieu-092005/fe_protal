@@ -7,7 +7,7 @@ import {
   LogOut,
   ChevronDown,
   ChevronUp,
-  FileEdit,
+  FileEdit,   Heart 
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -112,6 +112,19 @@ export default function CompanyProfileSidebar({ activeTab, setActiveTab }) {
                 >
                   <Users size={16} />
                   Ứng viên đã ứng tuyển
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => setActiveTab("favorite-projects")}
+                  className={`flex w-full items-center gap-3 rounded-md p-2 text-sm transition-all ${
+                    activeTab === "favorite-projects"
+                      ? "bg-blue-50 font-semibold text-blue-600"
+                      : "text-gray-600 hover:bg-gray-50"
+                  }`}
+                >
+                  <Heart size={16} />
+                  Dự án đã thích
                 </button>
               </li>
             </ul>

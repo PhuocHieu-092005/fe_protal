@@ -11,7 +11,25 @@ export const getPublicProjects = async (params = {}) => {
   const response = await api.get("/projects", { params: queryParams });
   return response.data;
 };
-
+export const deleteFavoriteProject = async(projectId)=>{
+  const reponse  =await api.delete(`/project-favorites/projects/${projectId}`);
+  return reponse.data;
+}
+export const toggleFavorite = async(projectId)=>{
+  const response = await api.post(`/project-favorites`,{
+    project_id:projectId
+  });
+  return response.data;
+}
+export const getAllFavorite = async()=>{
+  const response =await api.get('/project-favorites/me');
+  return response.data;
+}
+export const isFavorited = async(projectId)=>{
+  console.log("id là:",projectId);
+  const response = await api.get(`/project-favorites/${projectId}/isFavorited`);
+    return response.data.data;
+}
 export const getProjectById = async (id) => {
   const response = await api.get(`/projects/${id}`);
   return response.data;
@@ -65,6 +83,10 @@ const projectService = {
   deleteProject,
   getAdminProjects,
   updateProjectStatus,
+  toggleFavorite,
+  isFavorited,
+  deleteFavoriteProject,
+  getAllFavorite
 };
 
 export default projectService;

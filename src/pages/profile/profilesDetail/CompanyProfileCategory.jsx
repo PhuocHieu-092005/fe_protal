@@ -3,7 +3,8 @@ import Footer from "../../../layouts/Footer";
 import CompanyProfileSidebar from "../profilePage/CompanyProfileSidebar";
 import ChangePasswordForm from "../profilePage/ChangePasswordForm";
 import CompanyProfileForm from "../profilePage/CompanyProfileForm";
-
+import CompanyJobs from "../profilePage/CompanyJobs";
+import ProjectFavorite from "../profilePage/ProjectFavorite"
 function CompanyProfilePlaceholder({ title, description }) {
   return (
     <section className="flex-1 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
@@ -27,10 +28,7 @@ export default function CompanyProfileCategory() {
         {activeTab === "company-profile" && <CompanyProfileForm />}
 
         {activeTab === "posted-jobs" && (
-          <CompanyProfilePlaceholder
-            title="Tin tuyển dụng đã đăng"
-            description="Tạm thời chưa nối được đầy đủ vì backend chưa có API lấy danh sách job của chính công ty."
-          />
+          <CompanyJobs activeTab={activeTab} setActiveTab={setActiveTab} />
         )}
 
         {activeTab === "applicants" && (
@@ -39,7 +37,9 @@ export default function CompanyProfileCategory() {
             description="Phần này sẽ làm sau khi chốt được luồng danh sách bài tuyển dụng của công ty."
           />
         )}
-
+        {activeTab === "favorite-projects" && (
+          <ProjectFavorite activeTab={activeTab} setActiveTab={setActiveTab} />
+        )}
         {activeTab === "change-password" && <ChangePasswordForm />}
       </main>
 

@@ -23,10 +23,35 @@ export default function ProjectDetail() {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState("");
-
+  const [isFavorited, setIsFavotired] = useState(false);
+  const [loadingFav, setLoadingFav] = useState(false);
+  const checkFav = async () => {
+    try {
+      const ok = await projectService.isFavorited(id);
+      setIsFavotired(ok);
+    } catch (err) {
+      console.log("loi", err.data);
+    }
+  };
+  const handleToggleFavorite = async () => {
+    setLoadingFav(true);
+    try {
+      if (isFavorited) {
+        await projectService.deleteFavoriteProject(id);
+        alert("Đã gỡ thích dự án");
+      } else {
+        alert("Đã thích dự án");
+        await projectService.toggleFavorite(id);
+      }
+      await checkFav();
+    } finally {
+      setLoadingFav(false);
+    }
+  };
   useEffect(() => {
     const fetchDetail = async () => {
       try {
+        await checkFav();
         const res = await projectService.getProjectById(id);
 
         if (res?.data) {
@@ -103,14 +128,27 @@ export default function ProjectDetail() {
   return (
     <div className="min-h-screen bg-slate-50/50 px-6 pb-20 pt-28 text-left">
       <div className="mx-auto max-w-7xl">
-        <button
-          onClick={() => navigate(-1)}
-          className="mb-8 flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-blue-600"
-        >
-          <ChevronLeft size={20} />
-          QUAY LẠI
-        </button>
+        <div className="flex justify-between items-center mb-8">
+          <button
+            onClick={() => navigate(-1)}
+            className="mb-8 flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-blue-600"
+          >
+            <ChevronLeft size={20} />
+            QUAY LẠI
+          </button>
 
+          <button
+            onClick={handleToggleFavorite}
+            disabled={loadingFav}
+            className={`  rounded-2xl border px-4 py-3 text-sm font-medium transition ${
+              isFavorited
+                ? "bg-rose-50 border-rose-500 text-rose-600 shadow-sm"
+                : "border-slate-200 text-slate-700 hover:border-slate-900 hover:text-slate-900" // Style khi chưa lưu
+            }`}
+          >
+            Lưu dự án
+          </button>
+        </div>
         <div className="grid grid-cols-1 gap-8 xl:grid-cols-12">
           {/* LEFT */}
           <div className="space-y-8 xl:col-span-8">
