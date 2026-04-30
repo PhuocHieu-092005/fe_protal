@@ -3,6 +3,7 @@ import Footer from "../../../layouts/Footer";
 import CompanyProfileSidebar from "../profilePage/CompanyProfileSidebar";
 import ChangePasswordForm from "../profilePage/ChangePasswordForm";
 import CompanyProfileForm from "../profilePage/CompanyProfileForm";
+import CompanyProjectAccessRequests from "../profilePage/CompanyProjectAccessRequests";
 
 function CompanyProfilePlaceholder({ title, description }) {
   return (
@@ -38,6 +39,10 @@ export default function CompanyProfileCategory() {
             title="Ứng viên đã ứng tuyển"
             description="Phần này sẽ làm sau khi chốt được luồng danh sách bài tuyển dụng của công ty."
           />
+        )}
+
+        {activeTab === "project-access-requests" && (
+          <CompanyProjectAccessRequests />
         )}
 
         {activeTab === "change-password" && <ChangePasswordForm />}

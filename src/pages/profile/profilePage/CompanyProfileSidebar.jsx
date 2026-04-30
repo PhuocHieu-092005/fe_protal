@@ -8,6 +8,7 @@ import {
   ChevronDown,
   ChevronUp,
   FileEdit,
+  Handshake,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -112,6 +113,20 @@ export default function CompanyProfileSidebar({ activeTab, setActiveTab }) {
                 >
                   <Users size={16} />
                   Ứng viên đã ứng tuyển
+                </button>
+              </li>
+
+              <li>
+                <button
+                  onClick={() => setActiveTab("project-access-requests")}
+                  className={`flex w-full items-center gap-3 rounded-md p-2 text-sm transition-all ${
+                    activeTab === "project-access-requests"
+                      ? "bg-blue-50 font-semibold text-blue-600"
+                      : "text-gray-600 hover:bg-gray-50"
+                  }`}
+                >
+                  <Handshake size={16} />
+                  Yêu cầu hợp tác project
                 </button>
               </li>
             </ul>

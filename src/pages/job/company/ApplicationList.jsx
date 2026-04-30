@@ -109,10 +109,9 @@ export default function ApplicationList() {
               </button>
               <button
                 onClick={handleReview}
-   
                 className="flex-1 py-3 text-sm font-bold text-white bg-slate-950 hover:bg-slate-800 rounded-2xl transition-all disabled:bg-slate-300"
               >
-                 Xác nhận
+                Xác nhận
               </button>
             </div>
           </div>

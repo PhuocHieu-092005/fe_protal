@@ -67,25 +67,25 @@ const jobService = {
     );
   },
   getMyFavorites: async () => {
-    return await api.get("/students/favorites"); 
+    return await api.get("/students/favorites");
   },
-  searchByTitle: async(title)=>{
-    return await api.get('/jobs/search',{
-      params:{title:title}
+  searchByTitle: async (title) => {
+    return await api.get('/jobs/search', {
+      params: { title: title }
     });
   },
-  filterJobs: async(filters)=>{
-    const params=new URLSearchParams();
-    if(filters.location)
-      params.append("location",filters.location);
-    if(filters.type)
-      params.append("type",filters.type)
-    if(filters.minSalary)
-      params.append("minSalary",filters.minSalary);
-    if(filters.maxSalary)
-      params.append("maxSalary",filters.maxSalary);
-    if(filters.tags && filters.tags.length>0)
-      filters.tags.forEach(tag=>params.append("tags",tag));
+  filterJobs: async (filters) => {
+    const params = new URLSearchParams();
+    if (filters.location)
+      params.append("location", filters.location);
+    if (filters.type)
+      params.append("type", filters.type)
+    if (filters.minSalary)
+      params.append("minSalary", filters.minSalary);
+    if (filters.maxSalary)
+      params.append("maxSalary", filters.maxSalary);
+    if (filters.tags && filters.tags.length > 0)
+      filters.tags.forEach(tag => params.append("tags", tag));
     return api.get(`/jobs/filter?${params.toString()}`);
   }
 
