@@ -7,7 +7,9 @@ import {
   LogOut,
   ChevronDown,
   ChevronUp,
-  FileEdit,   Heart 
+  FileEdit,
+  Heart,
+  Handshake,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -43,6 +45,7 @@ export default function CompanyProfileSidebar({ activeTab, setActiveTab }) {
               <Building2 size={20} />
               <span className="text-sm tracking-wider">HỒ SƠ CÔNG TY</span>
             </div>
+
             {openMenus.company ? (
               <ChevronUp size={16} className="text-gray-400" />
             ) : (
@@ -78,6 +81,7 @@ export default function CompanyProfileSidebar({ activeTab, setActiveTab }) {
               <Briefcase size={20} />
               <span className="text-sm tracking-wider">TUYỂN DỤNG</span>
             </div>
+
             {openMenus.recruitment ? (
               <ChevronUp size={16} className="text-gray-400" />
             ) : (
@@ -114,6 +118,7 @@ export default function CompanyProfileSidebar({ activeTab, setActiveTab }) {
                   Ứng viên đã ứng tuyển
                 </button>
               </li>
+
               <li>
                 <button
                   onClick={() => setActiveTab("favorite-projects")}
@@ -125,6 +130,20 @@ export default function CompanyProfileSidebar({ activeTab, setActiveTab }) {
                 >
                   <Heart size={16} />
                   Dự án đã thích
+                </button>
+              </li>
+
+              <li>
+                <button
+                  onClick={() => setActiveTab("project-access-requests")}
+                  className={`flex w-full items-center gap-3 rounded-md p-2 text-sm transition-all ${
+                    activeTab === "project-access-requests"
+                      ? "bg-blue-50 font-semibold text-blue-600"
+                      : "text-gray-600 hover:bg-gray-50"
+                  }`}
+                >
+                  <Handshake size={16} />
+                  Yêu cầu hợp tác project
                 </button>
               </li>
             </ul>
@@ -140,6 +159,7 @@ export default function CompanyProfileSidebar({ activeTab, setActiveTab }) {
               <Lock size={20} />
               <span className="text-sm tracking-wider">TÀI KHOẢN</span>
             </div>
+
             {openMenus.account ? (
               <ChevronUp size={16} className="text-gray-400" />
             ) : (

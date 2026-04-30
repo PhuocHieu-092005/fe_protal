@@ -5,6 +5,8 @@ import ChangePasswordForm from "../profilePage/ChangePasswordForm";
 import CompanyProfileForm from "../profilePage/CompanyProfileForm";
 import CompanyJobs from "../profilePage/CompanyJobs";
 import ProjectFavorite from "../profilePage/ProjectFavorite";
+import CompanyProjectAccessRequests from "../profilePage/CompanyProjectAccessRequests";
+
 function CompanyProfilePlaceholder({ title, description }) {
   return (
     <section className="flex-1 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
@@ -37,9 +39,15 @@ export default function CompanyProfileCategory() {
             description="Phần này sẽ làm sau khi chốt được luồng danh sách bài tuyển dụng của công ty."
           />
         )}
+
         {activeTab === "favorite-projects" && (
           <ProjectFavorite activeTab={activeTab} setActiveTab={setActiveTab} />
         )}
+
+        {activeTab === "project-access-requests" && (
+          <CompanyProjectAccessRequests />
+        )}
+
         {activeTab === "change-password" && <ChangePasswordForm />}
       </main>
 
