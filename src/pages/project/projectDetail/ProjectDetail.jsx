@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Star,
-  Award,
   BookOpen,
   ChevronLeft,
   Eye,
@@ -15,30 +14,39 @@ import {
   ExternalLink,
 } from "lucide-react";
 import projectService from "../../../services/projectService";
+import TeacherEvaluationSection from "./TeacherEvaluationSection";
 
 export default function ProjectDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [project, setProject] = useState(null);
+  const [teacherEvaluations, setTeacherEvaluations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState("");
 
   useEffect(() => {
     const fetchDetail = async () => {
       try {
-        const res = await projectService.getProjectById(id);
+        const [projectRes, evaluationsRes] = await Promise.all([
+          projectService.getProjectById(id),
+          projectService.getProjectTeacherEvaluations(id),
+        ]);
 
-        if (res?.data) {
-          setProject(res.data);
+        if (projectRes?.data) {
+          setProject(projectRes.data);
 
           const firstImage =
-            res.data?.images?.[0]?.imageUrl ||
-            res.data?.images?.[0]?.image_url ||
+            projectRes.data?.images?.[0]?.imageUrl ||
+            projectRes.data?.images?.[0]?.image_url ||
             "";
 
           setSelectedImage(firstImage);
         }
+
+        setTeacherEvaluations(
+          Array.isArray(evaluationsRes?.data) ? evaluationsRes.data : []
+        );
       } catch (err) {
         console.error("Lỗi fetch detail:", err);
       } finally {
@@ -51,15 +59,29 @@ export default function ProjectDetail() {
 
   const imageList = useMemo(() => {
     if (!project?.images || !Array.isArray(project.images)) return [];
+
     return project.images.map((img) => ({
       id: img.id,
       url: img.imageUrl || img.image_url,
     }));
   }, [project]);
 
+  const normalizedTeacherEvaluations = useMemo(() => {
+    return teacherEvaluations.map((item) => ({
+      id: item.id,
+      teacherName: item.teacher_name || item.teacherName || "Giảng viên",
+      suggestions: item.suggestions || "Chưa có nhận xét từ giảng viên.",
+      score: item.score ?? item.rating ?? null,
+      createdAtLabel: item.created_at
+        ? `Ngày đánh giá: ${new Date(item.created_at).toLocaleDateString(
+            "vi-VN"
+          )}`
+        : "Chưa rõ thời gian đánh giá",
+    }));
+  }, [teacherEvaluations]);
+
   const courseName = project?.courseName || project?.course_name || "Đồ án";
-  const studentName =
-    project?.studentName || project?.student_name || "Sinh viên";
+  const studentName = project?.studentName || project?.student_name || "Sinh viên";
   const sourceCodeUrl = project?.sourceCodeUrl || project?.source_code_url;
   const demoUrl = project?.demoUrl || project?.demo_url;
   const priceType = project?.priceType || project?.price_type;
@@ -112,7 +134,6 @@ export default function ProjectDetail() {
         </button>
 
         <div className="grid grid-cols-1 gap-8 xl:grid-cols-12">
-          {/* LEFT */}
           <div className="space-y-8 xl:col-span-8">
             <section className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm md:p-10">
               <span className="mb-6 inline-flex rounded-full bg-blue-50 px-4 py-1 text-[10px] font-black uppercase tracking-wider text-blue-600">
@@ -221,9 +242,7 @@ export default function ProjectDetail() {
             </section>
           </div>
 
-          {/* RIGHT */}
           <div className="space-y-6 xl:col-span-4">
-            {/* pricing */}
             <section
               className={`rounded-[2.5rem] p-8 shadow-sm ${
                 isPaidProject
@@ -264,7 +283,6 @@ export default function ProjectDetail() {
               </div>
             </section>
 
-            {/* resources */}
             <section className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
               <h3 className="mb-6 flex items-center gap-2 text-2xl font-black text-slate-900">
                 <BookOpen size={22} className="text-blue-500" />
@@ -287,8 +305,7 @@ export default function ProjectDetail() {
                         </div>
 
                         <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                          Source code đang bị khóa cho tới khi hệ thống thanh
-                          toán được tích hợp.
+                          Source code đang bị khóa cho tới khi hệ thống thanh toán được tích hợp.
                         </p>
                       </div>
                     ) : (
@@ -356,9 +373,7 @@ export default function ProjectDetail() {
                     </span>
                   ))
                 ) : (
-                  <span className="text-sm text-slate-400">
-                    Chưa có công nghệ
-                  </span>
+                  <span className="text-sm text-slate-400">Chưa có công nghệ</span>
                 )}
               </div>
             </section>
@@ -387,9 +402,7 @@ export default function ProjectDetail() {
               <div className="space-y-4 text-sm">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                   <span className="text-slate-500">Mã đồ án</span>
-                  <span className="font-bold text-slate-900">
-                    #{project.id}
-                  </span>
+                  <span className="font-bold text-slate-900">#{project.id}</span>
                 </div>
 
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -421,27 +434,9 @@ export default function ProjectDetail() {
               </div>
             </section>
 
-            <section className="relative overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
-              <div className="absolute -right-6 -top-6 rotate-12 text-amber-100">
-                <Star size={120} fill="currentColor" />
-              </div>
-
-              <h3 className="relative mb-6 flex items-center gap-3 text-xl font-black text-slate-900">
-                <Star
-                  className="text-amber-400"
-                  fill="currentColor"
-                  size={24}
-                />
-                Đánh giá từ giảng viên
-              </h3>
-
-              <div className="relative rounded-[2rem] border border-dashed border-slate-200 bg-slate-50 py-8 text-center">
-                <Award className="mx-auto mb-3 text-slate-300" size={38} />
-                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                  Chưa có đánh giá chính thức
-                </p>
-              </div>
-            </section>
+            <TeacherEvaluationSection
+              evaluations={normalizedTeacherEvaluations}
+            />
 
             {adminNote && (
               <section className="rounded-[2.5rem] border border-rose-200 bg-rose-50 p-8 shadow-sm">
