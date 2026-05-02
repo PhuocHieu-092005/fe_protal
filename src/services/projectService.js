@@ -35,6 +35,16 @@ export const getProjectById = async (id) => {
   return response.data;
 };
 
+export const getProjectTeacherEvaluations = async (projectId) => {
+  const response = await api.get(`/projects/${projectId}/teacher-evaluations`);
+  return response.data;
+};
+
+export const getMyProjectEvaluations = async () => {
+  const response = await api.get("/students/me/project-evaluations");
+  return response.data;
+};
+
 // 2. DÀNH CHO SINH VIÊN (Portal)
 export const getMyProjects = async () => {
   const response = await api.get("/projects/me/projects");
@@ -77,6 +87,8 @@ export const updateProjectStatus = async (id, status, adminNote) => {
 const projectService = {
   getPublicProjects,
   getProjectById,
+  getProjectTeacherEvaluations,
+  getMyProjectEvaluations,
   getMyProjects,
   createProject,
   updateProject,

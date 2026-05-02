@@ -1,64 +1,96 @@
-import React, { useEffect, useState } from "react";
-import PostCard from "./PostCard";
-import Pagination from "./common/Pagination";
+import React, { useEffect, useMemo, useState } from "react";
 import jobService from "../services/jobService";
+import Pagination from "./common/Pagination";
+import PostCard from "./PostCard";
+
+function normalizeJobsResponse(response) {
+  if (Array.isArray(response)) return response;
+  if (Array.isArray(response?.data)) return response.data;
+  if (Array.isArray(response?.content)) return response.content;
+  if (Array.isArray(response?.data?.content)) return response.data.content;
+  return [];
+}
 
 export default function PostList() {
   const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [errorText, setErrorText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+
   useEffect(() => {
     const fetchActiveJobs = async () => {
       try {
+        setLoading(true);
+        setErrorText("");
+
         const response = await jobService.getAllJobs();
-        const data = response.data || [];
-        setJobs(data);
+        const normalizedJobs = normalizeJobsResponse(response);
+
+        setJobs(normalizedJobs);
+        console.log("Danh sách việc làm đã tải:", normalizedJobs);
       } catch (err) {
-        console.error("Lỗi, ", err);
+        console.error("Lỗi tải danh sách việc làm:", err);
+        setErrorText("Không thể tải danh sách việc làm.");
+        setJobs([]);
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchActiveJobs();
   }, []);
-  const totalPages = Math.floor((jobs.length + 5) / 6);
-  let currentJobs = [];
-  if (jobs.length > 0) {
-    currentJobs = jobs.slice(
+
+  const totalPages = useMemo(
+    () => Math.max(1, Math.ceil(jobs.length / itemsPerPage)),
+    [jobs.length],
+  );
+
+  const currentJobs = useMemo(() => {
+    if (!jobs.length) return [];
+
+    return jobs.slice(
       (currentPage - 1) * itemsPerPage,
       currentPage * itemsPerPage,
     );
-  }
+  }, [currentPage, jobs]);
+
   return (
-    <div className="min-h-screen bg-[#F8FAFC] py-16 px-4 md:px-8 font-sans text-slate-900">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+    <div className="min-h-screen bg-[#F8FAFC] px-4 py-16 font-sans text-slate-900 md:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-12 flex flex-col items-end justify-between gap-4 md:flex-row">
           <div>
-            <div className="h-1.5 w-16 bg-blue-600 mb-4 rounded-full"></div>
+            <div className="mb-4 h-1.5 w-16 rounded-full bg-blue-600"></div>
             <h2 className="text-4xl font-extrabold tracking-tight">
               Cơ hội việc làm <span className="text-blue-600">mới nhất</span>
             </h2>
-            <p className="text-slate-500 mt-3 text-lg max-w-2xl leading-relaxed">
+            <p className="mt-3 max-w-2xl text-lg leading-relaxed text-slate-500">
               Khám phá hàng ngàn cơ hội nghề nghiệp hấp dẫn dành cho các lập
               trình viên tài năng.
             </p>
           </div>
-
-          {/* Bạn có thể thêm bộ lọc hoặc search ở đây sau này */}
         </div>
 
-        {/* Grid: Tăng gap lên 8 để các card có không gian "thở" */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {currentJobs.length > 0 ? (
-            currentJobs.map((job) => <PostCard key={job.id} job={job} />)
-          ) : (
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {loading ? (
             <div className="col-span-full py-20 text-center">
               <div className="animate-pulse text-slate-400">
                 Đang tải dữ liệu...
               </div>
             </div>
+          ) : errorText ? (
+            <div className="col-span-full py-20 text-center text-red-500">
+              {errorText}
+            </div>
+          ) : currentJobs.length > 0 ? (
+            currentJobs.map((job) => <PostCard key={job.id} job={job} />)
+          ) : (
+            <div className="col-span-full py-20 text-center text-slate-500">
+              Hiện chưa có việc làm nào để hiển thị.
+            </div>
           )}
         </div>
 
-        {/* Pagination: Đặt trong một container đẹp hơn */}
         <div className="mt-16 flex justify-center border-t border-slate-200 pt-10">
           <Pagination
             currentPage={currentPage}
