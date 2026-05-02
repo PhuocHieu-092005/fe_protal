@@ -10,7 +10,7 @@ import ChangePasswordForm from "../profilePage/ChangePasswordForm";
 import MyProjects from "../profilePage/MyProjects";
 
 import FavoriteJobs from "../profilePage/FavoriteJobs";
-
+import ProjectFavorite from "../profilePage/ProjectFavorite"
 
 export default function StudentProfileCategory() {
   const [profile, setProfile] = useState(null);
@@ -62,6 +62,7 @@ export default function StudentProfileCategory() {
 
         {activeTab === "change-password" && <ChangePasswordForm />}
         {activeTab === "favorite-jobs" && <FavoriteJobs />}
+        {activeTab === "favorite-projects" && <ProjectFavorite />}
       </main>
 
       <Footer />

@@ -163,6 +163,19 @@ const ProfileSidebar = ({ activeTab, setActiveTab }) => {
                   Công việc yêu thích
                 </button>
               </li>
+              <li>
+                <button
+                  onClick={() => setActiveTab("favorite-projects")}
+                  className={`flex items-center gap-3 p-2 text-sm w-full rounded-md transition-all ${
+                    activeTab === "favorite-projects"
+                      ? "text-blue-600 font-semibold bg-blue-50"
+                      : "text-gray-600 hover:bg-gray-50"
+                  }`}
+                >
+                  <Heart size={16} />
+                  Dự án yêu thích
+                </button>
+              </li>
             </ul>
           )}
         </div>
