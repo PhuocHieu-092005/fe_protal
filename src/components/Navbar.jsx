@@ -15,7 +15,7 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
-
+import { connectWebSocket, disconnectWebSocket } from "../services/wsService";
 export default function Navbar() {
   const [authMode, setAuthMode] = useState(null);
   const [scrolled, setScrolled] = useState(false);
@@ -55,6 +55,14 @@ export default function Navbar() {
     if (user) {
       // eslint-disable-next-line react-hooks/immutability
       fetchInitialData();
+      console.log("giá trị của userId là: ", user);
+      console.log("an", user);
+      connectWebSocket(user.email, (message) => {
+        console.log("Tín hiệu mới", message);
+        alert("Bạn vừa có thông báo mới!");
+        fetchInitialData();
+      });
+      return () => disconnectWebSocket();
     } else {
       setNotifications([]);
       setUnreadCount(0);
@@ -174,7 +182,7 @@ export default function Navbar() {
             </li>
           )}
         </ul>
-  
+
         {/* AUTH SECTION */}
         <div className="flex-1 flex justify-end items-center gap-3">
           <div className="relative">
