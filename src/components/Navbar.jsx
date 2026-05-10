@@ -3,6 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
 import { Link, useLocation } from "react-router-dom";
+import notificationService from "../services/notificationService";
 // Import Lucide Icons
 import {
   UserCircle,
@@ -14,12 +15,16 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
-
+import { connectWebSocket, disconnectWebSocket } from "../services/wsService";
 export default function Navbar() {
   const [authMode, setAuthMode] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [isShow, setIsShow] = useState(false);
+  const [selectedNotif, setSelectedNotif] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const { user, isLoggedIn, logout } = useAuth();
   const location = useLocation();
   const scrollTimeoutRef = useRef(null);
@@ -46,7 +51,61 @@ export default function Navbar() {
       if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
     };
   }, []);
+  useEffect(() => {
+    if (user) {
+      // eslint-disable-next-line react-hooks/immutability
+      fetchInitialData();
+      console.log("giá trị của userId là: ", user);
+      console.log("an", user);
+      connectWebSocket(user.email, (message) => {
+        console.log("Tín hiệu mới", message);
+        alert("Bạn vừa có thông báo mới!");
+        fetchInitialData();
+      });
+      return () => disconnectWebSocket();
+    } else {
+      setNotifications([]);
+      setUnreadCount(0);
+    }
+  }, [user]);
 
+  const fetchInitialData = async () => {
+    try {
+      const res = await notificationService.getNotifications();
+      setNotifications(res);
+      setUnreadCount(res.length);
+    } catch (err) {
+      console.error("Lỗi khi lần đầu load thông báo", err);
+    }
+  };
+  const handleBellClick = async () => {
+    setIsShow(!isShow);
+    try {
+      if (user) {
+        const res = await notificationService.getNotifications();
+        setNotifications(res);
+        setUnreadCount(res.length);
+        console.log(res);
+      }
+    } catch (err) {
+      console.error("Lỗi khi cập nhật thông báo", err);
+    }
+  };
+  const clickDetailNotification = async (notif) => {
+    try {
+      setSelectedNotif(notif);
+      setShowDetailModal(true);
+      if (!notif.read) {
+        await notificationService.readNotification(notif.id);
+        setNotifications((prev) =>
+          prev.map((n) => (n.id === notif.id ? { ...n, read: true } : n)),
+        );
+        setUnreadCount(unreadCount - 1);
+      }
+    } catch (err) {
+      console.error("đã xảy ra lỗi", err);
+    }
+  };
   const handleLogout = () => {
     logout();
     setMenuOpen(false);
@@ -80,7 +139,6 @@ export default function Navbar() {
             Cổng thông tin việc làm
           </Link>
         </div>
-
         {/* MENU CHÍNH (DESKTOP) */}
         <ul className="hidden lg:flex menu menu-horizontal px-1 gap-1">
           <li>
@@ -127,6 +185,44 @@ export default function Navbar() {
 
         {/* AUTH SECTION */}
         <div className="flex-1 flex justify-end items-center gap-3">
+          <div className="relative">
+            <button
+              className="relative p-1.5 text-gray-500 hover:bg-gray-100 rounded-full transition-colors"
+              onClick={handleBellClick}
+            >
+              Thông báo ({unreadCount})
+            </button>
+            {isShow && (
+              <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden">
+                <div className="p-3 border-b bg-gray-50 font-bold text-sm text-gray-700">
+                  Thông báo
+                </div>
+                <div className="max-h-60 overflow-y-auto">
+                  {notifications.length > 0 ? (
+                    notifications.map((e) => (
+                      <div
+                        key={e.id}
+                        className="p-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer"
+                        onClick={() => clickDetailNotification(e)}
+                      >
+                        <p className="text-sm text-gray-800 font-medium">
+                          {e.type}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {e.title || "Bạn có thông báo mới"}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="p-4 text-center text-sm text-gray-400">
+                      Không có thông báo nào
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
           {!isLoggedIn ? (
             <>
               <button
@@ -321,6 +417,73 @@ export default function Navbar() {
                 onSwitchSignIn={() => setAuthMode("signin")}
               />
             )}
+          </div>
+        </div>
+      )}
+      {showDetailModal && selectedNotif && (
+        //inset 0 bằng với top:0,left:0,right....
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-slate-50">
+              <span className="px-3 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold rounded-full uppercase tracking-wider">
+                {selectedNotif.type}
+              </span>
+              <button
+                onClick={() => setShowDetailModal(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                {selectedNotif.title}
+              </h3>
+              <p className="text-sm text-gray-400 mb-4 flex items-center gap-2">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                {new Date(selectedNotif.sentAt).toLocaleString("vi-VN")}
+              </p>
+              <div className="bg-slate-50 p-4 rounded-xl border border-gray-100">
+                <p className="text-gray-700 leading-relaxed">
+                  {selectedNotif.content}
+                </p>
+              </div>
+            </div>
+
+            {/* Footer Modal */}
+            <div className="p-4 bg-gray-50 flex justify-end">
+              <button
+                onClick={() => setShowDetailModal(false)}
+                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-blue-200 active:scale-95"
+              >
+                Đóng
+              </button>
+            </div>
           </div>
         </div>
       )}
