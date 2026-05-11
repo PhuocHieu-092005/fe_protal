@@ -24,6 +24,7 @@ import EditJob from "./pages/job/company/EditJob";
 import ApplicationList from "./pages/job/company/ApplicationList";
 import FavoriteJobs from "./pages/job/student/FavoriteJobs";
 import ApprovedApplicants from "./pages/job/company/ApplicationApproved";
+import PaymentResult from "./pages/payment/PaymentResult";
 
 
 function App() {
@@ -63,6 +64,9 @@ function App() {
         <Route path="/project/edit/:id" element={<EditProject />} />
 
         <Route path="/my-wallet" element={<MyWallet />} />
+        <Route path="/payment-success" element={<PaymentResult type="success" />} />
+        <Route path="/payment-cancel" element={<PaymentResult type="cancel" />} />
+        <Route path="/payment-failed" element={<PaymentResult type="failed" />} />
       </Routes>
     </Router>
   );

@@ -4,12 +4,23 @@ import { useNavigate, useParams } from "react-router-dom";
 import projectAccessRequestService from "../../../services/projectAccessRequestService";
 import projectCommentService from "../../../services/projectCommentService";
 import projectService from "../../../services/projectService";
+import paymentService from "../../../services/paymentService";
 import ProjectAccessRequestModal from "./ProjectAccessRequestModal";
 import ProjectCommentSection from "./ProjectCommentSection";
 import ProjectOverviewSection from "./ProjectOverviewSection";
 import ProjectSidebar from "./ProjectSidebar";
-import ProjectUserReviewSection from "./ProjectUserReviewSection";
 import TeacherEvaluationSection from "./TeacherEvaluationSection";
+
+const normalizeUrl = (url) => {
+  if (!url || typeof url !== "string") return url;
+
+  const trimmedUrl = url.trim();
+  const duplicateStartIndex = trimmedUrl.indexOf("http", 1);
+
+  if (duplicateStartIndex === -1) return trimmedUrl;
+
+  return trimmedUrl.slice(0, duplicateStartIndex);
+};
 
 export default function ProjectDetail() {
   const { id } = useParams();
@@ -31,6 +42,7 @@ export default function ProjectDetail() {
   const [commentContent, setCommentContent] = useState("");
   const [commentLoading, setCommentLoading] = useState(true);
   const [submittingComment, setSubmittingComment] = useState(false);
+  const [creatingPaymentLink, setCreatingPaymentLink] = useState(false);
 
   const currentUser = JSON.parse(localStorage.getItem("user") || "null");
 
@@ -86,7 +98,9 @@ export default function ProjectDetail() {
         }
 
         setTeacherEvaluations(
-          Array.isArray(evaluationsResponse?.data) ? evaluationsResponse.data : [],
+          Array.isArray(evaluationsResponse?.data)
+            ? evaluationsResponse.data
+            : [],
         );
       } catch (err) {
         console.error("Lỗi tải chi tiết project:", err);
@@ -141,14 +155,18 @@ export default function ProjectDetail() {
   );
 
   const courseName = project?.courseName || project?.course_name || "Đồ án";
-  const studentName = project?.studentName || project?.student_name || "Sinh viên";
-  const sourceCodeUrl = project?.sourceCodeUrl || project?.source_code_url;
-  const demoUrl = project?.demoUrl || project?.demo_url;
+  const studentName =
+    project?.studentName || project?.student_name || "Sinh viên";
+  const sourceCodeUrl = normalizeUrl(
+    project?.sourceCodeUrl || project?.source_code_url,
+  );
+  const demoUrl = normalizeUrl(project?.demoUrl || project?.demo_url);
   const priceType = project?.priceType || project?.price_type;
   const priceDownload = project?.priceDownload ?? project?.price_download ?? 0;
   const adminNote = project?.adminNote || project?.admin_note;
   const viewCount = project?.viewCount ?? project?.view_count ?? 0;
   const downloadCount = project?.downloadCount ?? project?.download_count ?? 0;
+  const isPurchased = project?.isPurchased ?? project?.is_purchased ?? false;
 
   const isPaidProject = priceType === "PAID";
 
@@ -160,6 +178,47 @@ export default function ProjectDetail() {
 
     setRequestReason("");
     setOpenRequestModal(true);
+  };
+
+  const handleBuyProject = async () => {
+    if (!project?.id) return;
+
+    if (isPurchased) {
+      window.alert("Bạn đã mua source code của đồ án này.");
+      return;
+    }
+
+    if (!currentUser) {
+      window.alert("Vui lòng đăng nhập để mua source code.");
+      return;
+    }
+
+    try {
+      setCreatingPaymentLink(true);
+      const response = await paymentService.createProjectPaymentLink(
+        project.id,
+      );
+      const paymentLink = response?.data || response;
+      const checkoutUrl = paymentLink?.checkoutUrl || paymentLink?.checkout_url;
+
+      if (!checkoutUrl) {
+        throw new Error("Không nhận được link thanh toán từ hệ thống.");
+      }
+
+      window.location.href = checkoutUrl;
+    } catch (error) {
+      console.error("Lỗi tạo link thanh toán:", error);
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Không thể tạo link thanh toán. Vui lòng thử lại.";
+
+      navigate(
+        `/payment-failed?projectId=${project.id}&message=${encodeURIComponent(message)}`,
+      );
+    } finally {
+      setCreatingPaymentLink(false);
+    }
   };
 
   const handleCloseRequestModal = () => {
@@ -209,16 +268,21 @@ export default function ProjectDetail() {
     try {
       setSubmittingComment(true);
 
-      const response = await projectCommentService.addCommentToProject(project.id, {
-        content: commentContent.trim(),
-      });
+      const response = await projectCommentService.addCommentToProject(
+        project.id,
+        {
+          content: commentContent.trim(),
+        },
+      );
 
       setComments((prev) => [response, ...prev]);
       setCommentContent("");
       window.alert("Bình luận thành công.");
     } catch (error) {
       console.error("Lỗi thêm bình luận:", error);
-      window.alert(error?.response?.data?.message || "Không thể gửi bình luận.");
+      window.alert(
+        error?.response?.data?.message || "Không thể gửi bình luận.",
+      );
     } finally {
       setSubmittingComment(false);
     }
@@ -324,8 +388,6 @@ export default function ProjectDetail() {
                 handleSubmitComment={handleSubmitComment}
                 formatCommentTime={formatCommentTime}
               />
-
-              <ProjectUserReviewSection />
             </div>
 
             <div className="space-y-6 xl:col-span-4">
@@ -341,9 +403,14 @@ export default function ProjectDetail() {
                 projectStatus={project.status}
                 adminNote={adminNote}
                 onOpenRequestModal={handleOpenRequestModal}
+                onBuyProject={handleBuyProject}
+                buyingProject={creatingPaymentLink}
+                isPurchased={isPurchased}
               />
 
-              <TeacherEvaluationSection evaluations={normalizedTeacherEvaluations} />
+              <TeacherEvaluationSection
+                evaluations={normalizedTeacherEvaluations}
+              />
             </div>
           </div>
         </div>

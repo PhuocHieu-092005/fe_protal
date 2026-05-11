@@ -2,10 +2,12 @@ import React from "react";
 import {
   BadgeDollarSign,
   BookOpen,
+  CheckCircle2,
   ExternalLink,
   Handshake,
   Layers3,
   Lock,
+  ShoppingCart,
   Send,
 } from "lucide-react";
 
@@ -21,6 +23,9 @@ export default function ProjectSidebar({
   projectStatus,
   adminNote,
   onOpenRequestModal,
+  onBuyProject,
+  buyingProject,
+  isPurchased,
 }) {
   return (
     <>
@@ -94,7 +99,7 @@ export default function ProjectSidebar({
         <div className="space-y-4">
           {sourceCodeUrl && (
             <>
-              {isPaidProject ? (
+              {isPaidProject && !isPurchased ? (
                 <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
                   <div className="flex items-center justify-between">
                     <span className="flex items-center gap-2 text-base font-bold text-slate-900">
@@ -107,8 +112,18 @@ export default function ProjectSidebar({
                   </div>
 
                   <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                    Source code đang bị khóa cho tới khi hệ thống thanh toán được tích hợp.
+                    Source code đang bị khóa. Bấm mua để tạo link thanh toán payOS và mở khóa sau khi thanh toán thành công.
                   </p>
+
+                  <button
+                    type="button"
+                    onClick={onBuyProject}
+                    disabled={buyingProject}
+                    className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-orange-600 px-5 py-3 text-sm font-black text-white shadow-sm transition-all hover:bg-orange-700 disabled:cursor-not-allowed disabled:bg-orange-300"
+                  >
+                    <ShoppingCart size={17} />
+                    {buyingProject ? "Đang tạo link..." : "Mua source code"}
+                  </button>
                 </div>
               ) : (
                 <a
@@ -123,10 +138,17 @@ export default function ProjectSidebar({
                       Xem mã nguồn của đồ án
                     </p>
                   </div>
-                  <ExternalLink
-                    className="text-slate-400 transition-all group-hover:text-blue-600"
-                    size={18}
-                  />
+                  {isPaidProject ? (
+                    <CheckCircle2
+                      className="text-emerald-500 transition-all group-hover:text-emerald-600"
+                      size={20}
+                    />
+                  ) : (
+                    <ExternalLink
+                      className="text-slate-400 transition-all group-hover:text-blue-600"
+                      size={18}
+                    />
+                  )}
                 </a>
               )}
             </>
