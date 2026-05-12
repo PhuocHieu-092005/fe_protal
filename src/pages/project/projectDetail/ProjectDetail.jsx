@@ -37,6 +37,8 @@ export default function ProjectDetail() {
   const [openRequestModal, setOpenRequestModal] = useState(false);
   const [requestReason, setRequestReason] = useState("");
   const [requestLoading, setRequestLoading] = useState(false);
+  const [existingAccessRequest, setExistingAccessRequest] = useState(null);
+  const [checkingAccessRequest, setCheckingAccessRequest] = useState(false);
 
   const [comments, setComments] = useState([]);
   const [commentContent, setCommentContent] = useState("");
@@ -52,6 +54,39 @@ export default function ProjectDetail() {
       setIsFavorited(ok);
     } catch (err) {
       console.log("Lỗi kiểm tra yêu thích:", err?.data || err);
+    }
+  };
+
+  const fetchMyAccessRequestForProject = async () => {
+    if (currentUser?.role !== "COMPANY" || !id) return;
+
+    try {
+      setCheckingAccessRequest(true);
+
+      const response =
+        await projectAccessRequestService.getMyProjectAccessRequests(0, 100);
+
+      const rawData = response?.data;
+
+      const requestList = Array.isArray(rawData)
+        ? rawData
+        : Array.isArray(rawData?.content)
+          ? rawData.content
+          : [];
+
+      const foundRequest = requestList.find((item) => {
+        const requestProjectId = item.project_id || item.projectId;
+        return Number(requestProjectId) === Number(id);
+      });
+
+      setExistingAccessRequest(foundRequest || null);
+    } catch (error) {
+      console.error(
+        "Lỗi kiểm tra yêu cầu hợp tác đã gửi:",
+        error?.response?.data || error,
+      );
+    } finally {
+      setCheckingAccessRequest(false);
     }
   };
 
@@ -110,6 +145,10 @@ export default function ProjectDetail() {
     };
 
     fetchDetail();
+  }, [id]);
+
+  useEffect(() => {
+    fetchMyAccessRequestForProject();
   }, [id]);
 
   useEffect(() => {
@@ -173,6 +212,15 @@ export default function ProjectDetail() {
   const handleOpenRequestModal = () => {
     if (currentUser?.role !== "COMPANY") {
       window.alert("Chỉ tài khoản doanh nghiệp mới được gửi yêu cầu hợp tác.");
+      return;
+    }
+
+    if (existingAccessRequest) {
+      window.alert(
+        `Bạn đã gửi yêu cầu hợp tác cho project này rồi. Trạng thái hiện tại: ${
+          existingAccessRequest.status || "PENDING"
+        }`,
+      );
       return;
     }
 
@@ -245,13 +293,23 @@ export default function ProjectDetail() {
       const response =
         await projectAccessRequestService.createProjectAccessRequest(payload);
 
+      setExistingAccessRequest(
+        response?.data || {
+          project_id: Number(project.id),
+          status: "PENDING",
+        },
+      );
+
       window.alert(response?.message || "Đã gửi yêu cầu hợp tác thành công.");
       handleCloseRequestModal();
     } catch (error) {
       console.error("Lỗi gửi yêu cầu hợp tác:", error);
+
       window.alert(
         error?.response?.data?.message || "Không thể gửi yêu cầu hợp tác.",
       );
+
+      await fetchMyAccessRequestForProject();
     } finally {
       setRequestLoading(false);
     }
@@ -403,6 +461,8 @@ export default function ProjectDetail() {
                 projectStatus={project.status}
                 adminNote={adminNote}
                 onOpenRequestModal={handleOpenRequestModal}
+                existingAccessRequest={existingAccessRequest}
+                checkingAccessRequest={checkingAccessRequest}
                 onBuyProject={handleBuyProject}
                 buyingProject={creatingPaymentLink}
                 isPurchased={isPurchased}
