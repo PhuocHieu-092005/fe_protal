@@ -56,7 +56,6 @@ export default function ApplicationList() {
       {viewingCv && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-white w-full max-w-4xl h-[85vh] rounded-2xl overflow-hidden shadow-2xl flex flex-col">
-    
             <div className="p-5 border-b flex justify-between items-center">
               <h2 className="text-xl font-bold">Chi tiết: {viewingCv.title}</h2>
               <button
@@ -67,7 +66,6 @@ export default function ApplicationList() {
               </button>
             </div>
 
- 
             <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
               {viewingCv.type === "FORM" ? (
                 (() => {
