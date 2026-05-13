@@ -1,21 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+
 import Footer from "../../../layouts/Footer";
-import ApplyJobModal from "./ApplyJobModal";
 import jobService from "../../../services/jobService";
-import Loading from "./../../../components/common/Loading";
 import cvService from "../../../services/cvService";
+
 export default function JobDetail() {
   const { id } = useParams();
+
   const [job, setJob] = useState(null);
   const [loadingFav, setLoadingFav] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
   const [cvs, setCvs] = useState([]);
   const [selectedCv, setSelectedCv] = useState("");
   const [isApplyOpen, setIsApplyOpen] = useState(false);
+  const [showLoginNotice, setShowLoginNotice] = useState(false);
+
+  const isLoggedIn = () => {
+    const user = localStorage.getItem("user");
+    return !!user;
+  };
+
+  const requireLogin = () => {
+    setShowLoginNotice(true);
+  };
+
   const fetchCv = async () => {
     const token = localStorage.getItem("user");
     if (!token) return;
+
     try {
       const response = await cvService.getMyCvs();
       setCvs(response.data);
@@ -23,11 +36,13 @@ export default function JobDetail() {
       console.error("lỗi, ", err);
     }
   };
+
   const handleApplyJob = async () => {
     if (!selectedCv) {
-      alert("Chưa chọn cv");
+      alert("Chưa chọn CV");
       return;
     }
+
     try {
       await jobService.applyJob(id, selectedCv);
       alert("Ứng tuyển thành công");
@@ -41,6 +56,7 @@ export default function JobDetail() {
       console.log("Toàn bộ lỗi:", err.response?.data);
     }
   };
+
   useEffect(() => {
     const fetchJobDetail = async () => {
       try {
@@ -51,44 +67,92 @@ export default function JobDetail() {
         console.error("lỗi: ", err);
       }
     };
+
     fetchJobDetail();
     fetchCv();
   }, [id]);
+
   const formatDate = (dateString) => {
     if (!dateString) return "---";
     return new Date(dateString).toLocaleDateString("vi-VN");
   };
+
   const handleToggleFavorite = async () => {
+    if (!isLoggedIn()) {
+      requireLogin();
+      return;
+    }
+
     try {
       setLoadingFav(true);
       const response = await jobService.toggleFavorite(id, "ghi chú");
+
       if (response.data.data) {
         setIsFavorited(true);
-        alert("đã lưu bài viết");
+        alert("Đã lưu tin tuyển dụng");
       } else {
         setIsFavorited(false);
-        alert("đã xóa lưu bài viết");
+        alert("Đã bỏ lưu tin tuyển dụng");
       }
     } catch (err) {
       console.error("lỗi ", err);
+      alert("Có lỗi xảy ra, vui lòng thử lại!");
     } finally {
       setLoadingFav(false);
     }
   };
+
   if (!job)
     return (
       <div className="min-h-screen flex items-center justify-center">
         Không tìm thấy công việc!
       </div>
     );
+
   return (
+    // mở ra modal khi chưa login
     <>
+      {showLoginNotice && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="w-full max-w-md rounded-3xl bg-white p-7 shadow-2xl">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-50">
+              <span className="text-3xl">🔐</span>
+            </div>
+
+            <h2 className="mt-5 text-center text-2xl font-bold text-slate-900">
+              Cần đăng nhập
+            </h2>
+
+            <p className="mt-3 text-center text-sm leading-6 text-slate-500">
+              Bạn cần đăng nhập để ứng tuyển hoặc lưu tin tuyển dụng này.
+            </p>
+
+            <div className="mt-7 flex gap-3">
+              <button
+                onClick={() => setShowLoginNotice(false)}
+                className="flex-1 rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                Để sau
+              </button>
+
+              <button
+                onClick={() => setShowLoginNotice(false)}
+                className="flex-1 rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+              >
+                Tôi đã hiểu
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {isApplyOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl transform transition-all">
             <h2 className="text-2xl font-bold text-slate-900">
               Ứng tuyển ngay
             </h2>
+
             <p className="mt-2 text-slate-500">
               Vị trí:{" "}
               <span className="font-semibold text-slate-900">{job.title}</span>
@@ -98,13 +162,15 @@ export default function JobDetail() {
               <label className="text-sm font-medium text-slate-700">
                 Chọn CV của bạn
               </label>
+
               {cvs.length > 0 ? (
                 <select
                   className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm outline-none focus:border-slate-950 transition-all"
                   value={selectedCv}
                   onChange={(e) => setSelectedCv(e.target.value)}
                 >
-                  <option> Chọn cv</option>
+                  <option value="">Chọn CV</option>
+
                   {cvs.map((cv) => (
                     <option key={cv.id} value={cv.id}>
                       {cv.name || `CV #${cv.id}`}
@@ -114,6 +180,7 @@ export default function JobDetail() {
               ) : (
                 <div className="mt-2 rounded-2xl border border-dashed border-slate-300 p-4 text-center">
                   <p className="text-sm text-slate-500">Bạn chưa có CV nào.</p>
+
                   <Link
                     to="/template/edit"
                     className="text-sm font-semibold text-blue-600 hover:underline"
@@ -131,6 +198,7 @@ export default function JobDetail() {
               >
                 Hủy bỏ
               </button>
+
               <button
                 onClick={handleApplyJob}
                 className="flex-1 rounded-2xl bg-slate-950 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:bg-slate-300"
@@ -174,6 +242,7 @@ export default function JobDetail() {
                         <p className="text-sm text-slate-500">
                           {job.companyName}
                         </p>
+
                         <h1 className="mt-1 text-2xl font-bold text-slate-900 md:text-3xl">
                           {job.title}
                         </h1>
@@ -182,10 +251,10 @@ export default function JobDetail() {
                           <span className="rounded-full bg-slate-100 px-3 py-1.5">
                             {job.workLocation}
                           </span>
+
                           <span className="rounded-full bg-slate-100 px-3 py-1.5">
                             {job.jobType}
                           </span>
-                          
                         </div>
                       </div>
                     </div>
@@ -196,6 +265,7 @@ export default function JobDetail() {
                           ? `${job.salary.toLocaleString()} VNĐ`
                           : "Thỏa thuận"}
                       </p>
+
                       <p className="mt-1 text-sm text-slate-500">
                         Đăng {formatDate(job.startDay)}
                       </p>
@@ -230,8 +300,11 @@ export default function JobDetail() {
                   <h2 className="text-xl font-bold text-slate-900">
                     Mô tả công việc
                   </h2>
+
                   <p className="mt-4 leading-7 text-slate-600">
-                    {job.description!="undefined" ?job.description:"Chưa có mô tả công việc"}
+                    {job.description !== "undefined"
+                      ? job.description
+                      : "Chưa có mô tả công việc"}
                   </p>
                 </div>
 
@@ -239,8 +312,11 @@ export default function JobDetail() {
                   <h2 className="text-xl font-bold text-slate-900">
                     Yêu cầu ứng viên
                   </h2>
+
                   <div className="mt-4 leading-7 text-slate-600 whitespace-pre-line">
-                    {job.requirements!="undefined"?job.requirements: "Trao đổi trực tiếp khi phỏng vấn"}
+                    {job.requirements !== "undefined"
+                      ? job.requirements
+                      : "Trao đổi trực tiếp khi phỏng vấn"}
                   </div>
                 </div>
 
@@ -248,6 +324,7 @@ export default function JobDetail() {
                   <h2 className="text-xl font-bold text-slate-900">
                     Kỹ năng chuyên môn
                   </h2>
+
                   <div className="mt-4 flex flex-wrap gap-3">
                     {job.tags?.map((skill, index) => (
                       <span
@@ -257,11 +334,8 @@ export default function JobDetail() {
                         {skill}
                       </span>
                     ))}
-                    {
-                      job.tags.length==0 &&(
-                        <span> Chưa có </span>
-                      )
-                    }
+
+                    {job.tags?.length === 0 && <span>Chưa có</span>}
                   </div>
                 </div>
 
@@ -270,6 +344,7 @@ export default function JobDetail() {
                     <h2 className="text-xl font-bold text-slate-900">
                       Việc làm liên quan
                     </h2>
+
                     <Link
                       to="/job"
                       className="text-sm font-medium text-slate-600 hover:text-slate-900"
@@ -277,31 +352,13 @@ export default function JobDetail() {
                       Xem tất cả
                     </Link>
                   </div>
-
-                  {/* <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
-                  {jobData.relatedJobs.map((job) => (
-                    <Link
-                      key={job.id}
-                      to={`/job/${job.id}`}
-                      className="rounded-2xl border border-slate-200 p-4 transition hover:border-slate-900 hover:shadow-sm"
-                    >
-                      <p className="text-sm text-slate-500">{job.company}</p>
-                      <h3 className="mt-1 text-lg font-semibold text-slate-900">
-                        {job.title}
-                      </h3>
-                      <p className="mt-2 text-sm text-slate-600">
-                        {job.location}
-                      </p>
-                    </Link>
-                  ))}
-                </div> */}
                 </div>
               </div>
 
-              {/* Sidebar bên phải */}
               <div className="space-y-6">
                 <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                   <p className="text-sm text-slate-500">Mức lương</p>
+
                   <p className="mt-2 text-2xl font-bold text-slate-900">
                     {job.salary
                       ? `${job.salary.toLocaleString()} VNĐ`
@@ -310,7 +367,14 @@ export default function JobDetail() {
 
                   <div className="mt-6 space-y-3">
                     <button
-                      onClick={() => setIsApplyOpen(true)}
+                      onClick={() => {
+                        if (!isLoggedIn()) {
+                          requireLogin();
+                          return;
+                        }
+
+                        setIsApplyOpen(true);
+                      }}
                       className="w-full rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
                     >
                       Ứng tuyển ngay
@@ -322,15 +386,21 @@ export default function JobDetail() {
                       className={`w-full rounded-2xl border px-4 py-3 text-sm font-medium transition ${
                         isFavorited
                           ? "bg-rose-50 border-rose-500 text-rose-600 shadow-sm"
-                          : "border-slate-200 text-slate-700 hover:border-slate-900 hover:text-slate-900" // Style khi chưa lưu
+                          : "border-slate-200 text-slate-700 hover:border-slate-900 hover:text-slate-900"
                       }`}
                     >
-                      Lưu tin tuyển dụng
+                      {loadingFav
+                        ? "Đang xử lý..."
+                        : isFavorited
+                          ? "Đã lưu tin tuyển dụng"
+                          : "Lưu tin tuyển dụng"}
                     </button>
+
                     {job.jdFileUrl && (
                       <a
                         href={job.jdFileUrl}
                         target="_blank"
+                        rel="noreferrer"
                         className="block w-full text-center rounded-2xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
                       >
                         Tải File JD
@@ -345,6 +415,7 @@ export default function JobDetail() {
                         {job.workLocation}
                       </span>
                     </div>
+
                     <div className="flex items-center justify-between">
                       <span>Loại hình</span>
                       <span className="font-medium text-slate-900">
@@ -355,7 +426,7 @@ export default function JobDetail() {
                     <div className="flex items-center justify-between">
                       <span>Hạn nộp hồ sơ</span>
                       <span className="font-medium text-slate-900">
-                        {job.endDay}
+                        {formatDate(job.endDay)}
                       </span>
                     </div>
                   </div>
@@ -365,6 +436,7 @@ export default function JobDetail() {
                   <h2 className="text-lg font-bold text-slate-900">
                     Về công ty
                   </h2>
+
                   <p className="mt-4 text-sm leading-7 text-slate-600">
                     {job.companyName}
                   </p>
@@ -375,13 +447,6 @@ export default function JobDetail() {
         </main>
 
         <Footer />
-
-        {/* <ApplyJobModal
-        isOpen={isApplyOpen}
-        onClose={() => setIsApplyOpen(false)}
-        jobTitle={job.title}
-        company={jobData.company}
-      /> */}
       </div>
     </>
   );

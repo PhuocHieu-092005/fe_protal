@@ -93,20 +93,6 @@ export default function CompanyProfileSidebar({ activeTab, setActiveTab }) {
             <ul className="ml-9 mt-1 flex flex-col gap-1">
               <li>
                 <button
-                  onClick={() => setActiveTab("posted-jobs")}
-                  className={`flex w-full items-center gap-3 rounded-md p-2 text-sm transition-all ${
-                    activeTab === "posted-jobs"
-                      ? "bg-blue-50 font-semibold text-blue-600"
-                      : "text-gray-600 hover:bg-gray-50"
-                  }`}
-                >
-                  <Briefcase size={16} />
-                  Tin tuyển dụng đã đăng
-                </button>
-              </li>
-
-              <li>
-                <button
                   onClick={() => setActiveTab("applicants")}
                   className={`flex w-full items-center gap-3 rounded-md p-2 text-sm transition-all ${
                     activeTab === "applicants"
