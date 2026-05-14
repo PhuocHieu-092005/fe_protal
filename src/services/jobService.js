@@ -17,6 +17,9 @@ const jobService = {
     const response = await api.get(`/companies/jobs/${jobId}/applications`);
     return response.data;
   },
+  getApplicationByCompany: async()=>{
+    return (await api.get('/companies/jobs/applications')).data;
+  },
   getApplicatonsApproved: async () => {
     const response = await api.get(`/companies/jobs/applications/approved`);
     return response.data;

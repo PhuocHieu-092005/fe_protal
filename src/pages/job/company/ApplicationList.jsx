@@ -109,11 +109,14 @@ export default function ApplicationList() {
                   );
                 })()
               ) : (
+                <>
+                {console.log("duong dan file pdf",viewingCv.cv_file.file_path)}
                 <iframe
-                  src={viewingCv.cv_file}
+                  src={`${viewingCv.cv_file.file_path}#toolbar=0`}
                   className="w-full h-full border-none rounded-lg"
                   title="CV Preview"
                 />
+                </>
               )}
             </div>
           </div>

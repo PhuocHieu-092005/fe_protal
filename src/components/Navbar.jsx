@@ -186,12 +186,14 @@ export default function Navbar() {
         {/* AUTH SECTION */}
         <div className="flex-1 flex justify-end items-center gap-3">
           <div className="relative">
-            <button
-              className="relative p-1.5 text-gray-500 hover:bg-gray-100 rounded-full transition-colors"
-              onClick={handleBellClick}
-            >
-              Thông báo ({unreadCount})
-            </button>
+            {user && (
+              <button
+                className="relative p-1.5 text-gray-500 hover:bg-gray-100 rounded-full transition-colors"
+                onClick={handleBellClick}
+              >
+                Thông báo ({unreadCount})
+              </button>
+            )}
             {isShow && (
               <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden">
                 <div className="p-3 border-b bg-gray-50 font-bold text-sm text-gray-700">

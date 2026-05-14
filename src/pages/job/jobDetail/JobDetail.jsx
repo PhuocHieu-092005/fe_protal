@@ -7,7 +7,6 @@ import cvService from "../../../services/cvService";
 
 export default function JobDetail() {
   const { id } = useParams();
-
   const [job, setJob] = useState(null);
   const [loadingFav, setLoadingFav] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
@@ -15,12 +14,14 @@ export default function JobDetail() {
   const [selectedCv, setSelectedCv] = useState("");
   const [isApplyOpen, setIsApplyOpen] = useState(false);
   const [showLoginNotice, setShowLoginNotice] = useState(false);
-
+  const [user, setUser] = useState(null);
   const isLoggedIn = () => {
-    const user = localStorage.getItem("user");
     return !!user;
   };
-
+  const checkLogin=()=>{
+     const user = localStorage.getItem("user");
+    if (user) setUser(JSON.parse(user));
+  }
   const requireLogin = () => {
     setShowLoginNotice(true);
   };
@@ -59,6 +60,7 @@ export default function JobDetail() {
 
   useEffect(() => {
     const fetchJobDetail = async () => {
+      checkLogin();
       try {
         const response = await jobService.getJobDetail(id);
         setJob(response.data);
@@ -364,47 +366,53 @@ export default function JobDetail() {
                       ? `${job.salary.toLocaleString()} VNĐ`
                       : "Thỏa thuận"}
                   </p>
-
+                  {console.log("role", user)}
                   <div className="mt-6 space-y-3">
-                    <button
-                      onClick={() => {
-                        if (!isLoggedIn()) {
-                          requireLogin();
-                          return;
-                        }
+                    {user&& user.role==="STUDENT" && (
+                      <>
+                        <button
+                          onClick={() => {
+                            if (!isLoggedIn()) {
+                              requireLogin();
+                              return;
+                            }
 
-                        setIsApplyOpen(true);
-                      }}
-                      className="w-full rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
-                    >
-                      Ứng tuyển ngay
-                    </button>
+                            setIsApplyOpen(true);
+                          }}
+                          className="w-full rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                        >
+                          Ứng tuyển ngay
+                        </button>
 
-                    <button
-                      onClick={handleToggleFavorite}
-                      disabled={loadingFav}
-                      className={`w-full rounded-2xl border px-4 py-3 text-sm font-medium transition ${
-                        isFavorited
-                          ? "bg-rose-50 border-rose-500 text-rose-600 shadow-sm"
-                          : "border-slate-200 text-slate-700 hover:border-slate-900 hover:text-slate-900"
-                      }`}
-                    >
-                      {loadingFav
-                        ? "Đang xử lý..."
-                        : isFavorited
-                          ? "Đã lưu tin tuyển dụng"
-                          : "Lưu tin tuyển dụng"}
-                    </button>
+                        <button
+                          onClick={handleToggleFavorite}
+                          disabled={loadingFav}
+                          className={`w-full rounded-2xl border px-4 py-3 text-sm font-medium transition ${
+                            isFavorited
+                              ? "bg-rose-50 border-rose-500 text-rose-600 shadow-sm"
+                              : "border-slate-200 text-slate-700 hover:border-slate-900 hover:text-slate-900"
+                          }`}
+                        >
+                          {loadingFav
+                            ? "Đang xử lý..."
+                            : isFavorited
+                              ? "Đã lưu tin tuyển dụng"
+                              : "Lưu tin tuyển dụng"}
+                        </button>
+                      </>
+                    )}
 
                     {job.jdFileUrl && (
-                      <a
-                        href={job.jdFileUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="block w-full text-center rounded-2xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
-                      >
-                        Tải File JD
-                      </a>
+                      <>
+                        <a
+                          href={job.jdFileUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="block w-full text-center rounded-2xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                        >
+                          Tải File JD
+                        </a>
+                      </>
                     )}
                   </div>
 
