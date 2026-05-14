@@ -183,18 +183,21 @@ export default function ProjectSidebar({
         </h3>
 
         <div className="flex flex-wrap gap-3">
-          {technologies?.length > 0 ? (
-            technologies.map((tech) => (
-              <span
-                key={tech.id}
-                className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-2 text-sm font-bold text-slate-600"
-              >
-                {tech.name}
-              </span>
-            ))
-          ) : (
-            <span className="text-sm text-slate-400">Chưa có công nghệ</span>
-          )}
+          {technologies?.map((tech) => (
+            <span
+              key={tech.id}
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-100 bg-slate-50 px-4 py-2 text-sm font-bold text-slate-600"
+            >
+              {tech.iconUrl && (
+                <img
+                  src={tech.iconUrl}
+                  alt=""
+                  className="h-4 w-4 rounded object-contain"
+                />
+              )}
+              {tech.name}
+            </span>
+          ))}
         </div>
       </section>
 

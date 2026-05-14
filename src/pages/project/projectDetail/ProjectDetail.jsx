@@ -45,8 +45,14 @@ export default function ProjectDetail() {
   const [creatingPaymentLink, setCreatingPaymentLink] = useState(false);
 
   const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+  const accessToken = localStorage.getItem("accessToken");
 
   const checkFav = async () => {
+    if (!currentUser || !accessToken) {
+      setIsFavorited(false);
+      return;
+    }
+
     try {
       const ok = await projectService.isFavorited(id);
       setIsFavorited(ok);
@@ -56,6 +62,11 @@ export default function ProjectDetail() {
   };
 
   const handleToggleFavorite = async () => {
+    if (!currentUser || !accessToken) {
+      window.alert("Vui lòng đăng nhập để lưu đồ án.");
+      return;
+    }
+
     setLoadingFav(true);
 
     try {
@@ -138,6 +149,18 @@ export default function ProjectDetail() {
       id: img.id,
       url: img.imageUrl || img.image_url,
     }));
+  }, [project]);
+
+  const normalizedTechnologies = useMemo(() => {
+    if (!Array.isArray(project?.technologies)) return [];
+
+    return project.technologies
+      .filter((tech) => tech?.name)
+      .map((tech) => ({
+        id: tech.id || tech.name,
+        name: tech.name,
+        iconUrl: tech.iconUrl || tech.icon_url,
+      }));
   }, [project]);
 
   const normalizedTeacherEvaluations = useMemo(
@@ -260,6 +283,11 @@ export default function ProjectDetail() {
   const handleSubmitComment = async () => {
     if (!project?.id) return;
 
+    if (!currentUser || !accessToken) {
+      window.alert("Vui lòng đăng nhập để gửi bình luận.");
+      return;
+    }
+
     if (!commentContent.trim()) {
       window.alert("Vui lòng nhập nội dung bình luận.");
       return;
@@ -281,7 +309,9 @@ export default function ProjectDetail() {
     } catch (error) {
       console.error("Lỗi thêm bình luận:", error);
       window.alert(
-        error?.response?.data?.message || "Không thể gửi bình luận.",
+        error?.response?.data?.data ||
+          error?.response?.data?.message ||
+          "Không thể gửi bình luận.",
       );
     } finally {
       setSubmittingComment(false);
@@ -397,7 +427,7 @@ export default function ProjectDetail() {
                 priceDownload={priceDownload}
                 sourceCodeUrl={sourceCodeUrl}
                 demoUrl={demoUrl}
-                technologies={project.technologies}
+                technologies={normalizedTechnologies}
                 studentName={studentName}
                 projectId={project.id}
                 projectStatus={project.status}
