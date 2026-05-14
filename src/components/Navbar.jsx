@@ -12,10 +12,11 @@ import {
   Briefcase,
   FileSignature,
   ShieldHalf,
-  Settings,
   LogOut,
+  Bell,
 } from "lucide-react";
 import { connectWebSocket, disconnectWebSocket } from "../services/wsService";
+
 export default function Navbar() {
   const [authMode, setAuthMode] = useState(null);
   const [scrolled, setScrolled] = useState(false);
@@ -51,17 +52,20 @@ export default function Navbar() {
       if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
     };
   }, []);
+
   useEffect(() => {
     if (user) {
       // eslint-disable-next-line react-hooks/immutability
       fetchInitialData();
       console.log("giá trị của userId là: ", user);
       console.log("an", user);
+
       connectWebSocket(user.email, (message) => {
         console.log("Tín hiệu mới", message);
         alert("Bạn vừa có thông báo mới!");
         fetchInitialData();
       });
+
       return () => disconnectWebSocket();
     } else {
       setNotifications([]);
@@ -78,8 +82,10 @@ export default function Navbar() {
       console.error("Lỗi khi lần đầu load thông báo", err);
     }
   };
+
   const handleBellClick = async () => {
     setIsShow(!isShow);
+
     try {
       if (user) {
         const res = await notificationService.getNotifications();
@@ -91,21 +97,26 @@ export default function Navbar() {
       console.error("Lỗi khi cập nhật thông báo", err);
     }
   };
+
   const clickDetailNotification = async (notif) => {
     try {
       setSelectedNotif(notif);
       setShowDetailModal(true);
+
       if (!notif.read) {
         await notificationService.readNotification(notif.id);
+
         setNotifications((prev) =>
           prev.map((n) => (n.id === notif.id ? { ...n, read: true } : n)),
         );
+
         setUnreadCount(unreadCount - 1);
       }
     } catch (err) {
       console.error("đã xảy ra lỗi", err);
     }
   };
+
   const handleLogout = () => {
     logout();
     setMenuOpen(false);
@@ -139,13 +150,15 @@ export default function Navbar() {
             Cổng thông tin việc làm
           </Link>
         </div>
-        {/* MENU CHÍNH (DESKTOP) */}
+
+        {/* MENU CHÍNH DESKTOP */}
         <ul className="hidden lg:flex menu menu-horizontal px-1 gap-1">
           <li>
             <Link to="/" className={menuLinkStyles}>
               Trang chủ
             </Link>
           </li>
+
           <li>
             <Link to="/job" className={menuLinkStyles}>
               Công việc
@@ -186,39 +199,81 @@ export default function Navbar() {
         {/* AUTH SECTION */}
         <div className="flex-1 flex justify-end items-center gap-3">
           <div className="relative">
+       
+
             {user && (
               <button
-                className="relative p-1.5 text-gray-500 hover:bg-gray-100 rounded-full transition-colors"
+                type="button"
                 onClick={handleBellClick}
+                className={`relative flex h-11 w-11 items-center justify-center rounded-full border transition-all ${
+                  isShow
+                    ? "border-slate-950 bg-slate-950 text-white"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-950 hover:text-slate-950"
+                }`}
               >
-                Thông báo ({unreadCount})
+                <Bell size={20} />
+
+                {unreadCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-[11px] font-bold text-white">
+                    {unreadCount}
+                  </span>
+                )}
               </button>
             )}
+
             {isShow && (
-              <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden">
-                <div className="p-3 border-b bg-gray-50 font-bold text-sm text-gray-700">
-                  Thông báo
+              <div className="absolute right-0 mt-3 w-80 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl z-50">
+                <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 px-4 py-3">
+                  <div>
+                    <p className="text-sm font-bold text-slate-900">
+                      Thông báo
+                    </p>
+                    <p className="mt-0.5 text-xs text-slate-500">
+                      {unreadCount > 0
+                        ? `Bạn có ${unreadCount} thông báo`
+                        : "Không có thông báo mới"}
+                    </p>
+                  </div>
+
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+                    <Bell size={18} />
+                  </div>
                 </div>
-                <div className="max-h-60 overflow-y-auto">
+
+                <div className="max-h-72 overflow-y-auto">
                   {notifications.length > 0 ? (
                     notifications.map((e) => (
                       <div
                         key={e.id}
-                        className="p-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer"
+                        className="cursor-pointer border-b border-slate-100 px-4 py-3 transition hover:bg-slate-50"
                         onClick={() => clickDetailNotification(e)}
                       >
-                        <p className="text-sm text-gray-800 font-medium">
-                          {e.type}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {e.title || "Bạn có thông báo mới"}
-                        </p>
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="text-sm font-bold text-slate-800">
+                              {e.type}
+                            </p>
+                            <p className="mt-1 line-clamp-2 text-xs text-slate-500">
+                              {e.title || "Bạn có thông báo mới"}
+                            </p>
+                          </div>
+
+                          {!e.read && (
+                            <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-blue-600" />
+                          )}
+                        </div>
                       </div>
                     ))
                   ) : (
-                    <p className="p-4 text-center text-sm text-gray-400">
-                      Không có thông báo nào
-                    </p>
+                    <div className="flex flex-col items-center justify-center px-4 py-8 text-center">
+                      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                        <Bell size={22} />
+                      </div>
+
+                      <p className="text-sm font-semibold text-slate-500">
+                        Không có thông báo nào
+                      </p>
+                    </div>
                   )}
                 </div>
               </div>
@@ -233,6 +288,7 @@ export default function Navbar() {
               >
                 Đăng nhập
               </button>
+
               <button
                 onClick={() => setAuthMode("signup")}
                 className="bg-zinc-900 text-zinc-50 text-sm font-medium px-6 py-2.5 rounded-full hover:bg-zinc-800 transition-all shadow-sm"
@@ -257,6 +313,7 @@ export default function Navbar() {
                 className="w-8 h-8 rounded-full object-cover"
                 alt="avatar"
               />
+
               <span className="font-semibold text-zinc-800 text-sm">
                 {user?.full_name}
               </span>
@@ -272,8 +329,11 @@ export default function Navbar() {
             className="fixed inset-0 bg-zinc-900/20 backdrop-blur-sm z-[60]"
             onClick={() => setMenuOpen(false)}
           />
+
           <div
-            className={`fixed top-0 right-0 w-72 h-full bg-white shadow-2xl z-[70] p-6 flex flex-col transform transition-transform duration-300 ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
+            className={`fixed top-0 right-0 w-72 h-full bg-white shadow-2xl z-[70] p-6 flex flex-col transform transition-transform duration-300 ${
+              menuOpen ? "translate-x-0" : "translate-x-full"
+            }`}
           >
             <div className="flex items-center gap-4 mb-8 pb-6 border-b border-zinc-100">
               <img
@@ -284,10 +344,12 @@ export default function Navbar() {
                 className="w-12 h-12 rounded-xl object-cover border border-zinc-100"
                 alt="avatar"
               />
+
               <div>
                 <span className="font-bold text-zinc-900 block leading-tight">
                   {user?.full_name}
                 </span>
+
                 <span className="text-[10px] text-blue-600 font-bold uppercase tracking-widest mt-1 block">
                   {user?.role === "COMPANY"
                     ? "Nhà tuyển dụng"
@@ -297,7 +359,6 @@ export default function Navbar() {
             </div>
 
             <div className="flex flex-col gap-1">
-              {/* 1. HỒ SƠ CÁ NHÂN */}
               <Link
                 to="/profile"
                 onClick={() => setMenuOpen(false)}
@@ -311,7 +372,6 @@ export default function Navbar() {
                 <span>Hồ sơ cá nhân</span>
               </Link>
 
-              {/* 2. DÀNH RIÊNG CHO SINH VIÊN */}
               {user?.role === "STUDENT" && (
                 <>
                   <Link
@@ -326,6 +386,7 @@ export default function Navbar() {
                     <FolderOpen size={20} />
                     <span>Đồ án của tôi</span>
                   </Link>
+
                   <Link
                     to="/my-wallet"
                     onClick={() => setMenuOpen(false)}
@@ -341,7 +402,6 @@ export default function Navbar() {
                 </>
               )}
 
-              {/* 3. DÀNH RIÊNG CHO CÔNG TY */}
               {user?.role === "COMPANY" && (
                 <Link
                   to="/job/manage"
@@ -357,7 +417,6 @@ export default function Navbar() {
                 </Link>
               )}
 
-              {/* 4. DÀNH RIÊNG CHO GIẢNG VIÊN */}
               {user?.role === "TEACHER" && (
                 <Link
                   to="/evaluations"
@@ -373,7 +432,6 @@ export default function Navbar() {
                 </Link>
               )}
 
-              {/* 5. DÀNH RIÊNG CHO ADMIN */}
               {user?.role === "ADMIN" && (
                 <Link
                   to="/admin/dashboard"
@@ -391,7 +449,6 @@ export default function Navbar() {
 
               <div className="my-4 border-t border-zinc-100"></div>
 
-              {/* ĐĂNG XUẤT */}
               <button
                 onClick={handleLogout}
                 className="px-4 py-3 hover:bg-red-50 rounded-lg text-left text-red-600 font-bold transition-all duration-200 flex items-center gap-3 w-full"
@@ -422,14 +479,16 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      {/* MODAL CHI TIẾT THÔNG BÁO */}
       {showDetailModal && selectedNotif && (
-        //inset 0 bằng với top:0,left:0,right....
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-slate-50">
               <span className="px-3 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold rounded-full uppercase tracking-wider">
                 {selectedNotif.type}
               </span>
+
               <button
                 onClick={() => setShowDetailModal(false)}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -454,6 +513,7 @@ export default function Navbar() {
               <h3 className="text-xl font-bold text-gray-900 mb-2">
                 {selectedNotif.title}
               </h3>
+
               <p className="text-sm text-gray-400 mb-4 flex items-center gap-2">
                 <svg
                   className="w-4 h-4"
@@ -470,6 +530,7 @@ export default function Navbar() {
                 </svg>
                 {new Date(selectedNotif.sentAt).toLocaleString("vi-VN")}
               </p>
+
               <div className="bg-slate-50 p-4 rounded-xl border border-gray-100">
                 <p className="text-gray-700 leading-relaxed">
                   {selectedNotif.content}
@@ -477,7 +538,6 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* Footer Modal */}
             <div className="p-4 bg-gray-50 flex justify-end">
               <button
                 onClick={() => setShowDetailModal(false)}

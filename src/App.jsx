@@ -25,13 +25,18 @@ import ApplicationList from "./pages/job/company/ApplicationList";
 import FavoriteJobs from "./pages/job/student/FavoriteJobs";
 import ApprovedApplicants from "./pages/job/company/ApplicationApproved";
 import PaymentResult from "./pages/payment/PaymentResult";
+
 import ApplicationByCompany from "./pages/job/company/ApplicationByCompany";
+
+import AIChatWidget from "./components/AIChatWidget";
+
 
 
 function App() {
   return (
     <Router>
       <Navbar />
+      <AIChatWidget />
       <Routes>
         <Route path="/" element={<MainLayout />} />
 
