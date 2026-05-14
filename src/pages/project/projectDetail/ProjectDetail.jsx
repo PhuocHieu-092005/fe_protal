@@ -272,6 +272,7 @@ export default function ProjectDetail() {
       handleCloseRequestModal();
     } catch (error) {
       console.error("Lỗi gửi yêu cầu hợp tác:", error);
+
       window.alert(
         error?.response?.data?.message || "Không thể gửi yêu cầu hợp tác.",
       );

@@ -9,11 +9,36 @@ const TemplateCategory = () => {
   const [title, setTitle] = useState(""); //title của CV khi upload
   const [uploading, setUploading] = useState(false); //trạng thái đang upload hay không
 
+  const [showLoginNotice, setShowLoginNotice] = useState(false);
+  const [loginNoticeType, setLoginNoticeType] = useState("");
+
+  const isLoggedIn = () => {
+    const user = localStorage.getItem("user");
+    const accessToken = localStorage.getItem("accessToken");
+
+    return !!user || !!accessToken;
+  };
+
+  const openLoginNotice = (type) => {
+    setLoginNoticeType(type);
+    setShowLoginNotice(true);
+  };
+
   const handleCreateNewCV = () => {
+    if (!isLoggedIn()) {
+      openLoginNotice("create");
+      return;
+    }
+
     navigate("/template/edit");
   }; //chuyển sang trang tạo CV mới
 
   const handleOpenUploadModal = () => {
+    if (!isLoggedIn()) {
+      openLoginNotice("upload");
+      return;
+    }
+
     setIsModalOpen(true); //mở modal upload
     setSelectedFile(null); //reset file đã chọn trước đó
     setTitle(""); //reset title đã nhập trước đó
@@ -136,6 +161,43 @@ const TemplateCategory = () => {
           </p>
         </div>
       </div>
+
+      {/* Modal yêu cầu đăng nhập */}
+      {showLoginNotice && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="w-full max-w-md rounded-3xl bg-white p-7 shadow-2xl">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-50">
+              <span className="text-3xl">🔐</span>
+            </div>
+
+            <h2 className="mt-5 text-center text-2xl font-bold text-gray-900">
+              Cần đăng nhập
+            </h2>
+
+            <p className="mt-3 text-center text-sm leading-6 text-gray-500">
+              {loginNoticeType === "create"
+                ? "Bạn cần đăng nhập để tạo CV mới và lưu hồ sơ của mình."
+                : "Bạn cần đăng nhập để tải CV lên và quản lý hồ sơ của mình."}
+            </p>
+
+            <div className="mt-7 flex gap-3">
+              <button
+                onClick={() => setShowLoginNotice(false)}
+                className="flex-1 rounded-2xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+              >
+                Để sau
+              </button>
+
+              <button
+                onClick={() => setShowLoginNotice(false)}
+                className="flex-1 rounded-2xl bg-gray-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
+              >
+                Tôi đã hiểu
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal Upload */}
       {isModalOpen && (

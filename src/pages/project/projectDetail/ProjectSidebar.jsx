@@ -59,7 +59,9 @@ export default function ProjectSidebar({
 
           <span
             className={`shrink-0 rounded-full px-4 py-2 text-[11px] font-black uppercase tracking-wider ${
-              isPaidProject ? "bg-orange-500 text-white" : "bg-emerald-500 text-white"
+              isPaidProject
+                ? "bg-orange-500 text-white"
+                : "bg-emerald-500 text-white"
             }`}
           >
             {isPaidProject ? "Có phí" : "Miễn phí"}
@@ -75,8 +77,8 @@ export default function ProjectSidebar({
           </h3>
 
           <p className="mb-5 text-sm leading-relaxed text-slate-600">
-            Nếu bạn là doanh nghiệp và muốn hợp tác hoặc xin quyền truy cập project này,
-            hãy gửi yêu cầu để admin xem xét và phản hồi.
+            Nếu bạn là doanh nghiệp và muốn hợp tác hoặc xin quyền truy cập
+            project này, hãy gửi yêu cầu để admin xem xét và phản hồi.
           </p>
 
           <button
@@ -112,7 +114,8 @@ export default function ProjectSidebar({
                   </div>
 
                   <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                    Source code đang bị khóa. Bấm mua để tạo link thanh toán payOS và mở khóa sau khi thanh toán thành công.
+                    Source code đang bị khóa. Bấm mua để tạo link thanh toán
+                    payOS và mở khóa sau khi thanh toán thành công.
                   </p>
 
                   <button
@@ -133,7 +136,9 @@ export default function ProjectSidebar({
                   className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:border-blue-200 hover:bg-blue-50"
                 >
                   <div>
-                    <p className="text-base font-bold text-slate-900">GitHub Source</p>
+                    <p className="text-base font-bold text-slate-900">
+                      GitHub Source
+                    </p>
                     <p className="mt-1 text-xs text-slate-500">
                       Xem mã nguồn của đồ án
                     </p>
@@ -228,7 +233,9 @@ export default function ProjectSidebar({
 
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <span className="text-slate-500">Trạng thái</span>
-            <span className="font-bold text-slate-900">{projectStatus || "PENDING"}</span>
+            <span className="font-bold text-slate-900">
+              {projectStatus || "PENDING"}
+            </span>
           </div>
 
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -255,7 +262,9 @@ export default function ProjectSidebar({
 
       {adminNote && (
         <section className="rounded-[2.5rem] border border-rose-200 bg-rose-50 p-8 shadow-sm">
-          <h3 className="mb-3 text-lg font-black text-rose-700">Ghi chú từ admin</h3>
+          <h3 className="mb-3 text-lg font-black text-rose-700">
+            Ghi chú từ admin
+          </h3>
           <p className="text-sm leading-relaxed text-rose-600">{adminNote}</p>
         </section>
       )}
