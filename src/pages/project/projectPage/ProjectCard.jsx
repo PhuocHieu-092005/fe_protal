@@ -5,61 +5,70 @@ import { Eye, Download, User } from "lucide-react";
 export default function ProjectCard({ project }) {
   const navigate = useNavigate();
 
+  const imageUrl =
+    project.images?.[0]?.imageUrl ||
+    project.images?.[0]?.image_url ||
+    "https://via.placeholder.com/400x225";
+
+  const isFree = project.price_type === "FREE";
+
+  const priceText = isFree
+    ? "0đ"
+    : `${Number(project.price_download || 0).toLocaleString("vi-VN")}đ`;
+
   return (
-    <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden hover:shadow-xl transition-all group">
+    <div className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:shadow-xl">
+      {" "}
       {/* Thumbnail */}
-      <div className="aspect-video relative overflow-hidden">
+      <div className="relative aspect-video overflow-hidden bg-slate-100">
         <img
-          src={
-            project.images?.[0]?.imageUrl ||
-            "https://via.placeholder.com/400x225"
-          }
-          alt={project.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          src={imageUrl}
+          alt={project.title || "Đồ án"}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute top-4 right-4">
+
+        <div className="absolute right-3 top-3">
           <span
-            className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${
-              project.price_type === "FREE"
-                ? "bg-emerald-500 text-white"
-                : "bg-blue-600 text-white"
+            className={`rounded-full px-3 py-1 text-[10px] font-black uppercase text-white ${
+              isFree ? "bg-emerald-500" : "bg-blue-600"
             }`}
           >
-            {project.price_type === "FREE" ? "Miễn phí" : "Có phí"}
+            {isFree ? "Miễn phí" : "Có phí"}
           </span>
         </div>
       </div>
-
       {/* Content */}
-      <div className="p-6 text-left">
-        <h3 className="text-lg font-black text-slate-900 mb-2 truncate">
-          {project.title}
+      <div className="p-4 text-left">
+        <h3 className="line-clamp-2 min-h-[48px] text-[17px] font-black leading-6 text-slate-900">
+          {project.title || "Chưa cập nhật tiêu đề"}
         </h3>
-        <div className="flex items-center gap-2 text-slate-400 text-xs mb-6">
-          <User size={14} />
-          <span className="font-medium">{project.student_name}</span>
+
+        <div className="mt-2 flex items-center gap-2 text-sm text-slate-500">
+          <User size={15} />
+          <span className="truncate font-medium">
+            {project.student_name || "Chưa cập nhật"}
+          </span>
         </div>
 
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex gap-4">
-            <div className="flex items-center gap-1 text-slate-400 text-xs">
-              <Eye size={14} /> {project.view_count}
+        <div className="mt-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-4 text-sm text-slate-400">
+            <div className="flex items-center gap-1">
+              <Eye size={15} />
+              {project.view_count || 0}
             </div>
-            <div className="flex items-center gap-1 text-slate-400 text-xs">
-              <Download size={14} /> {project.download_count}
+
+            <div className="flex items-center gap-1">
+              <Download size={15} />
+              {project.download_count || 0}
             </div>
           </div>
-          <div className="text-blue-600 font-black">
-            {project.price_type === "FREE"
-              ? "0đ"
-              : `${project.price_download?.toLocaleString()}đ`}
-          </div>
+
+          <div className="text-lg font-black text-blue-600">{priceText}</div>
         </div>
 
-        {/* NÚT BẤM QUAN TRỌNG */}
         <button
           onClick={() => navigate(`/project/${project.id}`)}
-          className="w-full py-3 bg-zinc-900 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-blue-600 transition-colors"
+          className="mt-4 w-full rounded-xl bg-zinc-900 px-4 py-3 text-xs font-black uppercase tracking-widest text-white transition-colors hover:bg-blue-600"
         >
           Xem chi tiết đồ án
         </button>

@@ -12,10 +12,11 @@ export default function JobCategory() {
       <div className="min-h-screen bg-slate-50 flex flex-col">
         <main className="flex-grow">
           <JobHero />
-          <section className="mx-auto max-w-7xl px-6 py-10">
+
+          <section className="mx-auto w-[90%] py-8">
             <JobSectionHeader />
 
-            <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[280px_1fr]">
+            <div className="mt-6 grid grid-cols-1 gap-5 lg:grid-cols-[260px_1fr]">
               <JobFilterSidebar />
               <JobGridView />
             </div>

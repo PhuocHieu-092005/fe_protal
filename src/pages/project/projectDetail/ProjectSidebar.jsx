@@ -9,6 +9,8 @@ import {
   Lock,
   ShoppingCart,
   Send,
+  User,
+  ShieldCheck,
 } from "lucide-react";
 
 export default function ProjectSidebar({
@@ -29,102 +31,130 @@ export default function ProjectSidebar({
 }) {
   return (
     <>
-      <section
-        className={`rounded-[2.5rem] p-8 shadow-sm ${
-          isPaidProject
-            ? "border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50"
-            : "border border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50"
-        }`}
-      >
-        <div className="flex items-start justify-between gap-4">
+      {/* GIÁ SOURCE */}
+      <section className="rounded-xl border border-blue-100 bg-blue-50/40 p-4 shadow-sm">
+        <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
+              <Lock size={15} className="text-blue-600" />
               Giá truy cập source
-            </p>
-            <h3
-              className={`mt-3 text-3xl font-black md:text-4xl ${
-                isPaidProject ? "text-orange-600" : "text-emerald-600"
-              }`}
-            >
+            </div>
+
+            <h3 className="mt-2 text-2xl font-black text-blue-600">
               {isPaidProject
-                ? `${Number(priceDownload).toLocaleString("vi-VN")} VNĐ`
+                ? `${Number(priceDownload).toLocaleString("vi-VN")}đ`
                 : "Miễn phí"}
             </h3>
-            <p className="mt-3 text-sm leading-relaxed text-slate-600">
+
+            <p className="mt-1 text-xs font-medium text-slate-500">
               {isPaidProject
-                ? "Đồ án này thuộc dạng có phí. Link GitHub sẽ mở sau khi tích hợp thanh toán."
-                : "Bạn có thể xem và truy cập source code trực tiếp ngay bây giờ."}
+                ? "Thanh toán một lần • Truy cập vĩnh viễn"
+                : "Truy cập source code miễn phí"}
             </p>
           </div>
 
           <span
-            className={`shrink-0 rounded-full px-4 py-2 text-[11px] font-black uppercase tracking-wider ${
-              isPaidProject
-                ? "bg-orange-500 text-white"
-                : "bg-emerald-500 text-white"
+            className={`rounded-full px-3 py-1 text-xs font-black text-white ${
+              isPaidProject ? "bg-blue-600" : "bg-emerald-500"
             }`}
           >
-            {isPaidProject ? "Có phí" : "Miễn phí"}
+            {isPaidProject ? "Có phí" : "Free"}
           </span>
         </div>
       </section>
 
+      {/* HỢP TÁC PROJECT */}
       {currentUserRole === "COMPANY" && (
-        <section className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
-          <h3 className="mb-4 flex items-center gap-2 text-xl font-black text-slate-900">
-            <Handshake size={20} className="text-blue-600" />
-            Hợp tác project
-          </h3>
+        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="mb-3 flex items-start gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+              <Handshake size={18} />
+            </div>
 
-          <p className="mb-5 text-sm leading-relaxed text-slate-600">
-            Nếu bạn là doanh nghiệp và muốn hợp tác hoặc xin quyền truy cập
-            project này, hãy gửi yêu cầu để admin xem xét và phản hồi.
-          </p>
+            <div>
+              <h3 className="text-sm font-black text-slate-900">
+                Hợp tác project
+              </h3>
+              <p className="mt-1 text-xs leading-5 text-slate-500">
+                Doanh nghiệp quan tâm đến dự án này? Gửi yêu cầu hợp tác để trao
+                đổi chi tiết.
+              </p>
+            </div>
+          </div>
 
           <button
             type="button"
             onClick={onOpenRequestModal}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 px-5 py-3 text-sm font-bold text-white transition-all hover:bg-blue-600"
+            disabled={checkingAccessRequest || Boolean(existingAccessRequest)}
+            className={`inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-xs font-black transition disabled:cursor-not-allowed disabled:opacity-90 ${getRequestButtonStyle()}`}
           >
-            <Send size={16} />
-            Gửi yêu cầu hợp tác
+            <Send size={15} />
+            {getRequestButtonText()}
           </button>
+
+          {existingAccessRequest && (
+            <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+              <p className="text-xs font-semibold text-slate-500">
+                Trạng thái:{" "}
+                <span className={`font-black ${getRequestStatusTextColor()}`}>
+                  {getRequestStatusLabel()}
+                </span>
+              </p>
+
+              {approvalNote && (
+                <p className="mt-1 text-xs leading-5 text-slate-500">
+                  Ghi chú:{" "}
+                  <span className="font-semibold text-slate-700">
+                    {approvalNote}
+                  </span>
+                </p>
+              )}
+            </div>
+          )}
         </section>
       )}
 
-      <section className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
-        <h3 className="mb-6 flex items-center gap-2 text-2xl font-black text-slate-900">
-          <BookOpen size={22} className="text-blue-500" />
+      {/* TÀI NGUYÊN */}
+      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h3 className="mb-3 flex items-center gap-2 text-base font-black text-slate-900">
+          <BookOpen size={18} className="text-blue-600" />
           Tài nguyên
         </h3>
 
-        <div className="space-y-4">
+        <div className="space-y-2">
           {sourceCodeUrl && (
             <>
               {isPaidProject && !isPurchased ? (
-                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-2 text-base font-bold text-slate-900">
-                      <Lock size={16} className="text-amber-600" />
-                      GitHub Source
-                    </span>
-                    <span className="rounded-full bg-amber-500 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-white">
-                      Locked
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <Lock size={16} className="text-blue-600" />
+                      <div>
+                        <p className="text-sm font-black text-slate-900">
+                          GitHub Source
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          Source code đang bị khóa
+                        </p>
+                      </div>
+                    </div>
+
+                    <span className="rounded-full bg-slate-900 px-2.5 py-1 text-[10px] font-black text-white">
+                      LOCKED
                     </span>
                   </div>
 
-                  <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                    Source code đang bị khóa. Bấm mua để tạo link thanh toán
-                    payOS và mở khóa sau khi thanh toán thành công.
+                  <p className="mt-3 text-xs leading-5 text-slate-500">
+                    Mua source để mở khóa mã nguồn.
                   </p>
 
                   <button
                     type="button"
                     onClick={onBuyProject}
                     disabled={buyingProject}
-                    className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-orange-600 px-5 py-3 text-sm font-black text-white shadow-sm transition-all hover:bg-orange-700 disabled:cursor-not-allowed disabled:bg-orange-300"
+                    className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-black text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    <ShoppingCart size={17} />
+                    <ShoppingCart size={16} />
                     {buyingProject ? "Đang tạo link..." : "Mua source code"}
                   </button>
                 </div>
@@ -133,26 +163,21 @@ export default function ProjectSidebar({
                   href={sourceCodeUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:border-blue-200 hover:bg-blue-50"
+                  className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 transition hover:bg-blue-50"
                 >
                   <div>
-                    <p className="text-base font-bold text-slate-900">
+                    <p className="text-sm font-black text-slate-900">
                       GitHub Source
                     </p>
-                    <p className="mt-1 text-xs text-slate-500">
-                      Xem mã nguồn của đồ án
+                    <p className="text-xs text-slate-500">
+                      Xem mã nguồn trên GitHub
                     </p>
                   </div>
+
                   {isPaidProject ? (
-                    <CheckCircle2
-                      className="text-emerald-500 transition-all group-hover:text-emerald-600"
-                      size={20}
-                    />
+                    <CheckCircle2 className="text-emerald-500" size={18} />
                   ) : (
-                    <ExternalLink
-                      className="text-slate-400 transition-all group-hover:text-blue-600"
-                      size={18}
-                    />
+                    <ExternalLink className="text-blue-600" size={17} />
                   )}
                 </a>
               )}
@@ -164,108 +189,109 @@ export default function ProjectSidebar({
               href={demoUrl}
               target="_blank"
               rel="noreferrer"
-              className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:border-blue-200 hover:bg-blue-50"
+              className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 transition hover:bg-blue-50"
             >
               <div>
-                <p className="text-base font-bold text-slate-900">Video Demo</p>
-                <p className="mt-1 text-xs text-slate-500">
-                  Xem bản trình bày và mô phỏng sản phẩm
+                <p className="text-sm font-black text-slate-900">Video Demo</p>
+                <p className="text-xs text-slate-500">
+                  Xem video giới thiệu dự án
                 </p>
               </div>
-              <ExternalLink
-                className="text-slate-400 transition-all group-hover:text-blue-600"
-                size={18}
-              />
+
+              <ExternalLink className="text-blue-600" size={17} />
             </a>
           )}
         </div>
       </section>
 
-      <section className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
-        <h3 className="mb-6 flex items-center gap-2 text-2xl font-black text-slate-900">
-          <Layers3 size={20} className="text-slate-500" />
+      {/* CÔNG NGHỆ */}
+      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h3 className="mb-3 flex items-center gap-2 text-base font-black text-slate-900">
+          <Layers3 size={18} className="text-blue-600" />
           Công nghệ
         </h3>
 
-        <div className="flex flex-wrap gap-3">
-          {technologies?.map((tech) => (
-            <span
-              key={tech.id}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-100 bg-slate-50 px-4 py-2 text-sm font-bold text-slate-600"
-            >
-              {tech.iconUrl && (
-                <img
-                  src={tech.iconUrl}
-                  alt=""
-                  className="h-4 w-4 rounded object-contain"
-                />
-              )}
-              {tech.name}
-            </span>
-          ))}
+        <div className="flex flex-wrap gap-2">
+          {technologies?.length > 0 ? (
+            technologies.map((tech) => (
+              <span
+                key={tech.id}
+                className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-600"
+              >
+                {tech.name}
+              </span>
+            ))
+          ) : (
+            <span className="text-sm text-slate-400">Chưa có công nghệ</span>
+          )}
         </div>
       </section>
 
-      <section className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
-        <p className="mb-4 text-[10px] font-black uppercase tracking-widest text-slate-400">
+      {/* TÁC GIẢ */}
+      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <p className="mb-3 text-xs font-black uppercase tracking-widest text-slate-400">
           Tác giả
         </p>
 
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-100 bg-slate-50 text-xl font-black text-slate-900 shadow-sm">
-            {studentName?.charAt(0)}
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-50 text-sm font-black text-emerald-700">
+            {studentName?.charAt(0) || "U"}
           </div>
-          <div className="text-xl font-bold text-slate-900">{studentName}</div>
+
+          <div>
+            <p className="text-sm font-black text-slate-900">{studentName}</p>
+            <p className="text-xs text-slate-500">Sinh viên thực hiện</p>
+          </div>
         </div>
       </section>
 
-      <section className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
-        <h3 className="mb-4 flex items-center gap-2 text-xl font-black text-slate-900">
-          <BadgeDollarSign size={20} className="text-emerald-500" />
+      {/* THÔNG TIN THÊM */}
+      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h3 className="mb-4 flex items-center gap-2 text-base font-black text-slate-900">
+          <BadgeDollarSign size={18} className="text-blue-600" />
           Thông tin thêm
         </h3>
 
-        <div className="space-y-4 text-sm">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <span className="text-slate-500">Mã đồ án</span>
-            <span className="font-bold text-slate-900">#{projectId}</span>
+        <div className="grid grid-cols-2 gap-x-5 gap-y-3 text-xs">
+          <div>
+            <p className="text-slate-400">Mã đồ án</p>
+            <p className="mt-1 font-bold text-slate-900">#{projectId}</p>
           </div>
 
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <span className="text-slate-500">Trạng thái</span>
-            <span className="font-bold text-slate-900">
+          <div>
+            <p className="text-slate-400">Trạng thái</p>
+            <p className="mt-1 font-bold text-emerald-600">
               {projectStatus || "PENDING"}
-            </span>
+            </p>
           </div>
 
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <span className="text-slate-500">Loại</span>
-            <span className="font-bold text-slate-900">
+          <div>
+            <p className="text-slate-400">Loại</p>
+            <p className="mt-1 font-bold text-slate-900">
               {isPaidProject ? "Bán code" : "Miễn phí"}
-            </span>
+            </p>
           </div>
 
-          <div className="flex items-center justify-between">
-            <span className="text-slate-500">Giá bán</span>
-            <span
-              className={`font-black ${
-                isPaidProject ? "text-orange-600" : "text-emerald-600"
-              }`}
-            >
+          <div>
+            <p className="text-slate-400">Giá bán</p>
+            <p className="mt-1 font-black text-blue-600">
               {isPaidProject
-                ? `${Number(priceDownload).toLocaleString("vi-VN")} VNĐ`
-                : "0 VNĐ"}
-            </span>
+                ? `${Number(priceDownload).toLocaleString("vi-VN")}đ`
+                : "0đ"}
+            </p>
           </div>
         </div>
       </section>
 
+      {/* GHI CHÚ ADMIN */}
       {adminNote && (
-        <section className="rounded-[2.5rem] border border-rose-200 bg-rose-50 p-8 shadow-sm">
-          <h3 className="mb-3 text-lg font-black text-rose-700">
+        <section className="rounded-xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
+          <h3 className="mb-2 flex items-center gap-2 text-sm font-black text-amber-700">
+            <ShieldCheck size={17} />
             Ghi chú từ admin
           </h3>
-          <p className="text-sm leading-relaxed text-rose-600">{adminNote}</p>
+
+          <p className="text-xs leading-5 text-amber-700">{adminNote}</p>
         </section>
       )}
     </>
