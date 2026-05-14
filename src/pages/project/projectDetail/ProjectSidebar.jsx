@@ -25,63 +25,10 @@ export default function ProjectSidebar({
   projectStatus,
   adminNote,
   onOpenRequestModal,
-  existingAccessRequest,
-  checkingAccessRequest,
   onBuyProject,
   buyingProject,
   isPurchased,
 }) {
-  const requestStatus = String(
-    existingAccessRequest?.status || "",
-  ).toUpperCase();
-
-  const approvalNote =
-    existingAccessRequest?.approval_note || existingAccessRequest?.approvalNote;
-
-  const getRequestButtonStyle = () => {
-    if (!existingAccessRequest) {
-      return "bg-blue-600 text-white hover:bg-blue-700";
-    }
-
-    if (requestStatus === "PENDING") {
-      return "cursor-not-allowed border border-amber-200 bg-amber-50 text-amber-700";
-    }
-
-    if (requestStatus === "APPROVED") {
-      return "cursor-not-allowed border border-emerald-200 bg-emerald-50 text-emerald-700";
-    }
-
-    if (requestStatus === "REJECTED") {
-      return "cursor-not-allowed border border-rose-200 bg-rose-50 text-rose-700";
-    }
-
-    return "cursor-not-allowed bg-slate-100 text-slate-500";
-  };
-
-  const getRequestButtonText = () => {
-    if (checkingAccessRequest) return "Đang kiểm tra...";
-    if (!existingAccessRequest) return "Gửi yêu cầu hợp tác";
-
-    if (requestStatus === "PENDING") return "Đã gửi yêu cầu";
-    if (requestStatus === "APPROVED") return "Yêu cầu đã được duyệt";
-    if (requestStatus === "REJECTED") return "Yêu cầu đã bị từ chối";
-
-    return "Đã gửi yêu cầu";
-  };
-
-  const getRequestStatusTextColor = () => {
-    if (requestStatus === "APPROVED") return "text-emerald-700";
-    if (requestStatus === "REJECTED") return "text-rose-700";
-    return "text-amber-700";
-  };
-
-  const getRequestStatusLabel = () => {
-    if (requestStatus === "PENDING") return "Đang chờ duyệt";
-    if (requestStatus === "APPROVED") return "Đã được duyệt";
-    if (requestStatus === "REJECTED") return "Đã bị từ chối";
-    return requestStatus || "PENDING";
-  };
-
   return (
     <>
       {/* GIÁ SOURCE */}
