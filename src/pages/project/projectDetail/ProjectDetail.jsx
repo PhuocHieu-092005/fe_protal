@@ -398,32 +398,32 @@ export default function ProjectDetail() {
         studentName={studentName}
       />
 
-      <div className="min-h-screen bg-slate-50/50 px-6 pb-20 pt-28 text-left">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-8 flex items-center justify-between">
+      <div className="min-h-screen bg-slate-100 px-4 pb-16 pt-28 text-left md:px-6">
+        <div className="mx-auto w-[92%] max-w-[1500px]">
+          <div className="mb-5 flex items-center justify-between">
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-blue-600"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm transition hover:text-blue-600"
             >
-              <ChevronLeft size={20} />
-              QUAY LẠI
+              <ChevronLeft size={18} />
+              Quay lại
             </button>
 
             <button
               onClick={handleToggleFavorite}
               disabled={loadingFav}
-              className={`rounded-2xl border px-4 py-3 text-sm font-medium transition ${
+              className={`rounded-xl border px-4 py-2 text-sm font-bold transition ${
                 isFavorited
-                  ? "border-rose-500 bg-rose-50 text-rose-600 shadow-sm"
-                  : "border-slate-200 text-slate-700 hover:border-slate-900 hover:text-slate-900"
+                  ? "border-rose-200 bg-rose-50 text-rose-600"
+                  : "border-slate-200 bg-white text-slate-700 hover:text-blue-600"
               }`}
             >
               {loadingFav ? "Đang xử lý..." : "Lưu dự án"}
             </button>
           </div>
 
-          <div className="grid grid-cols-1 gap-8 xl:grid-cols-12">
-            <div className="space-y-8 xl:col-span-8">
+          <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_360px]">
+            <div className="min-w-0 space-y-5">
               <ProjectOverviewSection
                 courseName={courseName}
                 projectTitle={project.title}
@@ -448,7 +448,7 @@ export default function ProjectDetail() {
               />
             </div>
 
-            <div className="space-y-6 xl:col-span-4">
+            <aside className="space-y-5">
               <ProjectSidebar
                 currentUserRole={currentUser?.role}
                 isPaidProject={isPaidProject}
@@ -471,7 +471,7 @@ export default function ProjectDetail() {
               <TeacherEvaluationSection
                 evaluations={normalizedTeacherEvaluations}
               />
-            </div>
+            </aside>
           </div>
         </div>
       </div>

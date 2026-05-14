@@ -5,9 +5,10 @@ import jobService from "../../../services/jobService";
 import { useJobs } from "../../../contexts/JobContext";
 
 export default function JobGridView() {
-  const { jobs,setJobs } = useJobs();
+  const { jobs, setJobs } = useJobs();
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 9;
+
   useEffect(() => {
     const fetchActiveJobs = async () => {
       try {
@@ -18,9 +19,12 @@ export default function JobGridView() {
         console.error("Lỗi, ", err);
       }
     };
+
     fetchActiveJobs();
   }, []);
-  const totalPages = Math.floor((jobs.length + 5) / 6);
+
+  const totalPages = Math.ceil((jobs.length || 0) / itemsPerPage);
+
   let currentJobs = [];
   if (jobs.length > 0) {
     currentJobs = jobs.slice(
@@ -30,10 +34,8 @@ export default function JobGridView() {
   }
 
   return (
-    
     <div className="w-full flex flex-col min-h-[700px]">
-
-      <section className="grid grid-cols-1 gap-6 md:grid-cols-2 flex-1">
+      <section className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
         {currentJobs.map((job) => (
           <JobCard key={job.id} job={job} />
         ))}
