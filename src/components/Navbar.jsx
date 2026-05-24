@@ -55,6 +55,7 @@ export default function Navbar() {
 
   useEffect(() => {
     if (user) {
+      // eslint-disable-next-line react-hooks/immutability
       fetchInitialData();
       console.log("giá trị của userId là: ", user);
       console.log("an", user);
@@ -198,23 +199,27 @@ export default function Navbar() {
         {/* AUTH SECTION */}
         <div className="flex-1 flex justify-end items-center gap-3">
           <div className="relative">
-            <button
-              type="button"
-              onClick={handleBellClick}
-              className={`relative flex h-11 w-11 items-center justify-center rounded-full border transition-all ${
-                isShow
-                  ? "border-slate-950 bg-slate-950 text-white"
-                  : "border-slate-200 bg-white text-slate-600 hover:border-slate-950 hover:text-slate-950"
-              }`}
-            >
-              <Bell size={20} />
+       
 
-              {unreadCount > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-[11px] font-bold text-white">
-                  {unreadCount}
-                </span>
-              )}
-            </button>
+            {user && (
+              <button
+                type="button"
+                onClick={handleBellClick}
+                className={`relative flex h-11 w-11 items-center justify-center rounded-full border transition-all ${
+                  isShow
+                    ? "border-slate-950 bg-slate-950 text-white"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-950 hover:text-slate-950"
+                }`}
+              >
+                <Bell size={20} />
+
+                {unreadCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1 text-[11px] font-bold text-white">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+            )}
 
             {isShow && (
               <div className="absolute right-0 mt-3 w-80 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl z-50">

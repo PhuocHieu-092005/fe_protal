@@ -69,6 +69,7 @@ const CvStatusManager = () => {
     } else if (cv.type === "UPLOAD") {
       const fileObj = cv.cv_file;
       if (fileObj && fileObj.file_path) {
+        {console.log("đường dẫn"),fileObj.file_path}
         setPdfPreviewUrl(fileObj.file_path);
       } else {
         alert("Không tìm thấy link file PDF của CV này.");
@@ -251,11 +252,14 @@ const CvStatusManager = () => {
               </button>
             </div>
             <div className="flex-1 w-full bg-gray-100 p-2 sm:p-4">
+            
+              
               <iframe
                 src={`${pdfPreviewUrl}#toolbar=0`}
                 className="w-full h-full rounded-xl bg-white shadow-sm border border-gray-200"
                 title="PDF Preview"
               />
+              
             </div>
           </div>
         </div>

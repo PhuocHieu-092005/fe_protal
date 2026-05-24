@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Eye, Download, UserCheck } from "lucide-react"; // Dùng thư viện icon lucide-react
 import jobService from "../../../services/jobService";
 import { useNavigate } from "react-router-dom";
-
+import cvService from "../../../services/cvService";
 export default function ApprovedApplicants() {
   const [applicants, setApplicants] = useState([]);
+    const [viewingCv, setViewingCv] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
@@ -18,8 +19,87 @@ export default function ApprovedApplicants() {
     };
     fetchData();
   }, []);
-
+ const handleViewCv = async (cvId) => {
+    try {
+      console.log("giá trị cv id", cvId);
+      const response = await cvService.getCvById(cvId);
+      setViewingCv(response);
+      // console.log("đã set giá trị");
+    } catch (err) {
+      console.error("lỗi khi lấy chi tiết cv", err);
+    }
+  };
   return (
+    <>
+     {viewingCv && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white w-full max-w-4xl h-[85vh] rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+            <div className="p-5 border-b flex justify-between items-center">
+              <h2 className="text-xl font-bold">Chi tiết: {viewingCv.title}</h2>
+              <button
+                onClick={() => setViewingCv(null)}
+                className="text-slate-400 hover:text-slate-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
+              {viewingCv.type === "FORM" ? (
+                (() => {
+                  const cvData = viewingCv.content_json;
+
+                  return (
+                    <div className="bg-white p-8 rounded-xl shadow-sm space-y-6">
+                      <h3 className="text-lg font-bold">Thông tin ứng viên</h3>
+
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <strong>Họ tên:</strong> {cvData?.full_name}
+                        </div>
+                        <div>
+                          <strong>SĐT:</strong> {cvData?.phone}
+                        </div>
+                        <div>
+                          <strong>Email:</strong> {cvData?.email}
+                        </div>
+                        <div>
+                          <strong>Học vấn:</strong> {cvData?.education}
+                        </div>
+                      </div>
+
+                      <hr />
+
+                      <div>
+                        <h4 className="font-semibold mb-2">Kỹ năng</h4>
+                        <ul className="list-disc list-inside text-sm">
+                          {cvData?.skills?.map((skill, idx) => (
+                            <li key={idx}>{skill}</li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div>
+                        <h4 className="font-semibold mb-2">Giới thiệu</h4>
+                        <p className="text-sm">{cvData?.summary}</p>
+                      </div>
+                    </div>
+                  );
+                })()
+              ) : (
+                <>
+                {console.log("duong dan file pdf",viewingCv.cv_file.file_path)}
+                <iframe
+                  src={`${viewingCv.cv_file.file_path}#toolbar=0`}
+                  className="w-full h-full border-none rounded-lg"
+                  title="CV Preview"
+                />
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     <div className="p-6 bg-slate-50 min-h-screen pt-24">
       <div className=" mx-auto">
         {/* Header */}
@@ -58,7 +138,7 @@ export default function ApprovedApplicants() {
                 <th className="px-6 py-4 text-sm font-semibold text-slate-700">
                   Ngày nộp
                 </th>
-                <th className="px-6 py-4 text-sm font-semibold text-slate-700 text-right">
+                <th className="px-6 py-4 text-sm font-semibold text-slate-700 ">
                   Thao tác
                 </th>
               </tr>
@@ -83,19 +163,20 @@ export default function ApprovedApplicants() {
                   <td className="px-6 py-4 text-sm text-slate-600">
                     {new Date(item.appliedAt).toLocaleDateString("vi-VN")}
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      <a
-                        href={item.cvFileUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="p-2 hover:bg-white border border-slate-200 rounded-lg text-slate-600 hover:text-blue-600 transition-all shadow-sm"
-                        title="Xem CV"
-                      >
-                        <Eye size={18} />
-                      </a>
-                    </div>
-                  </td>
+                  <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-slate-700 truncate max-w-[200px]">
+                            {item.cvTitle || "CV_Ung_Vien"}
+                          </span>
+
+                          <button
+                            onClick={() => handleViewCv(item.cvId)}
+                            className="text-xs text-blue-600 hover:underline flex items-center gap-1 mt-1 text-left"
+                          >
+                            Xem CV chi tiết
+                          </button>
+                        </div>
+                      </td>
                 </tr>
               ))}
             </tbody>
@@ -109,5 +190,6 @@ export default function ApprovedApplicants() {
         </div>
       </div>
     </div>
+    </>
   );
 }

@@ -6,6 +6,7 @@ import CompanyProfileForm from "../profilePage/CompanyProfileForm";
 import CompanyJobs from "../profilePage/CompanyJobs";
 import ProjectFavorite from "../profilePage/ProjectFavorite";
 import CompanyProjectAccessRequests from "../profilePage/CompanyProjectAccessRequests";
+import ApplicationByCompany from "../../job/company/ApplicationByCompany";
 
 function CompanyProfilePlaceholder({ title, description }) {
   return (
@@ -34,10 +35,7 @@ export default function CompanyProfileCategory() {
         )}
 
         {activeTab === "applicants" && (
-          <CompanyProfilePlaceholder
-            title="Ứng viên đã ứng tuyển"
-            description="Phần này sẽ làm sau khi chốt được luồng danh sách bài tuyển dụng của công ty."
-          />
+             <ApplicationByCompany activeTab={activeTab} setActiveTab={setActiveTab} />
         )}
 
         {activeTab === "favorite-projects" && (
