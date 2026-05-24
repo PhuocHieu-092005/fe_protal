@@ -57,18 +57,15 @@ export default function PostList() {
   }, [currentPage, jobs]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] py-12 font-sans text-slate-900">
-      <div className="mx-auto w-[88%] max-w-[1280px]">
-        <div className="mb-8">
-          <div className="mb-4 h-1.5 w-16 rounded-full bg-blue-600"></div>
-
-          <h2 className="text-4xl font-extrabold tracking-tight">
-            Cơ hội việc làm <span className="text-blue-600">mới nhất</span>
+    <div className="min-h-screen bg-[#F8FAFC] py-10 font-sans text-slate-900">
+      <div className="mx-auto w-[90%] max-w-[1320px]">
+        <div className="mb-7">
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900">
+            Việc làm nổi bật
           </h2>
 
-          <p className="mt-3 max-w-2xl text-lg leading-relaxed text-slate-500">
-            Khám phá hàng ngàn cơ hội nghề nghiệp hấp dẫn dành cho các lập trình
-            viên tài năng.
+          <p className="mt-2 text-base leading-relaxed text-slate-500">
+            Những công việc đang được tuyển dụng nhiều và phù hợp với bạn.
           </p>
         </div>
 

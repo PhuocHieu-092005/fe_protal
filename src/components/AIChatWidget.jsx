@@ -17,7 +17,10 @@ export default function AIChatWidget() {
   const [sending, setSending] = useState(false);
   const endRef = useRef(null);
 
-  const canSend = useMemo(() => message.trim().length > 0 && !sending, [message, sending]);
+  const canSend = useMemo(
+    () => message.trim().length > 0 && !sending,
+    [message, sending],
+  );
 
   const scrollToEnd = () => {
     setTimeout(() => {
@@ -44,7 +47,11 @@ export default function AIChatWidget() {
 
     try {
       const response = await aiService.sendAiChatMessage(content);
-      const reply = response?.reply || response?.data?.reply || response?.data || response?.message;
+      const reply =
+        response?.reply ||
+        response?.data?.reply ||
+        response?.data ||
+        response?.message;
 
       setMessages((current) => [
         ...current,
@@ -83,7 +90,9 @@ export default function AIChatWidget() {
               </div>
               <div>
                 <h2 className="text-sm font-bold">Trợ lý AI</h2>
-                <p className="text-xs text-slate-300">Hỗ trợ nhanh trong hệ thống</p>
+                <p className="text-xs text-slate-300">
+                  Hỗ trợ nhanh trong hệ thống
+                </p>
               </div>
             </div>
 
@@ -125,7 +134,10 @@ export default function AIChatWidget() {
             <div ref={endRef} />
           </div>
 
-          <form onSubmit={handleSubmit} className="border-t border-slate-100 bg-white p-4">
+          <form
+            onSubmit={handleSubmit}
+            className="border-t border-slate-100 bg-white p-4"
+          >
             <div className="flex items-end gap-3">
               <textarea
                 rows={2}

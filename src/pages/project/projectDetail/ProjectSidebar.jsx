@@ -63,7 +63,7 @@ export default function ProjectSidebar({
         </div>
       </section>
 
-      {/* HỢP TÁC PROJECT */}
+      {/* HỢP TÁC PROJECT - Dành cho Công ty */}
       {currentUserRole === "COMPANY" && (
         <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="mb-3 flex items-start gap-3">
@@ -85,32 +85,11 @@ export default function ProjectSidebar({
           <button
             type="button"
             onClick={onOpenRequestModal}
-            disabled={checkingAccessRequest || Boolean(existingAccessRequest)}
-            className={`inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-xs font-black transition disabled:cursor-not-allowed disabled:opacity-90 ${getRequestButtonStyle()}`}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-2.5 text-xs font-black text-white transition hover:bg-blue-600"
           >
             <Send size={15} />
-            {getRequestButtonText()}
+            Gửi yêu cầu hợp tác
           </button>
-
-          {existingAccessRequest && (
-            <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
-              <p className="text-xs font-semibold text-slate-500">
-                Trạng thái:{" "}
-                <span className={`font-black ${getRequestStatusTextColor()}`}>
-                  {getRequestStatusLabel()}
-                </span>
-              </p>
-
-              {approvalNote && (
-                <p className="mt-1 text-xs leading-5 text-slate-500">
-                  Ghi chú:{" "}
-                  <span className="font-semibold text-slate-700">
-                    {approvalNote}
-                  </span>
-                </p>
-              )}
-            </div>
-          )}
         </section>
       )}
 

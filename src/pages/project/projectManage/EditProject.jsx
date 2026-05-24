@@ -12,6 +12,7 @@ import {
   BookOpen,
   Info,
   PencilLine,
+  ChevronDown, // Thêm icon mũi tên
 } from "lucide-react";
 
 import projectService from "../../../services/projectService";
@@ -57,13 +58,11 @@ export default function EditProject() {
         ]);
 
         const project = projectRes?.data;
-
         const techs = Array.isArray(techRes)
           ? techRes
           : Array.isArray(techRes?.data)
             ? techRes.data
             : [];
-
         const courses = Array.isArray(courseRes)
           ? courseRes
           : Array.isArray(courseRes?.data)
@@ -74,10 +73,19 @@ export default function EditProject() {
         setAvailableCourses(courses);
 
         if (project) {
+          // --- PHẦN SỬA LỖI GÁN MÔN HỌC ---
+          // Vì Backend trả về course_name, ta tìm ID tương ứng trong danh sách môn học
+          const foundCourse = courses.find(
+            (c) => c.name === project.course_name,
+          );
+          const initialCourseId =
+            project.courseId || project.course_id || foundCourse?.id || "";
+
           setFormData({
             title: project.title || "",
             description: project.description || "",
-            course_id: project.courseId || project.course_id || "",
+            // Ép kiểu String để select option nhận diện chính xác
+            course_id: String(initialCourseId),
             source_code_url:
               project.sourceCodeUrl || project.source_code_url || "",
             demo_url: project.demoUrl || project.demo_url || "",
@@ -365,19 +373,25 @@ export default function EditProject() {
                       Học phần <span className="text-rose-500">*</span>
                     </label>
 
-                    <select
-                      name="course_id"
-                      value={formData.course_id}
-                      onChange={handleInputChange}
-                      className="w-full appearance-none rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 font-semibold outline-none focus:border-blue-500 focus:bg-white"
-                    >
-                      <option value="">Chọn môn học...</option>
-                      {availableCourses.map((course) => (
-                        <option key={course.id} value={course.id}>
-                          {course.name}
-                        </option>
-                      ))}
-                    </select>
+                    {/* --- PHẦN HIỆN LẠI MŨI TÊN --- */}
+                    <div className="relative">
+                      <select
+                        name="course_id"
+                        value={formData.course_id}
+                        onChange={handleInputChange}
+                        className="w-full appearance-none rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 font-semibold outline-none focus:border-blue-500 focus:bg-white cursor-pointer"
+                      >
+                        <option value="">Chọn môn học...</option>
+                        {availableCourses.map((course) => (
+                          <option key={course.id} value={course.id}>
+                            {course.name}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-slate-400">
+                        <ChevronDown size={18} />
+                      </div>
+                    </div>
                   </div>
 
                   <div>

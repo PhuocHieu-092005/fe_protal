@@ -138,8 +138,8 @@ export default function ProjectCategory() {
           onSearch={handleSearch}
         />
 
-        <div className="mx-auto mt-12 max-w-7xl px-6">
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[300px_1fr]">
+        <div className="mx-auto mt-10 w-[90%] max-w-[1450px]">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[280px_1fr]">
             <ProjectFilterSidebar
               filters={filters}
               onApply={handleApplyFilters}
@@ -147,18 +147,18 @@ export default function ProjectCategory() {
               technologies={technologies}
             />
 
-            <div>
-              <div className="mb-8 flex items-center justify-between">
+            <div className="min-w-0">
+              <div className="mb-7 flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold text-slate-900">
                     Danh sách đồ án
                   </h2>
-                  <div className="mt-2 h-1 w-12 bg-blue-600"></div>
+                  <div className="mt-2 h-1 w-12 rounded-full bg-blue-600"></div>
                 </div>
 
                 <p className="text-sm font-medium text-slate-500">
                   Tìm thấy{" "}
-                  <span className="text-blue-600">
+                  <span className="font-bold text-blue-600">
                     {filters.priceType
                       ? filteredProjects.length
                       : pageInfo.totalElements}
@@ -168,7 +168,7 @@ export default function ProjectCategory() {
               </div>
 
               {loading ? (
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
                   {[...Array(6)].map((_, i) => (
                     <div
                       key={i}
@@ -179,7 +179,7 @@ export default function ProjectCategory() {
               ) : (
                 <>
                   {filteredProjects.length > 0 ? (
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
                       {filteredProjects.map((p) => (
                         <ProjectCard key={p.id} project={p} />
                       ))}

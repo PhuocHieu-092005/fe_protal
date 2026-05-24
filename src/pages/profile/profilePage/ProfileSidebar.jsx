@@ -39,7 +39,7 @@ const ProfileSidebar = ({ activeTab, setActiveTab }) => {
   };
 
   return (
-    <aside className="w-1/4 bg-white rounded-lg shadow-sm p-4 h-fit border border-gray-100 select-none">
+    <aside className=" sticky top-24  w-1/4 bg-white rounded-lg shadow-sm p-4 h-fit border border-gray-100 select-none">
       <nav className="flex flex-col gap-4">
         <div className="flex flex-col">
           <div
@@ -136,7 +136,7 @@ const ProfileSidebar = ({ activeTab, setActiveTab }) => {
 
           {openMenus.job && (
             <ul className="flex flex-col gap-1 ml-9 mt-1 animate-in fade-in duration-300">
-              <li>
+              {/* <li>
                 <button
                   onClick={() => setActiveTab("applied-cv")}
                   className={`flex items-center gap-3 p-2 text-sm w-full rounded-md transition-all ${
@@ -148,7 +148,7 @@ const ProfileSidebar = ({ activeTab, setActiveTab }) => {
                   <Star size={16} />
                   CV đã ứng tuyển
                 </button>
-              </li>
+              </li> */}
 
               <li>
                 <button

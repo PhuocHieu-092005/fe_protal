@@ -16,7 +16,7 @@ import projectService from "../../../services/projectService";
 import Pagination from "../../../components/common/Pagination";
 import Swal from "sweetalert2";
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 6;
 
 const getStatusStyle = (status) => {
   switch (status) {
@@ -145,77 +145,79 @@ export default function MyProjects() {
   };
 
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
-      <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <h2 className="flex items-center gap-3 text-3xl font-black text-slate-900">
-            <BarChart3 className="text-blue-600" size={30} />
+    <div className="w-full max-w-full overflow-hidden rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="min-w-0">
+          <h2 className="flex items-center gap-2 text-xl font-black text-slate-900">
+            <BarChart3 className="text-blue-600" size={22} />
             Thống kê đồ án
           </h2>
-          <p className="mt-2 max-w-2xl text-slate-500">
-            Quản lý toàn bộ đồ án bạn đã tạo, theo dõi trạng thái duyệt, lượt
-            xem và lượt tải một cách trực quan hơn.
+
+          <p className="mt-1 max-w-xl text-sm leading-6 text-slate-500">
+            Quản lý đồ án bạn đã tạo, theo dõi trạng thái duyệt, lượt xem và
+            lượt tải.
           </p>
         </div>
 
         <button
           onClick={() => navigate("/project/create")}
-          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 font-bold text-white transition-all hover:bg-blue-700"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white transition-all hover:bg-blue-700"
         >
-          <Plus size={18} />
+          <Plus size={16} />
           Đăng đồ án mới
         </button>
       </div>
 
-      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-          <p className="text-sm text-slate-500">Tổng đồ án</p>
-          <h3 className="mt-2 text-3xl font-black text-slate-900">
+      <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+          <p className="text-xs text-slate-500">Tổng đồ án</p>
+          <h3 className="mt-1 text-2xl font-black text-slate-900">
             {stats.total}
           </h3>
         </div>
 
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-          <p className="text-sm text-amber-700">Chờ duyệt</p>
-          <h3 className="mt-2 text-3xl font-black text-amber-800">
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-3">
+          <p className="text-xs text-amber-700">Chờ duyệt</p>
+          <h3 className="mt-1 text-2xl font-black text-amber-800">
             {stats.pending}
           </h3>
         </div>
 
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
-          <p className="text-sm text-emerald-700">Đã duyệt</p>
-          <h3 className="mt-2 text-3xl font-black text-emerald-800">
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-3">
+          <p className="text-xs text-emerald-700">Đã duyệt</p>
+          <h3 className="mt-1 text-2xl font-black text-emerald-800">
             {stats.approved}
           </h3>
         </div>
 
-        <div className="rounded-2xl border border-rose-200 bg-rose-50 p-5">
-          <p className="text-sm text-rose-700">Bị từ chối</p>
-          <h3 className="mt-2 text-3xl font-black text-rose-800">
+        <div className="rounded-2xl border border-rose-200 bg-rose-50 p-3">
+          <p className="text-xs text-rose-700">Bị từ chối</p>
+          <h3 className="mt-1 text-2xl font-black text-rose-800">
             {stats.rejected}
           </h3>
         </div>
       </div>
 
-      <div className="mb-8 flex flex-col gap-4 xl:flex-row">
-        <div className="relative flex-1">
+      <div className="mb-5 flex flex-col gap-3 xl:flex-row">
+        <div className="relative min-w-0 flex-1">
           <Search
-            size={18}
+            size={17}
             className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
           />
+
           <input
             type="text"
             placeholder="Tìm theo tên đồ án..."
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-11 pr-4 outline-none transition-all focus:border-blue-500"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:border-blue-500"
           />
         </div>
 
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="min-w-[220px] rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-blue-500"
+          className="min-w-[190px] rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition-all focus:border-blue-500"
         >
           <option value="ALL">Tất cả trạng thái</option>
           <option value="PENDING">Chờ duyệt</option>
@@ -225,33 +227,36 @@ export default function MyProjects() {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 gap-6">
-          {[...Array(4)].map((_, i) => (
+        <div className="grid w-full grid-cols-1 gap-3 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          {[...Array(6)].map((_, i) => (
             <div
               key={i}
-              className="h-[320px] animate-pulse rounded-3xl border border-slate-100 bg-slate-50"
+              className="h-[190px] animate-pulse rounded-2xl border border-slate-100 bg-slate-50"
             />
           ))}
         </div>
       ) : filteredProjects.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-slate-300 py-16 text-center">
-          <FolderOpen size={48} className="mx-auto mb-4 text-slate-300" />
-          <h3 className="text-xl font-bold text-slate-700">
+        <div className="rounded-3xl border border-dashed border-slate-300 py-12 text-center">
+          <FolderOpen size={40} className="mx-auto mb-3 text-slate-300" />
+
+          <h3 className="text-lg font-bold text-slate-700">
             Chưa có đồ án nào
           </h3>
-          <p className="mt-2 text-slate-500">
+
+          <p className="mt-2 text-sm text-slate-500">
             Hãy đăng đồ án đầu tiên của bạn để bắt đầu.
           </p>
+
           <button
             onClick={() => navigate("/project/create")}
-            className="mt-5 rounded-2xl bg-blue-600 px-5 py-3 font-bold text-white hover:bg-blue-700"
+            className="mt-5 rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
           >
             Đăng đồ án mới
           </button>
         </div>
       ) : (
         <>
-          <div className="mb-5 flex items-center justify-between">
+          <div className="mb-4 flex items-center justify-between">
             <p className="text-sm font-medium text-slate-500">
               Hiển thị{" "}
               <span className="font-bold text-blue-600">
@@ -265,7 +270,7 @@ export default function MyProjects() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-6">
+          <div className="grid w-full grid-cols-1 gap-3 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
             {paginatedProjects.map((project) => {
               const thumbnail =
                 project.images?.[0]?.imageUrl ||
@@ -284,10 +289,10 @@ export default function MyProjects() {
               return (
                 <div
                   key={project.id}
-                  className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
+                  className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
                 >
-                  <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr]">
-                    <div className="relative h-[260px] lg:h-full">
+                  <div className="grid min-w-0 grid-cols-1 sm:grid-cols-[150px_minmax(0,1fr)]">
+                    <div className="relative h-[150px] bg-slate-100 sm:h-[190px]">
                       <img
                         src={thumbnail}
                         alt={project.title}
@@ -295,7 +300,7 @@ export default function MyProjects() {
                       />
 
                       <span
-                        className={`absolute left-4 top-4 inline-flex rounded-full px-3 py-1 text-xs font-bold ${getStatusStyle(
+                        className={`absolute left-2.5 top-2.5 inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold ${getStatusStyle(
                           project.status,
                         )}`}
                       >
@@ -303,116 +308,111 @@ export default function MyProjects() {
                       </span>
                     </div>
 
-                    <div className="flex flex-col p-6 lg:p-7">
-                      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="min-w-0 p-3">
+                      <div className="flex min-w-0 items-start justify-between gap-2">
                         <div className="min-w-0 flex-1">
-                          <h3 className="line-clamp-2 text-2xl font-black text-slate-900">
+                          <h3 className="line-clamp-2 text-[16px] font-black leading-snug text-slate-900">
                             {project.title}
                           </h3>
 
-                          <p className="mt-3 line-clamp-3 max-w-3xl text-[15px] leading-7 text-slate-500">
+                          <p className="mt-1.5 line-clamp-2 text-[12px] leading-5 text-slate-500">
                             {project.description ||
                               "Chưa có mô tả cho đồ án này."}
                           </p>
                         </div>
 
-                        <div className="shrink-0">
-                          <div className="rounded-2xl bg-slate-50 px-5 py-4 text-right">
-                            <p className="text-xs text-slate-500">Giá</p>
-                            <p className="mt-1 text-2xl font-black text-slate-900">
-                              {priceType === "PAID"
-                                ? `${Number(priceDownload).toLocaleString("vi-VN")}đ`
-                                : "0đ"}
-                            </p>
-                          </div>
+                        <div className="shrink-0 rounded-xl bg-slate-50 px-2.5 py-2 text-right">
+                          <p className="text-[10px] text-slate-500">Giá</p>
+
+                          <p className="mt-1 text-base font-black text-slate-900">
+                            {priceType === "PAID"
+                              ? `${Number(priceDownload).toLocaleString(
+                                  "vi-VN",
+                                )}đ`
+                              : "0đ"}
+                          </p>
                         </div>
                       </div>
 
-                      <div className="mt-5 flex flex-wrap gap-2">
+                      <div className="mt-2.5 flex flex-wrap gap-1.5">
                         {project.technologies?.length > 0 ? (
-                          project.technologies.slice(0, 5).map((tech) => (
+                          project.technologies.slice(0, 3).map((tech) => (
                             <span
                               key={tech.id || tech.name}
-                              className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600"
+                              className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-semibold text-slate-600"
                             >
                               {tech.name}
                             </span>
                           ))
                         ) : (
-                          <span className="text-sm text-slate-400">
+                          <span className="text-xs text-slate-400">
                             Chưa có công nghệ
                           </span>
                         )}
                       </div>
 
-                      <div className="mt-6 grid grid-cols-2 gap-3 xl:grid-cols-4">
-                        <div className="rounded-2xl bg-slate-50 px-4 py-4">
-                          <p className="text-xs text-slate-500">Lượt xem</p>
-                          <p className="mt-2 flex items-center gap-2 text-lg font-bold text-slate-800">
-                            <Eye size={16} />
-                            {viewCount}
-                          </p>
+                      <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-slate-700">
+                        <div className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-1">
+                          <Eye size={12} />
+                          <span>{viewCount}</span>
+                          <span className="text-slate-500">lượt xem</span>
                         </div>
 
-                        <div className="rounded-2xl bg-slate-50 px-4 py-4">
-                          <p className="text-xs text-slate-500">Lượt tải</p>
-                          <p className="mt-2 flex items-center gap-2 text-lg font-bold text-slate-800">
-                            <Download size={16} />
-                            {downloadCount}
-                          </p>
+                        <div className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-1">
+                          <Download size={12} />
+                          <span>{downloadCount}</span>
+                          <span className="text-slate-500">lượt tải</span>
                         </div>
 
-                        <div className="rounded-2xl bg-slate-50 px-4 py-4">
-                          <p className="text-xs text-slate-500">Hình thức</p>
-                          <p className="mt-2 text-lg font-bold text-slate-800">
+                        <div className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-1">
+                          <span className="text-slate-500">Hình thức:</span>
+                          <span>
                             {priceType === "PAID" ? "Bán code" : "Miễn phí"}
-                          </p>
+                          </span>
                         </div>
 
-                        <div className="rounded-2xl bg-slate-50 px-4 py-4">
-                          <p className="text-xs text-slate-500">Ngày tạo</p>
-                          <p className="mt-2 flex items-center gap-2 text-sm font-bold text-slate-700">
-                            <CalendarDays size={16} />
-                            {formatDate(createdAt)}
-                          </p>
+                        <div className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-1">
+                          <CalendarDays size={12} />
+                          <span>{formatDate(createdAt)}</span>
                         </div>
                       </div>
 
                       {adminNote && (
-                        <div className="mt-5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3">
-                          <p className="mb-1 text-sm font-bold text-rose-700">
+                        <div className="mt-2.5 rounded-xl border border-rose-200 bg-rose-50 px-2.5 py-2">
+                          <p className="mb-1 text-[11px] font-bold text-rose-700">
                             Ghi chú từ admin
                           </p>
-                          <p className="text-sm leading-6 text-rose-600">
+
+                          <p className="line-clamp-2 text-[11px] leading-5 text-rose-600">
                             {adminNote}
                           </p>
                         </div>
                       )}
 
-                      <div className="mt-6 flex flex-wrap items-center gap-3">
+                      <div className="mt-3 flex flex-wrap items-center gap-1.5">
                         <button
                           onClick={() => navigate(`/project/${project.id}`)}
-                          className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-5 py-3 font-semibold text-slate-700 transition-all hover:bg-slate-50"
+                          className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-2.5 py-1.5 text-[11px] font-semibold text-slate-700 transition-all hover:bg-slate-50"
                         >
                           Chi tiết
-                          <ArrowRight size={16} />
+                          <ArrowRight size={13} />
                         </button>
 
                         <button
                           onClick={() =>
                             navigate(`/project/edit/${project.id}`)
                           }
-                          className="inline-flex items-center gap-2 rounded-2xl border border-blue-200 px-5 py-3 font-semibold text-blue-600 transition-all hover:bg-blue-50"
+                          className="inline-flex items-center gap-1 rounded-lg border border-blue-200 px-2.5 py-1.5 text-[11px] font-semibold text-blue-600 transition-all hover:bg-blue-50"
                         >
-                          <Pencil size={16} />
+                          <Pencil size={13} />
                           Chỉnh sửa
                         </button>
 
                         <button
                           onClick={() => handleDelete(project.id)}
-                          className="inline-flex items-center gap-2 rounded-2xl border border-rose-200 px-5 py-3 font-semibold text-rose-600 transition-all hover:bg-rose-50"
+                          className="inline-flex items-center gap-1 rounded-lg border border-rose-200 px-2.5 py-1.5 text-[11px] font-semibold text-rose-600 transition-all hover:bg-rose-50"
                         >
-                          <Trash2 size={16} />
+                          <Trash2 size={13} />
                           Xóa
                         </button>
                       </div>

@@ -1,18 +1,34 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import projectService from "../../../services/projectService";
 import { Link } from "react-router-dom";
+import {
+  FolderKanban,
+  User,
+  Clock,
+  Heart,
+  ChevronRight,
+  Code2,
+} from "lucide-react";
+import Pagination from "../../../components/common/Pagination"; // Import component phân trang của bạn
 
 export default function FavoriteProjects() {
   const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // --- Cấu hình phân trang ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Số lượng đồ án trên mỗi trang
 
   const fetchFavorites = async () => {
     try {
+      setLoading(true);
       const response = await projectService.getAllFavorite();
-     console.log(response);
-      const data = response.data;
-      setFavorites(data);
+      setFavorites(response.data || []);
+      setCurrentPage(1); // Reset về trang 1 khi load dữ liệu mới
     } catch (err) {
       console.error("lỗi: ", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -20,124 +36,145 @@ export default function FavoriteProjects() {
     try {
       await projectService.deleteFavoriteProject(projectId);
       alert("Đã bỏ lưu đồ án");
+      fetchFavorites();
     } catch (err) {
-      console.error("lỗi ", err);
+      console.error("lỗi khi bỏ lưu đồ án: ", err);
     }
-    fetchFavorites(); // reload list
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchFavorites();
   }, []);
 
+  // --- Logic tính toán dữ liệu hiển thị trên trang hiện tại ---
+  const totalPages = useMemo(() => {
+    return Math.ceil(favorites.length / itemsPerPage);
+  }, [favorites]);
+
+  const currentItems = useMemo(() => {
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    return favorites.slice(indexOfFirstItem, indexOfLastItem);
+  }, [favorites, currentPage]);
+
   return (
-    <section className="w-3/4 bg-white rounded-lg shadow-sm p-8 border border-gray-100 animate-in fade-in duration-500">
-      <div className="min-h-screen bg-slate-50">
-        <div className="max-w-5xl mx-auto">
-          
-          {/* HEADER */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-slate-900">
-              Đồ án đã lưu
-            </h1>
-            <p className="text-slate-500 mt-2">
-              Bạn đang lưu {favorites.length} đồ án
-            </p>
+    <section className="flex-1 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden animate-in fade-in duration-500 flex flex-col min-h-[600px]">
+      {/* HEADER */}
+      <div className="px-6 py-4 border-b border-gray-100 bg-slate-50/50 flex justify-between items-center">
+        <h1 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+          <FolderKanban size={20} className="text-indigo-600" />
+          Đồ án đã lưu ({favorites.length})
+        </h1>
+      </div>
+
+      {/* LIST */}
+      <div className="flex-1 flex flex-col gap-0 divide-y divide-gray-100">
+        {loading ? (
+          <div className="p-10 text-center text-slate-400 animate-pulse font-medium">
+            Đang tải danh sách đồ án...
           </div>
-
-          {/* LIST */}
-          {favorites.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4">
-              {favorites.map((fav) => (
-                <div
-                  key={fav.id}
-                  className="group relative bg-white border border-slate-200 rounded-3xl p-6 transition-all hover:shadow-md hover:border-slate-300"
-                >
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    
-                 
-                    <div className="flex-grow">
-                      <Link
-                        to={`/project/${fav.project_id}`}
-                        className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors"
-                      >
-                        {fav.project_title}
-                      </Link>
-
-                      <p className="text-slate-600 mt-1">
-                        Tác giả: {fav.student_name}
-                      </p>
-
-                      <p className="text-[11px] text-slate-400 mt-4 uppercase tracking-wider font-semibold">
-                        Đã lưu vào:{" "}
-                        {new Date(fav.createdAt).toLocaleDateString("vi-VN")}
-                      </p>
-                    </div>
-
-                 
-                    <div className="flex items-center gap-3">
-                      <Link
-                        to={`/project/${fav.project_id}`}
-                        className="px-6 py-2.5 bg-slate-950 text-white text-sm font-bold rounded-2xl hover:bg-slate-800 transition-all"
-                      >
-                        Xem chi tiết
-                      </Link>
-
-                      <button
-                        onClick={() => handleRemoveFavorite(fav.projectId)}
-                        className="p-2.5 text-rose-500 hover:bg-rose-50 rounded-2xl transition-all"
-                        title="Bỏ lưu"
-                      >
-                        <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                      </svg>
-                      </button>
-                    </div>
-
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-
-            <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-300">
-              <div className="text-slate-300 mb-4">
-                <svg
-                  className="mx-auto h-16 w-16"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1}
-                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                  />
-                </svg>
+        ) : currentItems.length > 0 ? (
+          currentItems.map((fav) => (
+            <div
+              key={fav.id}
+              className="group relative flex items-center gap-5 p-5 hover:bg-slate-50/80 transition-all"
+            >
+              {/* 1. ICON THAY THẾ */}
+              <div className="w-16 h-16 shrink-0 rounded-xl border border-indigo-50 bg-indigo-50/30 flex items-center justify-center text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white transition-all duration-300 shadow-sm">
+                <Code2 size={28} />
               </div>
 
-              <p className="text-slate-500">
-                Bạn chưa lưu đồ án nào.
-              </p>
+              {/* 2. THÔNG TIN CHÍNH */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <Link
+                    to={`/project/${fav.project_id}`}
+                    className="text-[17px] font-bold text-slate-900 hover:text-indigo-600 transition-colors truncate"
+                  >
+                    {fav.project_title}
+                  </Link>
+                  <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-extrabold rounded uppercase tracking-wider">
+                    Project
+                  </span>
+                </div>
 
-              <Link
-                to="/project"
-                className="mt-4 inline-block font-bold text-slate-900 underline"
-              >
-                Khám phá đồ án ngay
-              </Link>
+                <div className="flex items-center gap-1.5 text-[14px] text-slate-500 font-medium">
+                  <User size={14} className="text-slate-400" />
+                  <span>
+                    Tác giả:{" "}
+                    <span className="text-slate-700 font-semibold">
+                      {fav.student_name}
+                    </span>
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap gap-2 mt-2.5">
+                  <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-[11px] font-medium rounded-md">
+                    Source Code
+                  </span>
+                  <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-[11px] font-medium rounded-md">
+                    Tài liệu
+                  </span>
+                </div>
+              </div>
+
+              {/* 3. THÔNG TIN THỜI GIAN */}
+              <div className="hidden md:flex flex-col items-end gap-2 text-right min-w-[140px]">
+                <div className="flex items-center gap-1.5 text-slate-400 text-[12px] font-medium">
+                  <Clock size={14} />
+                  <span>
+                    Lưu: {new Date(fav.createdAt).toLocaleDateString("vi-VN")}
+                  </span>
+                </div>
+
+                <Link
+                  to={`/project/${fav.project_id}`}
+                  className="text-xs font-bold text-indigo-600 hover:underline flex items-center gap-0.5"
+                >
+                  Xem chi tiết <ChevronRight size={14} />
+                </Link>
+              </div>
+
+              {/* 4. NÚT HEART */}
+              <div className="ml-2">
+                <button
+                  onClick={() => handleRemoveFavorite(fav.project_id)}
+                  className="p-3 rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm active:scale-90"
+                  title="Bỏ lưu đồ án"
+                >
+                  <Heart size={20} fill="currentColor" />
+                </button>
+              </div>
             </div>
-          )}
-
-        </div>
+          ))
+        ) : (
+          <div className="py-24 text-center">
+            <div className="mb-4 opacity-20 flex justify-center text-slate-400">
+              <FolderKanban size={64} />
+            </div>
+            <p className="text-slate-400 font-medium">
+              Bạn chưa lưu đồ án nào.
+            </p>
+            <Link
+              to="/project"
+              className="mt-4 inline-block text-indigo-600 font-bold hover:underline"
+            >
+              Khám phá đồ án ngay
+            </Link>
+          </div>
+        )}
       </div>
+
+      {/* --- PHẦN PHÂN TRANG --- */}
+      {!loading && totalPages > 1 && (
+        <div className="py-6 border-t border-gray-100 bg-white">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            setCurrentPage={setCurrentPage}
+          />
+        </div>
+      )}
     </section>
   );
 }
