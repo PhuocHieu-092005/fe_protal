@@ -26,24 +26,38 @@ export default function PostCard({ job }) {
   return (
     <div className="group flex h-full min-h-[285px] flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md">
       {/* Header */}
+      {/* Header */}
       <div className="mb-4 flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-white p-1.5">
+          {/* KHUNG LOGO ĐÃ ĐƯỢC TỐI ƯU */}
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-white p-1 shadow-sm">
             <img
-              src={job.companyLogo}
+              src={
+                job.companyLogo ||
+                "https://cdn-icons-png.flaticon.com/512/4091/4091968.png"
+              }
               alt={job.companyName || "Logo công ty"}
-              className="h-full w-full object-contain"
+              className="h-full w-full rounded-lg object-contain"
+              onError={(e) => {
+                e.target.src =
+                  "https://cdn-icons-png.flaticon.com/512/4091/4091968.png";
+              }}
             />
           </div>
 
           <div className="min-w-0">
-            <p className="max-w-[120px] truncate text-[11px] font-bold uppercase tracking-wide text-slate-500">
+            <p className="max-w-[150px] truncate text-[12px] font-bold uppercase tracking-wide text-slate-600">
               {job.companyName || "Chưa cập nhật công ty"}
+            </p>
+            {/* Thêm địa điểm nhỏ dưới tên công ty cho đầy đặn */}
+            <p className="text-[11px] text-slate-400 flex items-center gap-1">
+              <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+              {job.workLocation || "Toàn quốc"}
             </p>
           </div>
         </div>
 
-        <span className="shrink-0 rounded-md bg-emerald-50 px-2.5 py-1 text-[10px] font-bold uppercase text-emerald-600">
+        <span className="shrink-0 rounded-lg bg-emerald-50 px-2.5 py-1 text-[10px] font-bold uppercase text-emerald-600 border border-emerald-100">
           Đang tuyển
         </span>
       </div>

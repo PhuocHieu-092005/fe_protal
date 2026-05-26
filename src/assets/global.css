@@ -9,3 +9,9 @@ select option:hover {
   background-color: #000;
   color: #fff;
 }
+/* Tối ưu hiển thị chữ */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}

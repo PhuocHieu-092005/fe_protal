@@ -11,7 +11,7 @@ export default function ProjectCommentSection({
   formatCommentTime,
 }) {
   return (
-    <section className="relative overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm md:p-10">
+    <section className="relative overflow-hidden rounded-none border border-slate-100 bg-white p-8 shadow-sm md:p-10">
       <div className="absolute -right-6 -top-6 rotate-12 text-blue-100">
         <MessageCircleMore size={120} />
       </div>

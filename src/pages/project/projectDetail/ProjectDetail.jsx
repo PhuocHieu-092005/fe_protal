@@ -272,9 +272,11 @@ export default function ProjectDetail() {
       handleCloseRequestModal();
     } catch (error) {
       console.error("Lỗi gửi yêu cầu hợp tác:", error);
+      const serverMessage =
+        error.response?.data?.data || error.response?.data?.message;
 
       window.alert(
-        error?.response?.data?.message || "Không thể gửi yêu cầu hợp tác.",
+        serverMessage || "Không thể gửi yêu cầu hợp tác. Vui lòng thử lại sau.",
       );
     } finally {
       setRequestLoading(false);
@@ -395,8 +397,8 @@ export default function ProjectDetail() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_360px]">
-            <div className="min-w-0 space-y-5">
+          <div className="grid grid-cols-1 gap-0 xl:grid-cols-[1fr_360px]">
+            <div className="min-w-0 space-y-1">
               <ProjectOverviewSection
                 courseName={courseName}
                 projectTitle={project.title}
@@ -421,7 +423,7 @@ export default function ProjectDetail() {
               />
             </div>
 
-            <aside className="space-y-5">
+            <aside className="space-y-0">
               <ProjectSidebar
                 currentUserRole={currentUser?.role}
                 isPaidProject={isPaidProject}

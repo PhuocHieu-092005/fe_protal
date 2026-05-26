@@ -32,7 +32,7 @@ export default function ProjectSidebar({
   return (
     <>
       {/* GIÁ SOURCE */}
-      <section className="rounded-xl border border-blue-100 bg-blue-50/40 p-4 shadow-sm">
+      <section className="rounded-none border border-blue-100 bg-blue-50/40 p-4 shadow-sm">
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
@@ -65,7 +65,7 @@ export default function ProjectSidebar({
 
       {/* HỢP TÁC PROJECT - Dành cho Công ty */}
       {currentUserRole === "COMPANY" && (
-        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <section className="rounded-none border border-slate-200 bg-white p-4 shadow-sm">
           <div className="mb-3 flex items-start gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
               <Handshake size={18} />
@@ -94,7 +94,7 @@ export default function ProjectSidebar({
       )}
 
       {/* TÀI NGUYÊN */}
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="rounded-none border border-slate-200 bg-white p-4 shadow-sm">
         <h3 className="mb-3 flex items-center gap-2 text-base font-black text-slate-900">
           <BookOpen size={18} className="text-blue-600" />
           Tài nguyên
@@ -184,7 +184,7 @@ export default function ProjectSidebar({
       </section>
 
       {/* CÔNG NGHỆ */}
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="rounded-none border border-slate-200 bg-white p-4 shadow-sm">
         <h3 className="mb-3 flex items-center gap-2 text-base font-black text-slate-900">
           <Layers3 size={18} className="text-blue-600" />
           Công nghệ
@@ -207,7 +207,7 @@ export default function ProjectSidebar({
       </section>
 
       {/* TÁC GIẢ */}
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="rounded-none border border-slate-200 bg-white p-4 shadow-sm">
         <p className="mb-3 text-xs font-black uppercase tracking-widest text-slate-400">
           Tác giả
         </p>
@@ -225,13 +225,13 @@ export default function ProjectSidebar({
       </section>
 
       {/* THÔNG TIN THÊM */}
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="rounded-none border border-slate-200 bg-white p-4 shadow-sm">
         <h3 className="mb-4 flex items-center gap-2 text-base font-black text-slate-900">
           <BadgeDollarSign size={18} className="text-blue-600" />
           Thông tin thêm
         </h3>
 
-        <div className="grid grid-cols-2 gap-x-5 gap-y-3 text-xs">
+        <div className="grid grid-cols-2 gap-x-5 gap-y-1.5 text-xs">
           <div>
             <p className="text-slate-400">Mã đồ án</p>
             <p className="mt-1 font-bold text-slate-900">#{projectId}</p>
@@ -264,7 +264,7 @@ export default function ProjectSidebar({
 
       {/* GHI CHÚ ADMIN */}
       {adminNote && (
-        <section className="rounded-xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
+        <section className="rounded-none border border-amber-200 bg-amber-50 p-4 shadow-sm">
           <h3 className="mb-2 flex items-center gap-2 text-sm font-black text-amber-700">
             <ShieldCheck size={17} />
             Ghi chú từ admin

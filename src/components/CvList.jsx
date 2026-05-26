@@ -54,7 +54,7 @@ export default function CvList() {
             Đang tải danh sách CV...
           </div>
         ) : cards.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl w-full mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 max-w-5xl w-full mt-6">
             {cards.map((cvData) => (
               // Truyền nguyên object cvData lấy từ API vào component
               <CvCard key={cvData.id} card={cvData} />

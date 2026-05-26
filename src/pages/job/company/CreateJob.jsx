@@ -49,11 +49,26 @@ export default function CreateJob() {
     }
     try {
       const response = await jobService.createJob(data);
-      window.alert(response.message || "Đăng tin thành công ");
+      window.alert(response.message || "Đăng tin thành công");
       navigate("/job/manage");
     } catch (err) {
-      console.log(err);
-      window.alert("Có lỗi khi đăng bài");
+      console.error(err);
+
+      // LẤY MESSAGE LỖI TỪ BACKEND
+      const errorMsg = err.response?.data?.data || err.response?.data?.message;
+
+      if (
+        errorMsg &&
+        (errorMsg.includes("verified") || errorMsg.includes("xác thực"))
+      ) {
+        window.alert(
+          "LỖI: Tài khoản công ty của bạn chưa được xác thực. Vui lòng đợi Admin phê duyệt hồ sơ trước khi đăng bài.",
+        );
+      } else {
+        window.alert(
+          errorMsg || "Có lỗi xảy ra khi đăng bài. Vui lòng thử lại.",
+        );
+      }
     }
   };
   return (

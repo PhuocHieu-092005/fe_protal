@@ -4,7 +4,7 @@ import { Award, Star, UserCheck } from "lucide-react";
 export default function TeacherEvaluationSection({ evaluations = [] }) {
   if (!evaluations.length) {
     return (
-      <section className="relative overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm">
+      <section className="relative overflow-hidden rounded-none border border-slate-100 bg-white p-8 shadow-sm">
         <div className="absolute -right-6 -top-6 rotate-12 text-amber-100">
           <Star size={120} fill="currentColor" />
         </div>

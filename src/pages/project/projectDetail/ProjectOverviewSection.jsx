@@ -16,8 +16,8 @@ export default function ProjectOverviewSection({
   const mainImage = selectedImage || imageList?.[0]?.url;
 
   return (
-    <section className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="mb-5">
+    <section className="rounded-none border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="3">
         <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-600">
           <Tag size={14} />
           {courseName}
@@ -32,7 +32,7 @@ export default function ProjectOverviewSection({
         </p>
       </div>
 
-      <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="mb-3 grid grid-cols-2 gap-3 md:grid-cols-4">
         <div className="rounded-xl border border-slate-200 bg-white p-4">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
