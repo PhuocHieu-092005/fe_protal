@@ -1,6 +1,21 @@
 import React, { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import ForgotPasswordModal from "./ForgotPasswordModal";
+import { API_ORIGIN } from "../config/apiConfig";
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const getApiErrorMessage = (errorData, fallbackMessage) => {
+  if (!errorData) return fallbackMessage;
+
+  if (typeof errorData.data === "string") return errorData.data;
+
+  if (errorData.data && typeof errorData.data === "object") {
+    return Object.values(errorData.data)[0] || errorData.message || fallbackMessage;
+  }
+
+  return errorData.message || fallbackMessage;
+};
 
 export default function SignInForm({ onClose, onSwitchSignUp }) {
   const [role, setRole] = useState("STUDENT");
@@ -8,14 +23,38 @@ export default function SignInForm({ onClose, onSwitchSignUp }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const { login } = useAuth();
 
+  const validateForm = () => {
+    const errors = {};
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail) {
+      errors.email = "Vui lòng nhập email";
+    } else if (!emailRegex.test(trimmedEmail)) {
+      errors.email = "Email không đúng định dạng";
+    }
+
+    if (!password) {
+      errors.password = "Vui lòng nhập mật khẩu";
+    } else if (password.length < 6) {
+      errors.password = "Mật khẩu phải từ 6 ký tự trở lên";
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+
+    if (!validateForm()) return;
+
+    setLoading(true);
 
     try {
       const loginData = {
@@ -24,20 +63,29 @@ export default function SignInForm({ onClose, onSwitchSignUp }) {
         role,
       };
 
-      const res = await login(loginData);
-      console.log("res:", res);
+      await login(loginData);
       onClose();
     } catch (err) {
-      const errorMsg = err.response?.data?.data || "Đăng nhập thất bại!";
-      console.log("Login error:", err.response);
-      setError(errorMsg);
+      const errorData = err.response?.data;
+
+      if (errorData?.data && typeof errorData.data === "object") {
+        setFieldErrors(errorData.data);
+      }
+
+      setError(getApiErrorMessage(errorData, "Đăng nhập thất bại!"));
     } finally {
       setLoading(false);
     }
   };
 
+  const handleFieldChange = (field, value, setter) => {
+    setter(value);
+    setError("");
+    setFieldErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    window.location.href = `${API_ORIGIN}/oauth2/authorization/google`;
   };
 
   if (showForgotPassword) {
@@ -53,6 +101,7 @@ export default function SignInForm({ onClose, onSwitchSignUp }) {
   return (
     <div className="bg-white text-gray-500 w-[450px] max-w-full mx-4 md:p-8 p-6 text-left text-sm rounded-3xl shadow-2xl relative transition-all">
       <button
+        type="button"
         onClick={onClose}
         className="absolute top-4 right-6 text-3xl font-bold text-gray-400 hover:text-red-500 transition-all"
       >
@@ -65,6 +114,7 @@ export default function SignInForm({ onClose, onSwitchSignUp }) {
 
       <div className="flex bg-gray-100 p-1 rounded-full mb-6">
         <button
+          type="button"
           onClick={() => setRole("STUDENT")}
           className={`flex-1 py-2 rounded-full font-bold transition-all ${
             role === "STUDENT"
@@ -75,6 +125,7 @@ export default function SignInForm({ onClose, onSwitchSignUp }) {
           Sinh viên
         </button>
         <button
+          type="button"
           onClick={() => setRole("COMPANY")}
           className={`flex-1 py-2 rounded-full font-bold transition-all ${
             role === "COMPANY"
@@ -86,7 +137,7 @@ export default function SignInForm({ onClose, onSwitchSignUp }) {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         <div>
           <label className="block mb-1.5 ml-4 font-semibold text-gray-700">
             Địa chỉ Email
@@ -94,15 +145,21 @@ export default function SignInForm({ onClose, onSwitchSignUp }) {
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-gray-50 border border-gray-200 outline-none rounded-full py-3 px-6 focus:border-indigo-500 focus:bg-white transition-all"
+            onChange={(e) => handleFieldChange("email", e.target.value, setEmail)}
+            className={`w-full bg-gray-50 border outline-none rounded-full py-3 px-6 focus:border-indigo-500 focus:bg-white transition-all ${
+              fieldErrors.email ? "border-red-400" : "border-gray-200"
+            }`}
             placeholder={
               role === "STUDENT"
                 ? "Nhập email sinh viên của bạn"
                 : "Nhập email doanh nghiệp"
             }
-            required
           />
+          {fieldErrors.email && (
+            <p className="mt-1.5 ml-4 text-xs font-medium text-red-500">
+              {fieldErrors.email}
+            </p>
+          )}
         </div>
 
         <div>
@@ -112,11 +169,19 @@ export default function SignInForm({ onClose, onSwitchSignUp }) {
           <input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-gray-50 border border-gray-200 outline-none rounded-full py-3 px-6 focus:border-indigo-500 focus:bg-white transition-all"
+            onChange={(e) =>
+              handleFieldChange("password", e.target.value, setPassword)
+            }
+            className={`w-full bg-gray-50 border outline-none rounded-full py-3 px-6 focus:border-indigo-500 focus:bg-white transition-all ${
+              fieldErrors.password ? "border-red-400" : "border-gray-200"
+            }`}
             placeholder="Nhập mật khẩu"
-            required
           />
+          {fieldErrors.password && (
+            <p className="mt-1.5 ml-4 text-xs font-medium text-red-500">
+              {fieldErrors.password}
+            </p>
+          )}
         </div>
 
         <div className="flex justify-end -mt-1">
@@ -143,6 +208,7 @@ export default function SignInForm({ onClose, onSwitchSignUp }) {
       <p className="text-center mt-6 text-gray-600">
         Chưa có tài khoản?{" "}
         <button
+          type="button"
           onClick={onSwitchSignUp}
           className="text-indigo-600 font-extrabold hover:underline"
         >
@@ -158,6 +224,7 @@ export default function SignInForm({ onClose, onSwitchSignUp }) {
 
       <div className="flex gap-3">
         <button
+          type="button"
           onClick={handleGoogleLogin}
           className="flex-1 flex items-center justify-center gap-2 border border-gray-200 py-2.5 rounded-full hover:bg-gray-50 transition-all font-semibold text-gray-700"
         >

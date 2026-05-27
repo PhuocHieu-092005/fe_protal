@@ -1,6 +1,19 @@
 import React, { useState } from "react";
-import { useAuth } from "../contexts/AuthContext"; // ← Import Context
-import authService from "../services/authService"; // Nếu cần gọi trực tiếp
+import authService from "../services/authService";
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const getApiErrorMessage = (errorData, fallbackMessage) => {
+  if (!errorData) return fallbackMessage;
+
+  if (typeof errorData.data === "string") return errorData.data;
+
+  if (errorData.data && typeof errorData.data === "object") {
+    return Object.values(errorData.data)[0] || errorData.message || fallbackMessage;
+  }
+
+  return errorData.message || fallbackMessage;
+};
 
 export default function SignUpForm({ onClose, onSwitchSignIn }) {
   const [role, setRole] = useState("STUDENT");
@@ -9,50 +22,81 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
 
-  const { login } = useAuth(); // Dùng để tự động login sau khi đăng ký thành công (tùy chọn)
+  const validateForm = () => {
+    const errors = {};
+    const trimmedFullName = fullName.trim();
+    const trimmedEmail = email.trim();
+
+    if (!trimmedFullName) {
+      errors.full_name =
+        role === "STUDENT"
+          ? "Vui lòng nhập họ và tên"
+          : "Vui lòng nhập tên doanh nghiệp";
+    }
+
+    if (!trimmedEmail) {
+      errors.email = "Vui lòng nhập email";
+    } else if (!emailRegex.test(trimmedEmail)) {
+      errors.email = "Email không đúng định dạng";
+    }
+
+    if (!password) {
+      errors.password = "Vui lòng nhập mật khẩu";
+    } else if (password.length < 6) {
+      errors.password = "Mật khẩu phải từ 6 ký tự trở lên";
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+
+    if (!validateForm()) return;
+
+    setLoading(true);
 
     try {
       const registerData = {
         full_name: fullName.trim(),
         email: email.trim(),
-        password: password,
-        role: role, // STUDENT hoặc COMPANY
+        password,
+        role,
       };
 
-      // Gọi API đăng ký
-      const response = await authService.register(registerData);
-
-      console.log("Đăng ký thành công:", response);
+      await authService.register(registerData);
 
       alert(
         "Đăng ký tài khoản thành công! Vui lòng kiểm tra email để xác thực.",
       );
-      // Tùy chọn: Tự động chuyển sang form đăng nhập
       onSwitchSignIn();
     } catch (err) {
-      if (
-        err.response?.data?.data &&
-        typeof err.response.data.data === "object"
-      ) {
-        const validationErrors = Object.values(err.response.data.data);
-        setError(validationErrors[0]); // Hiển thị lỗi đầu tiên
-      } else {
-        setError(err.response?.data?.message);
+      const errorData = err.response?.data;
+
+      if (errorData?.data && typeof errorData.data === "object") {
+        setFieldErrors(errorData.data);
       }
+
+      setError(getApiErrorMessage(errorData, "Đăng ký thất bại!"));
     } finally {
       setLoading(false);
     }
   };
 
+  const handleFieldChange = (field, value, setter) => {
+    setter(value);
+    setError("");
+    setFieldErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+
   return (
     <div className="bg-white text-gray-500 w-[450px] max-w-full mx-4 md:p-10 p-6 text-left text-sm rounded-3xl shadow-2xl relative">
       <button
+        type="button"
         onClick={onClose}
         className="absolute top-2 right-4 text-3xl font-bold text-gray-400 hover:text-red-500 p-2"
       >
@@ -63,9 +107,9 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
         Tạo Tài Khoản
       </h2>
 
-      {/* Role Selector */}
       <div className="flex bg-gray-100 p-1 rounded-full mb-6">
         <button
+          type="button"
           onClick={() => setRole("STUDENT")}
           className={`flex-1 py-2.5 rounded-full font-bold transition-all ${
             role === "STUDENT"
@@ -76,6 +120,7 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
           Sinh viên
         </button>
         <button
+          type="button"
           onClick={() => setRole("COMPANY")}
           className={`flex-1 py-2.5 rounded-full font-bold transition-all ${
             role === "COMPANY"
@@ -87,7 +132,7 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         <div>
           <label className="block mb-1.5 ml-4 font-semibold text-gray-700">
             Họ và tên
@@ -95,15 +140,23 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
           <input
             type="text"
             value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="w-full border border-gray-300 rounded-full py-3 px-6 outline-none focus:border-indigo-500"
+            onChange={(e) =>
+              handleFieldChange("full_name", e.target.value, setFullName)
+            }
+            className={`w-full border rounded-full py-3 px-6 outline-none focus:border-indigo-500 ${
+              fieldErrors.full_name ? "border-red-400" : "border-gray-300"
+            }`}
             placeholder={
               role === "STUDENT"
                 ? "Nhập họ và tên của bạn"
                 : "Nhập tên doanh nghiệp"
             }
-            required
           />
+          {fieldErrors.full_name && (
+            <p className="mt-1.5 ml-4 text-xs font-medium text-red-500">
+              {fieldErrors.full_name}
+            </p>
+          )}
         </div>
 
         <div>
@@ -113,15 +166,21 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-gray-300 rounded-full py-3 px-6 outline-none focus:border-indigo-500"
+            onChange={(e) => handleFieldChange("email", e.target.value, setEmail)}
+            className={`w-full border rounded-full py-3 px-6 outline-none focus:border-indigo-500 ${
+              fieldErrors.email ? "border-red-400" : "border-gray-300"
+            }`}
             placeholder={
               role === "STUDENT"
                 ? "Nhập email sinh viên của bạn"
                 : "Nhập email doanh nghiệp"
             }
-            required
           />
+          {fieldErrors.email && (
+            <p className="mt-1.5 ml-4 text-xs font-medium text-red-500">
+              {fieldErrors.email}
+            </p>
+          )}
         </div>
 
         <div>
@@ -131,11 +190,19 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
           <input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full border border-gray-300 rounded-full py-3 px-6 outline-none focus:border-indigo-500"
+            onChange={(e) =>
+              handleFieldChange("password", e.target.value, setPassword)
+            }
+            className={`w-full border rounded-full py-3 px-6 outline-none focus:border-indigo-500 ${
+              fieldErrors.password ? "border-red-400" : "border-gray-300"
+            }`}
             placeholder="Tạo mật khẩu"
-            required
           />
+          {fieldErrors.password && (
+            <p className="mt-1.5 ml-4 text-xs font-medium text-red-500">
+              {fieldErrors.password}
+            </p>
+          )}
         </div>
 
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
@@ -152,6 +219,7 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
       <p className="text-center mt-6 text-gray-700">
         Đã có tài khoản?{" "}
         <button
+          type="button"
           onClick={onSwitchSignIn}
           className="text-blue-600 font-extrabold hover:underline"
         >

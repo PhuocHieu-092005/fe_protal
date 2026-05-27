@@ -117,6 +117,10 @@ export default function JobDetail() {
     return value;
   };
 
+  const getCvTitle = (cv) => {
+    return cv.title || cv.cvTitle || cv.name || `CV #${cv.id}`;
+  };
+
   const handleToggleFavorite = async () => {
     if (!isLoggedIn()) {
       requireLogin();
@@ -202,7 +206,7 @@ export default function JobDetail() {
                   <option value="">Chọn CV</option>
                   {cvs.map((cv) => (
                     <option key={cv.id} value={cv.id}>
-                      {cv.name || `CV #${cv.id}`}
+                      {getCvTitle(cv)}
                     </option>
                   ))}
                 </select>

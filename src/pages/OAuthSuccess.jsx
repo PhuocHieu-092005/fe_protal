@@ -1,6 +1,10 @@
 import React, { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
+import {
+  API_BASE_URL,
+  NGROK_SKIP_BROWSER_WARNING_HEADER,
+} from "../config/apiConfig";
 
 export default function OAuthSuccess() {
   const [searchParams] = useSearchParams();
@@ -10,8 +14,9 @@ export default function OAuthSuccess() {
     const handleOAuth = async () => {
       const token = searchParams.get("token");
       localStorage.setItem("accessToken", token);
-      const res = await axios.get("http://localhost:8080/api/user/me", {
+      const res = await axios.get(`${API_BASE_URL}/user/me`, {
         headers: {
+          ...NGROK_SKIP_BROWSER_WARNING_HEADER,
           Authorization: `Bearer ${token}`,
         },
       });

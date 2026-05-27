@@ -18,7 +18,7 @@ export default function CvList() {
       if (response.code === 200 && response.data?.content) {
         // Set thẳng mảng raw data từ API vào state
         setCards(response.data.content);
-        console.log("Danh sách CV đã lấy về:", response.data.content);
+        // console.log("Danh sách CV đã lấy về:", response.data.content);
       }
     } catch (error) {
       console.error("Lỗi khi lấy danh sách CV:", error);
