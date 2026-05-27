@@ -1,8 +1,9 @@
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import { API_ORIGIN } from '../config/apiConfig';
 let stompClient = null;
 export const connectWebSocket = (userId, onMessageReceived) => {
-    const socket = new SockJS('http://localhost:8080/ws-pos');
+    const socket = new SockJS(`${API_ORIGIN}/ws-pos`);
     stompClient = new Client({
         webSocketFactory: () => socket,
         reconnectDelay: 3000,

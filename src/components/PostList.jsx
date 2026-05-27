@@ -29,7 +29,7 @@ export default function PostList() {
         const normalizedJobs = normalizeJobsResponse(response);
 
         setJobs(normalizedJobs);
-        console.log("Danh sách việc làm đã tải:", normalizedJobs);
+        // console.log("Danh sách việc làm đã tải:", normalizedJobs);
       } catch (err) {
         console.error("Lỗi tải danh sách việc làm:", err);
         setErrorText("Không thể tải danh sách việc làm.");

@@ -1,6 +1,10 @@
 // src/pages/template/templatePage/TemplateCategory.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  API_BASE_URL,
+  NGROK_SKIP_BROWSER_WARNING_HEADER,
+} from "../../../config/apiConfig";
 
 const TemplateCategory = () => {
   const navigate = useNavigate();
@@ -65,10 +69,11 @@ const TemplateCategory = () => {
     formData.append("title", title.trim());
     formData.append("file", selectedFile);
     try {
-      const response = await fetch("http://localhost:8080/api/cvs/upload", {
+      const response = await fetch(`${API_BASE_URL}/cvs/upload`, {
         method: "POST",
         body: formData,
         headers: {
+          ...NGROK_SKIP_BROWSER_WARNING_HEADER,
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       });

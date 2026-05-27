@@ -15,6 +15,10 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { validateCVData } from "../../helpers/cvValidation";
+import {
+  API_BASE_URL,
+  NGROK_SKIP_BROWSER_WARNING_HEADER,
+} from "../../config/apiConfig";
 import CvEditorLeftPanel from "./components/CvEditorLeftPanel";
 import CvPreview from "./components/CvPreview";
 import SortableSection from "./components/SortableSection";
@@ -88,8 +92,11 @@ const CvEdit = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("accessToken");
-      const response = await fetch(`http://localhost:8080/api/cvs/${cvId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await fetch(`${API_BASE_URL}/cvs/${cvId}`, {
+        headers: {
+          ...NGROK_SKIP_BROWSER_WARNING_HEADER,
+          Authorization: `Bearer ${token}`,
+        },
       });
       const data = await response.json();
 
@@ -150,10 +157,11 @@ const CvEdit = () => {
 
       try {
         const response = await fetch(
-          `http://localhost:8080/api/cvs/${id}/unlock-requests`,
+          `${API_BASE_URL}/cvs/${id}/unlock-requests`,
           {
             method: "POST",
             headers: {
+              ...NGROK_SKIP_BROWSER_WARNING_HEADER,
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
@@ -199,13 +207,14 @@ const CvEdit = () => {
 
       // Chọn URL và Method dựa trên Create hay Edit
       const url = isEditMode
-        ? `http://localhost:8080/api/cvs/form/${id}`
-        : `http://localhost:8080/api/cvs/form`;
+        ? `${API_BASE_URL}/cvs/form/${id}`
+        : `${API_BASE_URL}/cvs/form`;
       const method = isEditMode ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method: method,
         headers: {
+          ...NGROK_SKIP_BROWSER_WARNING_HEADER,
           Authorization: `Bearer ${token}`,
         },
         body: formData,
