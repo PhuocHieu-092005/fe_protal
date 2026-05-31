@@ -29,6 +29,7 @@ export default function CreateJob() {
     }));
   };
   const handleSubmit = async (e) => {
+
     e.preventDefault();
     const data = new FormData();
     data.append("title", formData.title);
@@ -53,10 +54,11 @@ export default function CreateJob() {
       navigate("/job/manage");
     } catch (err) {
       console.error(err);
-
+    
       // LẤY MESSAGE LỖI TỪ BACKEND
-      const errorMsg = err.response?.data?.data || err.response?.data?.message;
-
+      const errorMsg =err.response?.data?.message;
+      console.log(errorMsg);
+   
       if (
         errorMsg &&
         (errorMsg.includes("verified") || errorMsg.includes("xác thực"))
