@@ -13,7 +13,7 @@ import {
   Clock,
   BarChart3,
 } from "lucide-react";
-
+import { alertUtils } from "../../../helpers/alertUtils";
 export default function JobManage() {
   const [jobs, setJobs] = useState([]);
   const [companyInfo, setCompanyInfo] = useState(null);
@@ -50,13 +50,31 @@ export default function JobManage() {
   }, []);
 
   const handleCloseJob = async (id) => {
-    if (!window.confirm("Bạn có chắc muốn đóng tin tuyển dụng này?")) return;
+    // 1. Sử dụng alertUtils để hiện bảng hỏi xác nhận đẹp mắt
+    const confirmed = await alertUtils.confirmDelete(
+      "Đóng tin tuyển dụng?",
+      "Bạn có chắc muốn đóng tin tuyển dụng này? Hành động này không thể hoàn tác.",
+    );
+
+    // 2. Nếu người dùng bấm Hủy (Cancel) thì dừng lại
+    if (!confirmed) return;
+
     try {
+      // 3. Gọi API để đóng tin
       await jobService.deleteJob(id);
-      fetchData();
-      alert("Đã đóng tin thành công");
+
+      // 4. Load lại danh sách dữ liệu
+      fetchData(); // hoặc fetchJobs() tùy theo tên hàm trong file của bạn
+
+      // 5. Thông báo thành công bằng Toast ở góc
+      alertUtils.success("Đã đóng tin tuyển dụng thành công!");
     } catch (err) {
-      alert("Lỗi khi đóng tin");
+      console.error("Lỗi khi đóng tin:", err);
+      // 6. Thông báo lỗi nếu có vấn đề từ Server
+      alertUtils.error(
+        "Lỗi",
+        "Không thể đóng tin tuyển dụng lúc này. Vui lòng thử lại.",
+      );
     }
   };
 

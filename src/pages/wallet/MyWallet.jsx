@@ -7,6 +7,8 @@ import BankAccountForm from "./components/BankAccountForm";
 import WalletBalanceCard from "./components/WalletBalanceCard";
 import WithdrawalForm from "./components/WithdrawalForm";
 import WithdrawalHistory from "./components/WithdrawalHistory";
+// Import alertUtils
+import { alertUtils } from "../../helpers/alertUtils";
 
 export default function MyWallet() {
   const [showBankForm, setShowBankForm] = useState(false);
@@ -44,11 +46,13 @@ export default function MyWallet() {
     try {
       setLoadingWallet(true);
       const response = await walletService.getMyWallet();
-      setWallet(response?.data || {
-        totalBalance: 0,
-        availableBalance: 0,
-        updatedAt: null,
-      });
+      setWallet(
+        response?.data || {
+          totalBalance: 0,
+          availableBalance: 0,
+          updatedAt: null,
+        },
+      );
     } catch (error) {
       console.error("Lỗi tải ví:", error);
       setWallet({
@@ -100,7 +104,10 @@ export default function MyWallet() {
     };
 
     if (!payload.bankName || !payload.accountNumber) {
-      window.alert("Vui lòng nhập đầy đủ tên ngân hàng và số tài khoản.");
+      alertUtils.error(
+        "Thiếu thông tin",
+        "Vui lòng nhập đầy đủ tên ngân hàng và số tài khoản.",
+      );
       return;
     }
 
@@ -112,10 +119,13 @@ export default function MyWallet() {
       setBankAccounts((current) => [createdAccount, ...current]);
       resetForm();
       setShowBankForm(false);
-      window.alert(response?.message || "Thêm tài khoản ngân hàng thành công.");
+      alertUtils.success(
+        response?.message || "Thêm tài khoản ngân hàng thành công.",
+      );
     } catch (error) {
       console.error("Lỗi thêm tài khoản ngân hàng:", error);
-      window.alert(
+      alertUtils.error(
+        "Lỗi",
         error?.response?.data?.message ||
           "Không thể thêm tài khoản ngân hàng. Vui lòng thử lại.",
       );
@@ -125,7 +135,10 @@ export default function MyWallet() {
   };
 
   const handleDeleteBankAccount = async (accountId) => {
-    const confirmed = window.confirm("Bạn có chắc muốn xóa tài khoản ngân hàng này?");
+    const confirmed = await alertUtils.confirmDelete(
+      "Xóa tài khoản?",
+      "Bạn có chắc muốn xóa tài khoản ngân hàng này?",
+    );
 
     if (!confirmed) return;
 
@@ -135,10 +148,13 @@ export default function MyWallet() {
       setBankAccounts((current) =>
         current.filter((account) => account.id !== accountId),
       );
-      window.alert(response?.message || "Xóa tài khoản ngân hàng thành công.");
+      alertUtils.success(
+        response?.message || "Xóa tài khoản ngân hàng thành công.",
+      );
     } catch (error) {
       console.error("Lỗi xóa tài khoản ngân hàng:", error);
-      window.alert(
+      alertUtils.error(
+        "Lỗi",
         error?.response?.data?.message ||
           "Không thể xóa tài khoản ngân hàng. Vui lòng thử lại.",
       );
@@ -152,17 +168,26 @@ export default function MyWallet() {
     const bankAccountId = Number(formData.bankAccountId);
 
     if (!amount || amount <= 0) {
-      window.alert("Vui lòng nhập số tiền muốn rút hợp lệ.");
+      alertUtils.error(
+        "Số tiền không hợp lệ",
+        "Vui lòng nhập số tiền muốn rút hợp lệ.",
+      );
       return;
     }
 
     if (!bankAccountId) {
-      window.alert("Vui lòng chọn tài khoản ngân hàng nhận tiền.");
+      alertUtils.error(
+        "Thiếu thông tin",
+        "Vui lòng chọn tài khoản ngân hàng nhận tiền.",
+      );
       return;
     }
 
     if (amount > wallet.availableBalance) {
-      window.alert("Số tiền rút không được lớn hơn tiền có thể rút.");
+      alertUtils.error(
+        "Số dư không đủ",
+        "Số tiền rút không được lớn hơn tiền có thể rút.",
+      );
       return;
     }
 
@@ -177,10 +202,13 @@ export default function MyWallet() {
       setWithdrawalRequests((current) => [createdRequest, ...current]);
       loadWallet();
       resetForm();
-      window.alert(response?.message || "Tạo yêu cầu rút tiền thành công.");
+      alertUtils.success(
+        response?.message || "Tạo yêu cầu rút tiền thành công.",
+      );
     } catch (error) {
       console.error("Lỗi tạo yêu cầu rút tiền:", error);
-      window.alert(
+      alertUtils.error(
+        "Lỗi",
         error?.response?.data?.message ||
           "Không thể tạo yêu cầu rút tiền. Vui lòng thử lại.",
       );
@@ -202,7 +230,8 @@ export default function MyWallet() {
               Ví của tôi
             </h1>
             <p className="mt-2 max-w-2xl text-base font-medium text-slate-500">
-              Quản lý thu nhập bán source code, tài khoản ngân hàng và yêu cầu rút tiền.
+              Quản lý thu nhập bán source code, tài khoản ngân hàng và yêu cầu
+              rút tiền.
             </p>
           </div>
 

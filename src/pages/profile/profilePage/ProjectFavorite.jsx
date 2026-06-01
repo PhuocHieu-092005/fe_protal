@@ -10,7 +10,7 @@ import {
   Code2,
 } from "lucide-react";
 import Pagination from "../../../components/common/Pagination"; // Import component phân trang của bạn
-
+import { alertUtils } from "../../../helpers/alertUtils";
 export default function FavoriteProjects() {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,7 +35,7 @@ export default function FavoriteProjects() {
   const handleRemoveFavorite = async (projectId) => {
     try {
       await projectService.deleteFavoriteProject(projectId);
-      alert("Đã bỏ lưu đồ án");
+      alertUtils.success("Đã bỏ lưu đồ án");
       fetchFavorites();
     } catch (err) {
       console.error("lỗi khi bỏ lưu đồ án: ", err);

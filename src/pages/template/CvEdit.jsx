@@ -1,6 +1,6 @@
 // src/pages/template/CvEdit.jsx
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Thêm dòng này
+import { useParams, useNavigate } from "react-router-dom";
 import {
   DndContext,
   closestCenter,
@@ -28,14 +28,17 @@ import ObjectiveSection from "./components/sections/ObjectiveSection";
 import EducationSection from "./components/sections/EducationSection";
 import ExperienceSection from "./components/sections/ExperienceSection";
 import SkillsSection from "./components/sections/SkillsSection";
+//import notification
+import { alertUtils } from "../../helpers/alertUtils";
 
 const CvEdit = () => {
-  const { id } = useParams(); // Lấy ID từ URL: /cv/edit/:id
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [isEditMode, setIsEditMode] = useState(false);
-  const [currentStatus, setCurrentStatus] = useState(null); // PENDING, REJECTED, APPROVED
+  const [currentStatus, setCurrentStatus] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false); // Thêm state này
   const [hasPendingRequest, setHasPendingRequest] = useState(false);
 
   const [title, setTitle] = useState("Title CV - Frontend Developer");
@@ -56,7 +59,7 @@ const CvEdit = () => {
     education: [{ school: "", major: "", gpa: "", period: "" }],
     experience: [],
     skills: { programming: [], frameworks: [], softSkills: [] },
-    avatar: "", // Lưu URL avatar cũ
+    avatar: "",
   });
 
   const [sections, setSections] = useState([
@@ -80,7 +83,6 @@ const CvEdit = () => {
     useSensor(KeyboardSensor),
   );
 
-  // =================== FETCH DATA KHI EDIT ===================
   useEffect(() => {
     if (id) {
       setIsEditMode(true);
@@ -103,18 +105,15 @@ const CvEdit = () => {
       if (response.ok && data) {
         setTitle(data.title);
         setCurrentStatus(data.status);
-        setHasPendingRequest(data.has_pending_request); // PENDING, REJECTED, APPROVED
-        console.log("Dữ liệu CV API trả về:", data);
-        // Đổ dữ liệu JSON vào form
+        setHasPendingRequest(data.has_pending_request);
         if (data.content_json) {
           setCvData(data.content_json);
-          // Nếu có ảnh cũ, gán vào preview
           if (data.content_json.avatar) {
             setAvatarPreview(data.content_json.avatar);
           }
         }
       } else {
-        alert("Không thể tải thông tin CV");
+        alertUtils.error("Lỗi", "Không thể tải thông tin CV");
       }
     } catch (error) {
       console.error("Lỗi fetch CV:", error);
@@ -144,11 +143,11 @@ const CvEdit = () => {
     }
   };
 
-  // =================== LOGIC LƯU CV TỔNG HỢP ===================
   const handleSaveCV = async () => {
+    if (isSaving) return; // Chặn nếu đang lưu
+
     const token = localStorage.getItem("accessToken");
 
-    // 1. TRƯỜNG HỢP CV ĐÃ DUYỆT (APPROVED) -> Gửi Ticket
     if (isEditMode && currentStatus === "APPROVED") {
       const reason = window.prompt(
         "CV đã được duyệt. Vui lòng nhập lý do bạn muốn chỉnh sửa để Admin mở khóa:",
@@ -156,6 +155,7 @@ const CvEdit = () => {
       if (!reason || reason.trim() === "") return;
 
       try {
+        setIsSaving(true); // Bắt đầu trạng thái lưu
         const response = await fetch(
           `${API_BASE_URL}/cvs/${id}/unlock-requests`,
           {
@@ -170,21 +170,25 @@ const CvEdit = () => {
         );
         const result = await response.json();
         if (response.ok) {
-          alert("Gửi yêu cầu thành công! Vui lòng chờ Admin duyệt.");
+          alertUtils.success(
+            "Gửi yêu cầu thành công! Vui lòng chờ Admin duyệt.",
+          );
           navigate("/profile");
         } else {
-          alert(result.message || "Có lỗi xảy ra");
+          alertUtils.error("Thất bại", result.message || "Có lỗi xảy ra");
         }
       } catch (error) {
         console.error("Lỗi gửi yêu cầu:", error);
+        alertUtils.error("Lỗi", "Không thể gửi yêu cầu mở khóa.");
+      } finally {
+        setIsSaving(false);
       }
-      return; // Dừng tại đây, không lưu data
+      return;
     }
 
-    // 2. TRƯỜNG HỢP PENDING / REJECTED / CREATE MỚI -> Lưu Data
     const validation = validateCVData(title, cvData);
     if (!validation.isValid) {
-      alert(validation.message);
+      alertUtils.error(validation.message);
       return;
     }
 
@@ -193,7 +197,7 @@ const CvEdit = () => {
       title: title.trim(),
       content_json: {
         ...cvData,
-        avatar: cvData.avatar || "", // Giữ URL ảnh cũ nếu ko up mới
+        avatar: cvData.avatar || "",
       },
     };
 
@@ -203,9 +207,9 @@ const CvEdit = () => {
     }
 
     try {
+      setIsSaving(true); // Bắt đầu trạng thái lưu
       console.log("Đang gửi dữ liệu lên Backend...");
 
-      // Chọn URL và Method dựa trên Create hay Edit
       const url = isEditMode
         ? `${API_BASE_URL}/cvs/form/${id}`
         : `${API_BASE_URL}/cvs/form`;
@@ -223,13 +227,25 @@ const CvEdit = () => {
       const result = await response.json();
 
       if (response.ok) {
-        alert(isEditMode ? "Cập nhật CV thành công!" : "Lưu CV thành công!");
+        alertUtils.success(
+          isEditMode ? "Cập nhật CV thành công!" : "Lưu CV thành công!",
+        );
         navigate("/profile");
       } else {
-        alert(result.message || result.data || "Có lỗi xảy ra");
+        let finalMessage = "";
+        if (result.data && typeof result.data === "string") {
+          finalMessage = result.data;
+        } else if (result.data && typeof result.data === "object") {
+          finalMessage = Object.values(result.data)[0];
+        } else {
+          finalMessage = result.message || "Có lỗi xảy ra, vui lòng thử lại";
+        }
+        alertUtils.error(finalMessage);
       }
     } catch (error) {
-      console.error("Lỗi kết nối:", error);
+      alertUtils.error("Lỗi kết nối", "Không thể lưu dữ liệu lúc này.");
+    } finally {
+      setIsSaving(false); // Kết thúc trạng thái lưu
     }
   };
 
@@ -242,9 +258,7 @@ const CvEdit = () => {
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50 mt-14">
-      {/* CỘT TRÁI - Sidebar */}
       <div className="w-[450px] bg-white border-r overflow-y-auto mt-4">
-        {/* Truyền thêm isEditMode và currentStatus */}
         <CvEditorLeftPanel
           title={title}
           setTitle={setTitle}
@@ -254,11 +268,11 @@ const CvEdit = () => {
           isEditMode={isEditMode}
           currentStatus={currentStatus}
           hasPendingRequest={hasPendingRequest}
+          isSaving={isSaving} // Truyền prop xuống
         />
 
-        {/* Vô hiệu hóa kéo thả nếu đã duyệt (Tuỳ chọn UX) */}
         <div
-          className={`p-6 ${currentStatus === "APPROVED" ? "opacity-60 pointer-events-none" : ""}`}
+          className={`p-6 ${currentStatus === "APPROVED" || isSaving ? "opacity-60 pointer-events-none" : ""}`}
         >
           <h3 className="font-medium text-gray-700 mb-5">Các phần của CV</h3>
           <DndContext
@@ -283,7 +297,6 @@ const CvEdit = () => {
         </div>
       </div>
 
-      {/* CỘT PHẢI - PREVIEW */}
       <div className="flex-1 overflow-auto bg-gray-100 flex items-start justify-center pt-8 px-6">
         <div className="w-full max-w-[1300px] origin-top">
           <CvPreview

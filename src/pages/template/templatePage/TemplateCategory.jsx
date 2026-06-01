@@ -5,6 +5,8 @@ import {
   API_BASE_URL,
   NGROK_SKIP_BROWSER_WARNING_HEADER,
 } from "../../../config/apiConfig";
+// 1. IMPORT alertUtils
+import { alertUtils } from "../../../helpers/alertUtils";
 
 const TemplateCategory = () => {
   const navigate = useNavigate();
@@ -53,13 +55,18 @@ const TemplateCategory = () => {
     if (file && file.type === "application/pdf") {
       setSelectedFile(file);
     } else {
-      alert("Vui lòng chọn file PDF!");
+      // Thay alert bằng alertUtils
+      alertUtils.error("Định dạng không hỗ trợ", "Vui lòng chọn file PDF!");
     }
   };
 
   const handleUploadSubmit = async () => {
     if (!selectedFile || !title.trim()) {
-      alert("Vui lòng nhập tên CV và chọn file PDF!");
+      // Thay alert bằng alertUtils
+      alertUtils.error(
+        "Thiếu thông tin",
+        "Vui lòng nhập tên CV và chọn file PDF!",
+      );
       return;
     }
 
@@ -79,18 +86,29 @@ const TemplateCategory = () => {
       });
       const result = await response.json();
       if (response.ok) {
-        alert("Tải CV lên thành công!");
+        // Thay alert bằng alertUtils
+        alertUtils.success("Tải CV lên thành công!");
         console.log("Thành công:", result);
         setIsModalOpen(false);
-        navigate("/template");
+        navigate("/profile"); // Chuyển về profile để xem kết quả
       } else {
-        const messageErr = result.data;
+        // --- SỬA LOGIC BẮT LỖI TẠI ĐÂY ---
         console.error("Lỗi từ server:", result);
-        alert(messageErr);
+
+        let finalMessage = "";
+        // Ưu tiên lấy 'data' nếu là string (thông báo nghiệp vụ),
+        // nếu không có thì lấy 'message' (thông báo hệ thống)
+        if (result.data && typeof result.data === "string") {
+          finalMessage = result.data;
+        } else {
+          finalMessage = result.message || "Có lỗi xảy ra khi tải CV lên";
+        }
+
+        alertUtils.error(finalMessage);
       }
     } catch (error) {
       console.error("Lỗi kết nối:", error);
-      alert("Lỗi kết nối server!");
+      alertUtils.error("Lỗi kết nối", "Không thể kết nối đến máy chủ!");
     } finally {
       setUploading(false);
     }

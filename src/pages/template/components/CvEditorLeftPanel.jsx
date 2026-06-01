@@ -1,4 +1,3 @@
-// src/pages/template/components/CvEditorLeftPanel.jsx
 import React from "react";
 
 const CvEditorLeftPanel = ({
@@ -7,20 +6,22 @@ const CvEditorLeftPanel = ({
   avatarPreview,
   handleAvatarUpload,
   handleSaveCV,
-  currentStatus, // Nhận thêm prop này
-  isEditMode, // Nhận thêm prop này
+  currentStatus,
+  isEditMode,
   hasPendingRequest,
+  isSaving, // Nhận thêm prop này
 }) => {
   // Xác định chữ và màu nút dựa trên trạng thái
   let buttonText = "Lưu CV";
   let buttonClass = "bg-black hover:bg-gray-800 text-white";
   let isDisabled = false;
+
   if (isEditMode) {
     if (currentStatus === "APPROVED") {
       if (hasPendingRequest) {
         buttonText = "Đang chờ Admin duyệt yêu cầu sửa";
         buttonClass = "bg-gray-400 text-white cursor-not-allowed";
-        isDisabled = true; // Khóa nút
+        isDisabled = true;
       } else {
         buttonText = "Yêu cầu mở khóa sửa CV";
         buttonClass = "bg-orange-500 hover:bg-orange-600 text-white";
@@ -40,7 +41,7 @@ const CvEditorLeftPanel = ({
         onChange={(e) => setTitle(e.target.value)}
         className="w-full text-xl font-semibold px-5 py-3 border border-gray-300 rounded-2xl focus:outline-none focus:border-indigo-500 mb-6"
         placeholder="Tên CV của bạn"
-        disabled={currentStatus === "APPROVED"} // Khóa đổi tên nếu đã duyệt
+        disabled={currentStatus === "APPROVED" || isSaving} // Khóa khi đang lưu
       />
 
       {/* Avatar */}
@@ -50,18 +51,21 @@ const CvEditorLeftPanel = ({
         </label>
         <div className="flex justify-center">
           <div className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-2xl overflow-hidden hover:border-indigo-400 transition relative">
-            {/* Vô hiệu hóa upload ảnh nếu đã duyệt */}
             <input
               type="file"
               accept="image/*"
               onChange={handleAvatarUpload}
               className="hidden"
               id="avatar-upload"
-              disabled={currentStatus === "APPROVED"}
+              disabled={currentStatus === "APPROVED" || isSaving}
             />
             <label
               htmlFor="avatar-upload"
-              className={`h-full w-full flex items-center justify-center ${currentStatus === "APPROVED" ? "cursor-not-allowed opacity-70" : "cursor-pointer"}`}
+              className={`h-full w-full flex items-center justify-center ${
+                currentStatus === "APPROVED" || isSaving
+                  ? "cursor-not-allowed opacity-70"
+                  : "cursor-pointer"
+              }`}
             >
               {avatarPreview ? (
                 <img
@@ -80,10 +84,19 @@ const CvEditorLeftPanel = ({
       {/* Nút Lưu / Cập nhật / Yêu cầu */}
       <button
         onClick={handleSaveCV}
-        disabled={isDisabled}
-        className={`w-full py-2.5 font-medium rounded-2xl transition flex items-center justify-center gap-2 shadow-sm ${buttonClass}`}
+        disabled={isDisabled || isSaving} // Khóa nút nếu đang lưu
+        className={`w-full py-2.5 font-medium rounded-2xl transition flex items-center justify-center gap-2 shadow-sm ${
+          isSaving ? "bg-gray-400 cursor-not-allowed" : buttonClass
+        }`}
       >
-        {buttonText}
+        {isSaving ? (
+          <>
+            <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            Đang xử lý...
+          </>
+        ) : (
+          buttonText
+        )}
       </button>
     </div>
   );

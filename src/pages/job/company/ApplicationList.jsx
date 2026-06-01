@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import jobService from "../../../services/jobService";
 import { useNavigate, useParams } from "react-router-dom";
 import cvService from "../../../services/cvService";
-
+import { alertUtils } from "../../../helpers/alertUtils";
 export default function ApplicationList() {
   const [applicants, setApplicants] = useState([]);
   const [selectedApp, setSelectedApp] = useState(null);
@@ -16,7 +16,7 @@ export default function ApplicationList() {
   const handleReview = async () => {
     try {
       await jobService.reviewApplication(selectedApp.applicationId, reviewData);
-      alert("Đã gửi phản hồi thành công");
+      alertUtils.success("Đã gửi phản hồi thành công");
       setApplicants((prev) =>
         prev.map((app) =>
           app.applicationId === selectedApp.applicationId
@@ -27,7 +27,7 @@ export default function ApplicationList() {
       setSelectedApp(null);
     } catch (err) {
       console.error("Lỗi review: ", err);
-      alert("Có lỗi xảy ra khi gửi phản hồi.");
+      alertUtils.error("Có lỗi xảy ra khi gửi phản hồi.");
     }
   };
   useEffect(() => {
@@ -110,12 +110,15 @@ export default function ApplicationList() {
                 })()
               ) : (
                 <>
-                {console.log("duong dan file pdf",viewingCv.cv_file.file_path)}
-                <iframe
-                  src={`${viewingCv.cv_file.file_path}#toolbar=0`}
-                  className="w-full h-full border-none rounded-lg"
-                  title="CV Preview"
-                />
+                  {console.log(
+                    "duong dan file pdf",
+                    viewingCv.cv_file.file_path,
+                  )}
+                  <iframe
+                    src={`${viewingCv.cv_file.file_path}#toolbar=0`}
+                    className="w-full h-full border-none rounded-lg"
+                    title="CV Preview"
+                  />
                 </>
               )}
             </div>

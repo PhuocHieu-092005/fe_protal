@@ -16,6 +16,7 @@ import projectService from "../../../services/projectService";
 import Pagination from "../../../components/common/Pagination";
 import Swal from "sweetalert2";
 
+import { alertUtils } from "../../../helpers/alertUtils";
 const ITEMS_PER_PAGE = 6;
 
 const getStatusStyle = (status) => {
@@ -116,21 +117,22 @@ export default function MyProjects() {
   }, [filteredProjects, currentPage]);
 
   const handleDelete = async (projectId) => {
-    const result = await Swal.fire({
-      title: "Xóa đồ án?",
-      text: "Đồ án sẽ được đóng và không còn hiển thị trong danh sách của bạn.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Xóa",
-      cancelButtonText: "Hủy",
-      confirmButtonColor: "#e11d48",
-    });
+    // 1. Sử dụng alertUtils để hỏi xác nhận xóa
+    const confirmed = await alertUtils.confirmDelete(
+      "Xóa đồ án?",
+      "Đồ án sẽ được đóng và không còn hiển thị trong danh sách của bạn.",
+    );
 
-    if (!result.isConfirmed) return;
+    if (!confirmed) return;
 
     try {
+      // 2. Thực hiện gọi API xóa
       await projectService.deleteProject(projectId);
-      await Swal.fire("Thành công", "Đã xóa đồ án.", "success");
+
+      // 3. Thông báo thành công bằng Toast ở góc
+      alertUtils.success("Đã xóa đồ án thành công.");
+
+      // 4. Load lại danh sách đồ án
       fetchMyProjects();
     } catch (error) {
       console.error("Lỗi xóa project:", error?.response?.data || error);
@@ -140,7 +142,8 @@ export default function MyProjects() {
         error?.response?.data?.message ||
         "Không thể xóa đồ án.";
 
-      Swal.fire("Thất bại", errorMsg, "error");
+      // 5. Thông báo lỗi chi tiết bằng Modal
+      alertUtils.error("Thất bại", errorMsg);
     }
   };
 

@@ -10,6 +10,8 @@ import ProjectCommentSection from "./ProjectCommentSection";
 import ProjectOverviewSection from "./ProjectOverviewSection";
 import ProjectSidebar from "./ProjectSidebar";
 import TeacherEvaluationSection from "./TeacherEvaluationSection";
+// Import alertUtils
+import { alertUtils } from "../../../helpers/alertUtils";
 
 const normalizeUrl = (url) => {
   if (!url || typeof url !== "string") return url;
@@ -62,8 +64,8 @@ export default function ProjectDetail() {
   };
 
   const handleToggleFavorite = async () => {
-    if (!currentUser || !accessToken) {
-      window.alert("Vui lòng đăng nhập để lưu đồ án.");
+    if (!isLoggedIn()) {
+      alertUtils.info("Yêu cầu đăng nhập", "Vui lòng đăng nhập để lưu đồ án.");
       return;
     }
 
@@ -72,16 +74,16 @@ export default function ProjectDetail() {
     try {
       if (isFavorited) {
         await projectService.deleteFavoriteProject(id);
-        window.alert("Đã gỡ thích dự án");
+        alertUtils.success("Đã gỡ thích dự án");
       } else {
         await projectService.toggleFavorite(id);
-        window.alert("Đã thích dự án");
+        alertUtils.success("Đã thích dự án");
       }
 
       await checkFav();
     } catch (err) {
       console.error("Lỗi xử lý yêu thích:", err);
-      window.alert("Không thể cập nhật trạng thái yêu thích.");
+      alertUtils.error("Lỗi", "Không thể cập nhật trạng thái yêu thích.");
     } finally {
       setLoadingFav(false);
     }
@@ -195,7 +197,10 @@ export default function ProjectDetail() {
 
   const handleOpenRequestModal = () => {
     if (currentUser?.role !== "COMPANY") {
-      window.alert("Chỉ tài khoản doanh nghiệp mới được gửi yêu cầu hợp tác.");
+      alertUtils.info(
+        "Thông báo",
+        "Chỉ tài khoản doanh nghiệp mới được gửi yêu cầu hợp tác.",
+      );
       return;
     }
 
@@ -207,12 +212,15 @@ export default function ProjectDetail() {
     if (!project?.id) return;
 
     if (isPurchased) {
-      window.alert("Bạn đã mua source code của đồ án này.");
+      alertUtils.info("Thông báo", "Bạn đã mua source code của đồ án này.");
       return;
     }
 
     if (!currentUser) {
-      window.alert("Vui lòng đăng nhập để mua source code.");
+      alertUtils.info(
+        "Yêu cầu đăng nhập",
+        "Vui lòng đăng nhập để mua source code.",
+      );
       return;
     }
 
@@ -253,7 +261,10 @@ export default function ProjectDetail() {
     if (!project?.id) return;
 
     if (!requestReason.trim()) {
-      window.alert("Vui lòng nhập lý do gửi yêu cầu hợp tác.");
+      alertUtils.error(
+        "Thiếu thông tin",
+        "Vui lòng nhập lý do gửi yêu cầu hợp tác.",
+      );
       return;
     }
 
@@ -268,14 +279,16 @@ export default function ProjectDetail() {
       const response =
         await projectAccessRequestService.createProjectAccessRequest(payload);
 
-      window.alert(response?.message || "Đã gửi yêu cầu hợp tác thành công.");
+      alertUtils.success(
+        response?.message || "Đã gửi yêu cầu hợp tác thành công.",
+      );
       handleCloseRequestModal();
     } catch (error) {
       console.error("Lỗi gửi yêu cầu hợp tác:", error);
       const serverMessage =
         error.response?.data?.data || error.response?.data?.message;
 
-      window.alert(
+      alertUtils.error(
         serverMessage || "Không thể gửi yêu cầu hợp tác. Vui lòng thử lại sau.",
       );
     } finally {
@@ -287,12 +300,15 @@ export default function ProjectDetail() {
     if (!project?.id) return;
 
     if (!currentUser || !accessToken) {
-      window.alert("Vui lòng đăng nhập để gửi bình luận.");
+      alertUtils.info(
+        "Yêu cầu đăng nhập",
+        "Vui lòng đăng nhập để gửi bình luận.",
+      );
       return;
     }
 
     if (!commentContent.trim()) {
-      window.alert("Vui lòng nhập nội dung bình luận.");
+      alertUtils.error("Thiếu thông tin", "Vui lòng nhập nội dung bình luận.");
       return;
     }
 
@@ -308,14 +324,12 @@ export default function ProjectDetail() {
 
       setComments((prev) => [response, ...prev]);
       setCommentContent("");
-      window.alert("Bình luận thành công.");
+      alertUtils.success("Bình luận thành công.");
     } catch (error) {
       console.error("Lỗi thêm bình luận:", error);
-      window.alert(
-        error?.response?.data?.data ||
-          error?.response?.data?.message ||
-          "Không thể gửi bình luận.",
-      );
+      const serverMessage =
+        error?.response?.data?.data || error?.response?.data?.message;
+      alertUtils.error(serverMessage || "Không thể gửi bình luận.");
     } finally {
       setSubmittingComment(false);
     }
@@ -328,6 +342,10 @@ export default function ProjectDetail() {
     if (Number.isNaN(date.getTime())) return "---";
 
     return date.toLocaleString("vi-VN");
+  };
+
+  const isLoggedIn = () => {
+    return !!currentUser;
   };
 
   if (loading) {

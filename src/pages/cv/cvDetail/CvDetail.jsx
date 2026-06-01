@@ -115,22 +115,6 @@ export default function CvDetailPage() {
       <main className="mt-28 px-6 flex-1 max-w-5xl mx-auto w-full pb-16">
         {/* 3. Breadcrumb hiện đại hơn */}
         <nav className="flex items-center gap-2 text-sm font-medium text-slate-500 mb-8">
-          <Link to="/" className="hover:text-indigo-600 transition-colors">
-            Trang chủ
-          </Link>
-          <svg
-            className="w-4 h-4 text-slate-300"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
           <Link to="/cv" className="hover:text-indigo-600 transition-colors">
             Hồ sơ ứng viên
           </Link>

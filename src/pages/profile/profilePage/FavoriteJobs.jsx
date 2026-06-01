@@ -11,7 +11,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 import Pagination from "../../../components/common/Pagination"; // Import component phân trang của bạn
-
+//import notification
+import { alertUtils } from "../../../helpers/alertUtils";
 export default function FavoriteJobs() {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +38,7 @@ export default function FavoriteJobs() {
     try {
       const response = await jobService.toggleFavorite(jobId, "ghi chú");
       if (!response.data.data) {
-        alert("Đã bỏ lưu bài viết");
+        alertUtils.success("Đã bỏ lưu bài viết");
         fetchFavorites();
       }
     } catch (err) {

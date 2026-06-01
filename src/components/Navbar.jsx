@@ -16,6 +16,8 @@ import {
   Bell,
 } from "lucide-react";
 import { connectWebSocket, disconnectWebSocket } from "../services/wsService";
+//import thông báo
+import { alertUtils } from "../helpers/alertUtils";
 
 export default function Navbar() {
   const [authMode, setAuthMode] = useState(null);
@@ -62,7 +64,7 @@ export default function Navbar() {
 
       connectWebSocket(user.email, (message) => {
         console.log("Tín hiệu mới", message);
-        alert("Bạn vừa có thông báo mới!");
+        alertUtils.success("Bạn vừa có thông báo mới!");
         fetchInitialData();
       });
 
@@ -199,8 +201,6 @@ export default function Navbar() {
         {/* AUTH SECTION */}
         <div className="flex-1 flex justify-end items-center gap-3">
           <div className="relative">
-       
-
             {user && (
               <button
                 type="button"

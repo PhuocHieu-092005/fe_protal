@@ -18,6 +18,9 @@ import {
 import Footer from "../../../layouts/Footer";
 import jobService from "../../../services/jobService";
 import cvService from "../../../services/cvService";
+import PostCard from "../../../components/PostCard";
+// Import alertUtils
+import { alertUtils } from "../../../helpers/alertUtils";
 
 export default function JobDetail() {
   const { id } = useParams();
@@ -37,7 +40,9 @@ export default function JobDetail() {
     const user = localStorage.getItem("user");
     if (user) setUser(JSON.parse(user));
   };
-  const requireLogin = () => setShowLoginNotice(true);
+  const requireLogin = () => {
+    setShowLoginNotice(true);
+  };
 
   // TÍNH NĂNG: Tự động cuộn lên đầu trang khi ID thay đổi (bấm vào job liên quan)
   useEffect(() => {
@@ -57,16 +62,17 @@ export default function JobDetail() {
 
   const handleApplyJob = async () => {
     if (!selectedCv) {
-      alert("Chưa chọn CV");
+      alertUtils.error("Vui lòng chọn CV để ứng tuyển");
       return;
     }
     try {
       await jobService.applyJob(id, selectedCv);
-      alert("Ứng tuyển thành công");
+      alertUtils.success("Ứng tuyển thành công");
       setIsApplyOpen(false);
     } catch (err) {
-      const errorData = err.response?.data?.data;
-      alert(errorData || "Ứng tuyển thất bại, vui lòng thử lại!");
+      console.log(err);
+      const errorData = err.response?.data?.data || err.response?.data?.message;
+      alertUtils.error(errorData || "Ứng tuyển thất bại, vui lòng thử lại!");
     }
   };
 
@@ -131,13 +137,13 @@ export default function JobDetail() {
       const response = await jobService.toggleFavorite(id, "ghi chú");
       if (response.data.data) {
         setIsFavorited(true);
-        alert("Đã lưu tin tuyển dụng");
+        alertUtils.success("Đã lưu tin tuyển dụng");
       } else {
         setIsFavorited(false);
-        alert("Đã bỏ lưu tin tuyển dụng");
+        alertUtils.success("Đã bỏ lưu tin tuyển dụng");
       }
     } catch (err) {
-      alert("Có lỗi xảy ra, vui lòng thử lại!");
+      alertUtils.error("Có lỗi xảy ra, vui lòng thử lại!");
     } finally {
       setLoadingFav(false);
     }
@@ -245,10 +251,6 @@ export default function JobDetail() {
           {/* Breadcrumbs */}
           <section className="mx-auto max-w-7xl px-5 pt-28 pb-1">
             <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500">
-              <Link to="/" className="hover:text-slate-900">
-                Trang chủ
-              </Link>
-              <span>/</span>
               <Link to="/job" className="hover:text-slate-900">
                 Việc làm
               </Link>

@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import jobService from "../../../services/jobService";
+// Import alertUtils
+import { alertUtils } from "../../../helpers/alertUtils";
+
 export default function CreateJob() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -15,6 +18,7 @@ export default function CreateJob() {
     jdFile: null,
     tags: "",
   });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -22,14 +26,15 @@ export default function CreateJob() {
       [name]: value,
     }));
   };
+
   const handleFileChange = (e) => {
     setFormData((prev) => ({
       ...prev,
       jdFile: e.target.files[0],
     }));
   };
-  const handleSubmit = async (e) => {
 
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData();
     data.append("title", formData.title);
@@ -48,26 +53,33 @@ export default function CreateJob() {
     if (formData.endDay) {
       data.append("endDay", `${formData.endDay}T23:59:59`);
     }
+
     try {
       const response = await jobService.createJob(data);
-      window.alert(response.message || "Đăng tin thành công");
+
+      // Thông báo thành công đẹp ở góc màn hình
+      alertUtils.success(response.message || "Đăng tin tuyển dụng thành công!");
+
       navigate("/job/manage");
     } catch (err) {
       console.error(err);
-    
+
       // LẤY MESSAGE LỖI TỪ BACKEND
-      const errorMsg =err.response?.data?.message;
+      const errorMsg = err.response?.data?.message;
       console.log(errorMsg);
-   
+
       if (
         errorMsg &&
         (errorMsg.includes("verified") || errorMsg.includes("xác thực"))
       ) {
-        window.alert(
-          "LỖI: Tài khoản công ty của bạn chưa được xác thực. Vui lòng đợi Admin phê duyệt hồ sơ trước khi đăng bài.",
+        // Thông báo lỗi xác thực bằng Modal ở giữa màn hình cho trang trọng
+        alertUtils.error(
+          "Tài khoản chưa xác thực",
+          "Tài khoản công ty của bạn chưa được xác thực. Vui lòng đợi Admin phê duyệt hồ sơ trước khi đăng bài.",
         );
       } else {
-        window.alert(
+        // Các lỗi khác hiện Toast hoặc Modal tùy độ dài
+        alertUtils.error(
           errorMsg || "Có lỗi xảy ra khi đăng bài. Vui lòng thử lại.",
         );
       }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import jobService from "../../../services/jobService";
-
+import { alertUtils } from "../../../helpers/alertUtils";
 export default function EditJob() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -67,12 +67,12 @@ export default function EditJob() {
       data.append("endDay", `${formData.endDay}T23:59:59`);
     }
     try {
-      const response = await jobService.updateJob(id,data);
-      window.alert(response.message || "Sửa thành công ");
+      const response = await jobService.updateJob(id, data);
+      alertUtils.success(response.message || "Sửa thành công ");
       navigate("/job/manage");
     } catch (err) {
       console.log(err);
-      window.alert("Có lỗi khi sửa bài");
+      alertUtils.error("Có lỗi khi sửa bài");
     }
   };
   return (

@@ -9,9 +9,11 @@ import {
   Plus,
   X,
   XCircle,
-  Edit, //
+  Edit,
 } from "lucide-react";
 import cvService from "../../../services/cvService";
+// Import alertUtils để dùng thông báo đẹp
+import { alertUtils } from "../../../helpers/alertUtils";
 
 const CvStatusManager = () => {
   const [cvs, setCvs] = useState([]);
@@ -42,47 +44,48 @@ const CvStatusManager = () => {
     }
   };
 
-  // Xử lý xóa CV
+  // =================== SỬA PHẦN XÁC NHẬN XÓA TẠI ĐÂY ===================
   const handleDelete = async (id) => {
-    if (
-      !window.confirm(
-        "Bạn có chắc chắn muốn xóa CV này không? Hành động này không thể hoàn tác.",
-      )
-    ) {
-      return;
-    }
+    // Dùng alertUtils để hiện bảng hỏi xác nhận đẹp mắt
+    const confirm = await alertUtils.confirmDelete(
+      "Xóa hồ sơ?",
+      "Bạn có chắc chắn muốn xóa CV này không? Hành động này không thể hoàn tác.",
+    );
+
+    if (!confirm) return;
 
     try {
       await cvService.deleteCv(id);
       setCvs(cvs.filter((cv) => cv.id !== id));
-      alert("Xóa CV thành công!");
+
+      // Hiện thông báo thành công ở góc màn hình
+      alertUtils.success("Đã xóa CV thành công!");
     } catch (error) {
       console.error("Lỗi khi xóa CV:", error.response?.data || error.message);
-      alert("Có lỗi xảy ra khi xóa CV.");
+
+      // Hiện thông báo lỗi nếu có vấn đề
+      alertUtils.error("Lỗi", "Có lỗi xảy ra khi xóa CV. Vui lòng thử lại.");
     }
   };
+  // =====================================================================
 
-  // 1. Xử lý Xem Chi Tiết (Nút Mắt)
   const handlePreview = (cv) => {
     if (cv.type === "FORM") {
-      navigate(`/cv/${cv.id}`); // Mở trang xem chi tiết CV (không phải edit)
+      navigate(`/cv/${cv.id}`);
     } else if (cv.type === "UPLOAD") {
       const fileObj = cv.cv_file;
       if (fileObj && fileObj.file_path) {
-        {console.log("đường dẫn"),fileObj.file_path}
         setPdfPreviewUrl(fileObj.file_path);
       } else {
-        alert("Không tìm thấy link file PDF của CV này.");
+        alertUtils.error("Lỗi", "Không tìm thấy link file PDF của CV này.");
       }
     }
   };
 
-  // 2. Xử lý Sửa CV (Nút Bút - CHỈ DÀNH CHO FORM)
   const handleEdit = (cvId) => {
-    navigate(`/template/edit/${cvId}`); // Chuyển sang trang Edit
+    navigate(`/template/edit/${cvId}`);
   };
 
-  // Render Status
   const renderStatus = (status) => {
     switch (status) {
       case "APPROVED":
@@ -252,14 +255,11 @@ const CvStatusManager = () => {
               </button>
             </div>
             <div className="flex-1 w-full bg-gray-100 p-2 sm:p-4">
-            
-              
               <iframe
                 src={`${pdfPreviewUrl}#toolbar=0`}
                 className="w-full h-full rounded-xl bg-white shadow-sm border border-gray-200"
                 title="PDF Preview"
               />
-              
             </div>
           </div>
         </div>
