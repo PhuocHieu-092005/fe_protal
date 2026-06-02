@@ -2,12 +2,10 @@ import React, { useEffect, useState } from "react";
 import { UserCheck } from "lucide-react";
 import jobService from "../../../services/jobService";
 import { useNavigate } from "react-router-dom";
-import cvService from "../../../services/cvService";
 
 import { alertUtils } from "../../../helpers/alertUtils";
 export default function ApplicationByCompany() {
   const [applicants, setApplicants] = useState([]);
-  const [viewingCv, setViewingCv] = useState(null);
   const [selectedApp, setSelectedApp] = useState(null);
   const [reviewData, setReviewData] = useState({
     status: "APPROVED",
@@ -46,14 +44,9 @@ export default function ApplicationByCompany() {
     fetchData();
   }, []);
 
-  const handleViewCv = async (cvId) => {
-    try {
-      console.log("giá trị cv id", cvId);
-      const response = await cvService.getCvById(cvId);
-      setViewingCv(response);
-    } catch (err) {
-      console.error("lỗi khi lấy chi tiết cv", err);
-    }
+  const handleViewCv = (cvId) => {
+    if (!cvId) return;
+    navigate(`/cv/${cvId}`);
   };
 
   return (
@@ -137,71 +130,6 @@ export default function ApplicationByCompany() {
               >
                 Xác nhận
               </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal Preview CV */}
-      {viewingCv && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-white w-full max-w-4xl h-[85vh] rounded-2xl overflow-hidden shadow-2xl flex flex-col">
-            <div className="p-5 border-b flex justify-between items-center">
-              <h2 className="text-xl font-bold truncate pr-4">
-                Chi tiết: {viewingCv.title}
-              </h2>
-              <button
-                onClick={() => setViewingCv(null)}
-                className="text-slate-400 hover:text-slate-600 text-xl font-semibold"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
-              {viewingCv.type === "FORM" ? (
-                (() => {
-                  const cvData = viewingCv.content_json;
-                  return (
-                    <div className="bg-white p-8 rounded-xl shadow-sm space-y-6">
-                      <h3 className="text-lg font-bold">Thông tin ứng viên</h3>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <strong>Họ tên:</strong> {cvData?.full_name}
-                        </div>
-                        <div>
-                          <strong>SĐT:</strong> {cvData?.phone}
-                        </div>
-                        <div>
-                          <strong>Email:</strong> {cvData?.email}
-                        </div>
-                        <div>
-                          <strong>Học vấn:</strong> {cvData?.education}
-                        </div>
-                      </div>
-                      <hr />
-                      <div>
-                        <h4 className="font-semibold mb-2">Kỹ năng</h4>
-                        <ul className="list-disc list-inside text-sm">
-                          {cvData?.skills?.map((skill, idx) => (
-                            <li key={idx}>{skill}</li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold mb-2">Giới thiệu</h4>
-                        <p className="text-sm">{cvData?.summary}</p>
-                      </div>
-                    </div>
-                  );
-                })()
-              ) : (
-                <iframe
-                  src={`${viewingCv.cv_file.file_path}#toolbar=0`}
-                  className="w-full h-full border-none rounded-lg"
-                  title="CV Preview"
-                />
-              )}
             </div>
           </div>
         </div>

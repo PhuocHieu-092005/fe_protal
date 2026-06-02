@@ -361,7 +361,7 @@ export default function Navbar() {
           ) : (
             <button
               onClick={() => setMenuOpen(true)}
-              className={`flex items-center gap-2.5 p-1 pr-4 rounded-full transition-all border ${
+              className={`flex min-w-0 max-w-[190px] items-center gap-2.5 rounded-full border p-1 pr-4 transition-all sm:max-w-[260px] lg:max-w-[320px] ${
                 scrolled
                   ? "bg-white/80 border-zinc-300"
                   : "bg-zinc-50 border-zinc-200"
@@ -369,11 +369,11 @@ export default function Navbar() {
             >
               <img
                 src={displayAvatarUrl}
-                className="w-8 h-8 rounded-full object-cover"
+                className="h-8 w-8 shrink-0 rounded-full object-cover"
                 alt="avatar"
               />
 
-              <span className="font-semibold text-zinc-800 text-sm">
+              <span className="min-w-0 truncate text-sm font-semibold text-zinc-800">
                 {displayName}
               </span>
             </button>
