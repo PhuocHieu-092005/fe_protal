@@ -2,6 +2,16 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import jobService from "../../../services/jobService";
 import { alertUtils } from "../../../helpers/alertUtils";
+
+// Hàm định dạng chuỗi số thành dạng có dấu chấm phân cách hàng nghìn (VD: 10.000.000)
+const formatCurrency = (value) => {
+  if (!value) return "";
+  // Xóa bỏ tất cả ký tự không phải là số
+  const number = value.toString().replace(/\D/g, "");
+  // Định dạng chuỗi số thành dạng có dấu chấm
+  return number.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
 export default function EditJob() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -18,6 +28,7 @@ export default function EditJob() {
     jdFile: null,
     tags: "",
   });
+
   useEffect(() => {
     const fetchJobDetal = async () => {
       try {
@@ -26,6 +37,8 @@ export default function EditJob() {
         setFormData({
           ...job,
           jdFile: null,
+          // Tự động định dạng dấu chấm cho mức lương khi nhận dữ liệu từ API về
+          salary: job.salary ? formatCurrency(job.salary) : "",
           startDay: job.startDay ? job.startDay.substring(0, 10) : "",
           endDay: job.endDay ? job.endDay.substring(0, 10) : "",
         });
@@ -36,16 +49,25 @@ export default function EditJob() {
     };
     fetchJobDetal();
   }, [id]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "salary") {
+      // Nếu là ô nhập mức lương, tự động lọc và thêm dấu chấm trực tiếp khi gõ
+      setFormData((prev) => ({ ...prev, [name]: formatCurrency(value) }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
+
   const handleFileChange = (e) => {
     setFormData((prev) => ({
       ...prev,
       jdFile: e.target.files[0],
     }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -53,7 +75,13 @@ export default function EditJob() {
     data.append("title", formData.title);
     data.append("description", formData.description);
     data.append("requirements", formData.requirements);
-    data.append("salary", formData.salary);
+
+    // Xóa bỏ các dấu chấm trong mức lương trước khi gửi lên API (để chuyển thành số thuần như 10000000)
+    const cleanSalary = formData.salary
+      ? formData.salary.replace(/\./g, "")
+      : "";
+    data.append("salary", cleanSalary);
+
     data.append("jobType", formData.jobType);
     data.append("workLocation", formData.workLocation);
     data.append("tags", formData.tags);
@@ -75,6 +103,7 @@ export default function EditJob() {
       alertUtils.error("Có lỗi khi sửa bài");
     }
   };
+
   return (
     <div className="min-h-screen bg-slate-50 pt-24 pb-12 px-6 text-slate-700 font-sans">
       <div className="max-w-5xl mx-auto">
@@ -161,6 +190,7 @@ export default function EditJob() {
                 <textarea
                   rows="4"
                   name="description"
+                  value={formData.description}
                   onChange={handleChange}
                   placeholder="Mô tả chi tiết nhiệm vụ và trách nhiệm..."
                   className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
