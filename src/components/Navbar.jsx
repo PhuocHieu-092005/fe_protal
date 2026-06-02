@@ -4,6 +4,7 @@ import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
 import { Link, useLocation } from "react-router-dom";
 import notificationService from "../services/notificationService";
+import companyService from "../services/companyService";
 // Import Lucide Icons
 import {
   UserCircle,
@@ -19,6 +20,17 @@ import { connectWebSocket, disconnectWebSocket } from "../services/wsService";
 //import thông báo
 import { alertUtils } from "../helpers/alertUtils";
 
+const DEFAULT_USER_AVATAR =
+  "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200";
+
+function getCompanyData(response) {
+  return response?.data || response || null;
+}
+
+function getCompanyAvatarUrl(company) {
+  return company?.avatarUrl || company?.avatar_url || "";
+}
+
 export default function Navbar() {
   const [authMode, setAuthMode] = useState(null);
   const [scrolled, setScrolled] = useState(false);
@@ -28,12 +40,21 @@ export default function Navbar() {
   const [isShow, setIsShow] = useState(false);
   const [selectedNotif, setSelectedNotif] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [companyProfile, setCompanyProfile] = useState(null);
   const { user, isLoggedIn, logout } = useAuth();
   const location = useLocation();
   const scrollTimeoutRef = useRef(null);
   const lastScrolledRef = useRef(false);
 
   const closeAuth = () => setAuthMode(null);
+  const displayAvatarUrl =
+    user?.role === "COMPANY"
+      ? getCompanyAvatarUrl(companyProfile) || user?.avatar_url || DEFAULT_USER_AVATAR
+      : user?.avatar_url || DEFAULT_USER_AVATAR;
+  const displayName =
+    user?.role === "COMPANY"
+      ? companyProfile?.companyName || user?.full_name
+      : user?.full_name;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -74,6 +95,47 @@ export default function Navbar() {
       setUnreadCount(0);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (user?.role !== "COMPANY") {
+      setCompanyProfile(null);
+      return;
+    }
+
+    let isMounted = true;
+
+    const fetchCompanyProfile = async () => {
+      try {
+        const res = await companyService.getMyCompanyProfile();
+        if (isMounted) {
+          setCompanyProfile(getCompanyData(res));
+        }
+      } catch (error) {
+        console.error(
+          "Lỗi lấy thông tin công ty cho navbar:",
+          error?.response?.data || error,
+        );
+      }
+    };
+
+    const handleCompanyProfileUpdated = (event) => {
+      setCompanyProfile(getCompanyData(event.detail));
+    };
+
+    fetchCompanyProfile();
+    window.addEventListener(
+      "company-profile-updated",
+      handleCompanyProfileUpdated,
+    );
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener(
+        "company-profile-updated",
+        handleCompanyProfileUpdated,
+      );
+    };
+  }, [user?.role, user?.email]);
 
   const fetchInitialData = async () => {
     try {
@@ -306,16 +368,13 @@ export default function Navbar() {
               }`}
             >
               <img
-                src={
-                  user?.avatar_url ||
-                  "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200"
-                }
+                src={displayAvatarUrl}
                 className="w-8 h-8 rounded-full object-cover"
                 alt="avatar"
               />
 
               <span className="font-semibold text-zinc-800 text-sm">
-                {user?.full_name}
+                {displayName}
               </span>
             </button>
           )}
@@ -337,17 +396,14 @@ export default function Navbar() {
           >
             <div className="flex items-center gap-4 mb-8 pb-6 border-b border-zinc-100">
               <img
-                src={
-                  user?.avatar_url ||
-                  "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200"
-                }
+                src={displayAvatarUrl}
                 className="w-12 h-12 rounded-xl object-cover border border-zinc-100"
                 alt="avatar"
               />
 
               <div>
                 <span className="font-bold text-zinc-900 block leading-tight">
-                  {user?.full_name}
+                  {displayName}
                 </span>
 
                 <span className="text-[10px] text-blue-600 font-bold uppercase tracking-widest mt-1 block">

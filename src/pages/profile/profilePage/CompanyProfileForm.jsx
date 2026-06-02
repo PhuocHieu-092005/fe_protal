@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
 import {
   Building2,
@@ -53,6 +53,22 @@ function getReadableCompanyError(error) {
   return "Không thể cập nhật thông tin công ty. Hãy kiểm tra lại dữ liệu nhập.";
 }
 
+function getCompanyData(response) {
+  return response?.data || response || null;
+}
+
+function getCompanyAvatarUrl(company) {
+  return company?.avatarUrl || company?.avatar_url || "";
+}
+
+function notifyCompanyProfileUpdated(company) {
+  window.dispatchEvent(
+    new CustomEvent("company-profile-updated", {
+      detail: company,
+    }),
+  );
+}
+
 export default function CompanyProfileForm() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -70,14 +86,15 @@ export default function CompanyProfileForm() {
     location: "",
   });
 
-  const fetchCompanyProfile = async () => {
+  const fetchCompanyProfile = useCallback(async () => {
     try {
       setLoading(true);
       const res = await companyService.getMyCompanyProfile();
-      const data = res?.data || null;
+      const data = getCompanyData(res);
 
       setCompanyInfo(data);
       setSelectedAvatarFile(null);
+      notifyCompanyProfileUpdated(data);
 
       setFormData({
         companyName: data?.companyName || "",
@@ -97,11 +114,11 @@ export default function CompanyProfileForm() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchCompanyProfile();
-  }, []);
+  }, [fetchCompanyProfile]);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({
@@ -120,8 +137,9 @@ export default function CompanyProfileForm() {
       return URL.createObjectURL(selectedAvatarFile);
     }
 
-    if (companyInfo?.avatarUrl) {
-      return companyInfo.avatarUrl;
+    const companyAvatarUrl = getCompanyAvatarUrl(companyInfo);
+    if (companyAvatarUrl) {
+      return companyAvatarUrl;
     }
 
     return DEFAULT_COMPANY_AVATAR;
@@ -182,10 +200,16 @@ export default function CompanyProfileForm() {
       }
 
       const res = await companyService.updateMyCompanyProfile(payload);
-      const updatedData = res?.data || null;
+      let updatedData = getCompanyData(res);
+
+      if (!getCompanyAvatarUrl(updatedData) && selectedAvatarFile) {
+        const refreshedProfile = await companyService.getMyCompanyProfile();
+        updatedData = getCompanyData(refreshedProfile);
+      }
 
       setCompanyInfo(updatedData);
       setSelectedAvatarFile(null);
+      notifyCompanyProfileUpdated(updatedData);
 
       setFormData({
         companyName: updatedData?.companyName || payload.companyName || "",
