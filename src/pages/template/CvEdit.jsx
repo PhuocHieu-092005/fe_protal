@@ -40,6 +40,8 @@ const CvEdit = () => {
   const [loading, setLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false); // Thêm state này
   const [hasPendingRequest, setHasPendingRequest] = useState(false);
+  const [isUnlockModalOpen, setIsUnlockModalOpen] = useState(false);
+  const [unlockReason, setUnlockReason] = useState("");
 
   const [title, setTitle] = useState("Title CV - Frontend Developer");
   const [avatarPreview, setAvatarPreview] = useState("");
@@ -143,46 +145,63 @@ const CvEdit = () => {
     }
   };
 
+  const handleCloseUnlockModal = () => {
+    if (isSaving) return;
+    setIsUnlockModalOpen(false);
+    setUnlockReason("");
+  };
+
+  const handleSubmitUnlockRequest = async (e) => {
+    e.preventDefault();
+    if (isSaving) return;
+
+    const reason = unlockReason.trim();
+    if (!reason) {
+      alertUtils.error(
+        "Thiếu lý do",
+        "Vui lòng nhập lý do bạn muốn chỉnh sửa CV.",
+      );
+      return;
+    }
+
+    try {
+      setIsSaving(true); // Bắt đầu trạng thái lưu
+      const token = localStorage.getItem("accessToken");
+      const response = await fetch(`${API_BASE_URL}/cvs/${id}/unlock-requests`, {
+        method: "POST",
+        headers: {
+          ...NGROK_SKIP_BROWSER_WARNING_HEADER,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ reason }),
+      });
+      const result = await response.json();
+      if (response.ok) {
+        alertUtils.success(
+          "Gửi yêu cầu thành công! Vui lòng chờ Admin duyệt.",
+        );
+        setIsUnlockModalOpen(false);
+        setUnlockReason("");
+        navigate("/profile");
+      } else {
+        alertUtils.error("Thất bại", result.message || "Có lỗi xảy ra");
+      }
+    } catch (error) {
+      console.error("Lỗi gửi yêu cầu:", error);
+      alertUtils.error("Lỗi", "Không thể gửi yêu cầu mở khóa.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleSaveCV = async () => {
     if (isSaving) return; // Chặn nếu đang lưu
 
     const token = localStorage.getItem("accessToken");
 
     if (isEditMode && currentStatus === "APPROVED") {
-      const reason = window.prompt(
-        "CV đã được duyệt. Vui lòng nhập lý do bạn muốn chỉnh sửa để Admin mở khóa:",
-      );
-      if (!reason || reason.trim() === "") return;
-
-      try {
-        setIsSaving(true); // Bắt đầu trạng thái lưu
-        const response = await fetch(
-          `${API_BASE_URL}/cvs/${id}/unlock-requests`,
-          {
-            method: "POST",
-            headers: {
-              ...NGROK_SKIP_BROWSER_WARNING_HEADER,
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ reason: reason.trim() }),
-          },
-        );
-        const result = await response.json();
-        if (response.ok) {
-          alertUtils.success(
-            "Gửi yêu cầu thành công! Vui lòng chờ Admin duyệt.",
-          );
-          navigate("/profile");
-        } else {
-          alertUtils.error("Thất bại", result.message || "Có lỗi xảy ra");
-        }
-      } catch (error) {
-        console.error("Lỗi gửi yêu cầu:", error);
-        alertUtils.error("Lỗi", "Không thể gửi yêu cầu mở khóa.");
-      } finally {
-        setIsSaving(false);
-      }
+      setIsUnlockModalOpen(true);
       return;
     }
 
@@ -242,7 +261,7 @@ const CvEdit = () => {
         }
         alertUtils.error(finalMessage);
       }
-    } catch (error) {
+    } catch {
       alertUtils.error("Lỗi kết nối", "Không thể lưu dữ liệu lúc này.");
     } finally {
       setIsSaving(false); // Kết thúc trạng thái lưu
@@ -306,6 +325,49 @@ const CvEdit = () => {
           />
         </div>
       </div>
+
+      {isUnlockModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <form
+            onSubmit={handleSubmitUnlockRequest}
+            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+          >
+            <h2 className="text-xl font-semibold text-gray-900">
+              Yêu cầu mở khóa chỉnh sửa CV
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              CV đã được duyệt. Vui lòng nhập lý do bạn muốn chỉnh sửa để Admin mở khóa.
+            </p>
+
+            <textarea
+              value={unlockReason}
+              onChange={(e) => setUnlockReason(e.target.value)}
+              className="mt-5 min-h-32 w-full resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-800 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+              placeholder="Nhập lý do chỉnh sửa CV..."
+              disabled={isSaving}
+              autoFocus
+            />
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={handleCloseUnlockModal}
+                disabled={isSaving}
+                className="rounded-xl border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Hủy
+              </button>
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="rounded-xl bg-orange-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:bg-gray-400"
+              >
+                {isSaving ? "Đang gửi..." : "Gửi yêu cầu"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 };
