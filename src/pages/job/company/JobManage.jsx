@@ -165,7 +165,7 @@ export default function JobManage() {
               Danh sách tin tuyển dụng
             </h3>
           </div>
-          <div className="overflow-x-auto">
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left">
               <thead className="bg-slate-50 text-[11px] uppercase font-bold text-slate-400">
                 <tr>
@@ -249,6 +249,66 @@ export default function JobManage() {
                 )}
               </tbody>
             </table>
+          </div>
+          <div className="block md:hidden ">
+            {jobs.map((job) => (
+              <div
+                key={job.id}
+                className="p-4 flex flex-col gap-3 border-b-2 border-slate-300"
+              >
+                {/* Hàng 1: Tiêu đề và Trạng thái */}
+                <div className="flex justify-between items-start gap-2">
+                  <div>
+                    <h4 className="font-bold text-slate-900 text-sm">
+                      {job.title}
+                    </h4>
+                    <span className="text-xs text-slate-400">
+                      ID: #{job.id}
+                    </span>
+                  </div>
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${
+                      job.status === "APPROVED"
+                        ? "bg-emerald-50 text-emerald-600"
+                        : "bg-orange-50 text-orange-600"
+                    }`}
+                  >
+                    {job.status}
+                  </span>
+                </div>
+
+                {/* Hàng 2: Thông tin ứng tuyển & Hạn chót */}
+                <div className="flex items-center justify-between text-xs text-slate-500 mt-1">
+                  <button
+                    onClick={() =>
+                      navigate(`/companies/jobs/${job.id}/applications`)
+                    }
+                    className="flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-600 rounded-lg font-bold"
+                  >
+                    <Users size={12} /> {job.quantityApply || 0} đơn ứng tuyển
+                  </button>
+                  <span className="text-slate-400">
+                    Hạn: {new Date(job.endDay).toLocaleDateString("vi-VN")}
+                  </span>
+                </div>
+
+                {/* Hàng 3: Các nút chức năng (Thao tác) */}
+                <div className="flex justify-end gap-3 pt-2 border-t border-dashed border-slate-100">
+                  <button
+                    onClick={() => navigate(`/job/edit/${job.id}`)}
+                    className="flex items-center gap-1 text-xs font-semibold text-slate-600 px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-200"
+                  >
+                    <Edit3 size={14} /> Sửa
+                  </button>
+                  <button
+                    onClick={() => handleCloseJob(job.id)}
+                    className="flex items-center gap-1 text-xs font-semibold text-rose-600 px-3 py-1.5 bg-rose-50/50 rounded-lg"
+                  >
+                    <Trash2 size={14} /> Đóng
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

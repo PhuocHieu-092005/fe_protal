@@ -72,7 +72,8 @@ export default function ApplicationList() {
                   const cvData = viewingCv.content_json;
 
                   return (
-                    <div className="bg-white p-8 rounded-xl shadow-sm space-y-6">
+                    <>
+                    <div className="hidden md:block bg-white p-8 rounded-xl shadow-sm space-y-6">
                       <h3 className="text-lg font-bold">Thông tin ứng viên</h3>
 
                       <div className="grid grid-cols-2 gap-4 text-sm">
@@ -106,6 +107,41 @@ export default function ApplicationList() {
                         <p className="text-sm">{cvData?.summary}</p>
                       </div>
                     </div>
+                    <div className="block md:hidden bg-white p-8 rounded-xl shadow-sm space-y-6">
+                      <h3 className="text-lg font-bold">Thông tin ứng viên</h3>
+
+                      <div className="grid grid-cols-1 gap-4 text-sm">
+                        <div>
+                          <strong>Họ tên:</strong> {cvData?.full_name}
+                        </div>
+                        <div>
+                          <strong>SĐT:</strong> {cvData?.phone}
+                        </div>
+                        <div>
+                          <strong>Email:</strong> {cvData?.email}
+                        </div>
+                        <div>
+                          <strong>Học vấn:</strong> {cvData?.education}
+                        </div>
+                      </div>
+
+                      <hr />
+
+                      <div>
+                        <h4 className="font-semibold mb-2">Kỹ năng</h4>
+                        <ul className="list-disc list-inside text-sm">
+                          {cvData?.skills?.map((skill, idx) => (
+                            <li key={idx}>{skill}</li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div>
+                        <h4 className="font-semibold mb-2">Giới thiệu</h4>
+                        <p className="text-sm">{cvData?.summary}</p>
+                      </div>
+                    </div>
+                    </>
                   );
                 })()
               ) : (
@@ -222,7 +258,7 @@ export default function ApplicationList() {
           </div>
 
           {/* Table Content */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="hidden md:block bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <table className="w-full text-left border-collapse">
               <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
@@ -331,6 +367,98 @@ export default function ApplicationList() {
                 )}
               </tbody>
             </table>
+          </div>
+          {/* LAYOUT DẠNG CARD TRÊN MOBILE (Chỉ hiển thị khi màn hình nhỏ hơn md) */}
+          <div className="block md:hidden mx-auto">
+            {applicants.length > 0 ? (
+              applicants.map((app) => (
+                <div
+                  key={app.applicationId}
+                  className="p-5 flex flex-col gap-4 border-b-2 border-slate-200 last:border-b-0 bg-white"
+                >
+                  {/* HÀNG 1: THÔNG TIN ỨNG VIÊN & TRẠNG THÁI */}
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="flex items-center gap-3">
+                      {/* Avatar tròn */}
+                      <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shrink-0">
+                        {app.fullName?.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-800 text-sm">
+                          {app.fullName}
+                        </p>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {app.email}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Badge trạng thái */}
+                    <span
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shrink-0 ${
+                        app.status === "PENDING"
+                          ? "bg-amber-100 text-amber-700"
+                          : app.status === "APPROVED"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-slate-100 text-slate-600"
+                      }`}
+                    >
+                      {app.status}
+                    </span>
+                  </div>
+
+                  {/* HÀNG 2: BÀI ĐĂNG & CHI TIẾT HỒ SƠ CV */}
+                  <div className="bg-slate-50 p-3 rounded-xl flex flex-col gap-1.5 text-xs">
+                    <div>
+                      <span className="text-slate-400 font-medium">
+                        Vị trí:{" "}
+                      </span>
+                      <span className="text-slate-700 font-semibold">
+                        {app.jobTitle}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between pt-1.5 border-t border-slate-200/60 border-dashed">
+                      <span className="text-slate-700 font-medium truncate max-w-[180px]">
+                        📄 {app.cvTitle || "CV_Ung_Vien"}
+                      </span>
+                      <button
+                        onClick={() => handleViewCv(app.cvId)}
+                        className="text-blue-600 font-bold hover:underline shrink-0"
+                      >
+                        Xem CV chi tiết
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* HÀNG 3: NGÀY NỘP & NÚT THAO TÁC */}
+                  <div className="flex items-center justify-between text-xs pt-1">
+                    <span className="text-slate-400">
+                      Ngày nộp:{" "}
+                      {app.appliedAt
+                        ? new Date(app.appliedAt).toLocaleDateString("vi-VN")
+                        : "---"}
+                    </span>
+
+                    <button
+                      onClick={() => {
+                        setSelectedApp(app);
+                        setReviewData({
+                          status: app.status,
+                          companyNote: "",
+                        });
+                      }}
+                      className="px-4 py-2 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 rounded-xl font-bold transition-all shadow-sm"
+                    >
+                      Phản hồi
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="p-12 text-center text-slate-400 text-sm bg-white">
+                Chưa có ứng viên nào nộp hồ sơ.
+              </div>
+            )}
           </div>
         </div>
       </div>
