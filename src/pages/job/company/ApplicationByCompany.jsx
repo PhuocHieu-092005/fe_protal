@@ -136,7 +136,8 @@ export default function ApplicationByCompany() {
       )}
 
       {/* Main Layout */}
-      <div className="p-6 bg-slate-50 min-h-screen w-full box-border">
+
+      <div className=" flex-1 bg-slate-50 min-h-screen w-full box-border">
         <div className="w-full mx-auto">
           {/* Header */}
           <div className="flex items-center justify-between mb-6 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
@@ -144,7 +145,7 @@ export default function ApplicationByCompany() {
               <div className="p-2 bg-green-50 rounded-xl">
                 <UserCheck className="text-green-600 w-5 h-5" />
               </div>
-              <div>
+              <div className="hidden md:block">
                 <h1 className="text-xl font-bold text-slate-900">
                   Ứng viên đã nộp đơn
                 </h1>
@@ -169,8 +170,8 @@ export default function ApplicationByCompany() {
 
           {/* Table Container - Thêm cuộn ngang mượt mà khi màn hình hẹp */}
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden w-full">
-            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
-              <table className="w-full text-left border-collapse min-w-[1100px]">
+            <div className=" hidden md:block overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200">
+              <table className="w-full text-left border-collapse ">
                 <thead className="bg-slate-50 border-b border-slate-200">
                   <tr>
                     <th className="px-6 py-4 text-xs font-semibold text-slate-700 w-[18%]">
@@ -182,9 +183,9 @@ export default function ApplicationByCompany() {
                     <th className="px-6 py-4 text-xs font-semibold text-slate-700 text-center w-[12%]">
                       Trạng thái
                     </th>
-                    <th className="px-6 py-4 text-xs font-semibold text-slate-700 text-center w-[12%]">
+                    {/* <th className="px-6 py-4 text-xs font-semibold text-slate-700 text-center w-[12%]">
                       Ngày nộp
-                    </th>
+                    </th> */}
                     <th className="px-6 py-4 text-xs font-semibold text-slate-700 w-[16%]">
                       Hồ sơ đính kèm
                     </th>
@@ -235,9 +236,9 @@ export default function ApplicationByCompany() {
                       </td>
 
                       {/* Ngày nộp */}
-                      <td className="px-6 py-4.5 text-center text-xs text-slate-600 font-medium whitespace-nowrap">
+                      {/* <td className="px-6 py-4.5 text-center text-xs text-slate-600 font-medium whitespace-nowrap">
                         {new Date(item.appliedAt).toLocaleDateString("vi-VN")}
-                      </td>
+                      </td> */}
 
                       {/* Xem CV */}
                       <td className="px-6 py-4.5">
@@ -289,6 +290,63 @@ export default function ApplicationByCompany() {
                 Chưa có ứng viên nào ứng tuyển.
               </div>
             )}
+            <div className="md:hidden space-y-4">
+              {applicants.map((item) => (
+                <div
+                  key={item.applicationId}
+                  className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm"
+                >
+                  <div>
+                    <h3 className="font-semibold text-slate-900">
+                      {item.fullName}
+                    </h3>
+
+                    <p className="text-xs text-slate-500">{item.email}</p>
+                  </div>
+
+                  <div className="mt-3 space-y-2 text-sm">
+                    <div>
+                      <span className="font-medium">Vị trí:</span>{" "}
+                      {item.jobTitle}
+                    </div>
+
+                    <div>
+                      <span className="font-medium">Trạng thái:</span>{" "}
+                      {item.status}
+                    </div>
+
+                    <div>
+                      <span className="font-medium">CV:</span>{" "}
+                      {item.cvTitle || "CV_Ung_Vien"}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 mt-4">
+                    <button
+                      onClick={() => handleViewCv(item.cvId)}
+                      className="flex-1 rounded-lg border px-3 py-2 text-sm"
+                    >
+                      Xem CV
+                    </button>
+
+                    {item.status === "PENDING" && (
+                      <button
+                        onClick={() => {
+                          setSelectedApp(item);
+                          setReviewData({
+                            status: "APPROVED",
+                            companyNote: "",
+                          });
+                        }}
+                        className="flex-1 rounded-lg bg-blue-600 text-white px-3 py-2 text-sm"
+                      >
+                        Phản hồi
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

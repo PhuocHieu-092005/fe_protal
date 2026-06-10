@@ -169,7 +169,7 @@ export default function ChangePasswordForm() {
           <button
             type="submit"
             disabled={loading}
-            className="h-12 flex-1 rounded-xl bg-black px-8 text-sm font-bold text-white shadow-lg shadow-black/10 transition-all hover:bg-slate-800 hover:shadow-black/20 disabled:opacity-50"
+            className="h-12  rounded-xl bg-black px-8 text-sm font-bold text-white shadow-lg shadow-black/10 transition-all hover:bg-slate-800 hover:shadow-black/20 disabled:opacity-50"
           >
             {loading ? "Đang xử lý..." : "Cập nhật mật khẩu"}
           </button>

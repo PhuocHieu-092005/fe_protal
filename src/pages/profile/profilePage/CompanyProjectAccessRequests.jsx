@@ -183,15 +183,16 @@ export default function CompanyProjectAccessRequests() {
 
       <section className="flex-1 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
         <div className="mb-8 flex items-center justify-between">
-          <div>
+          <div className="">
             <h2 className="text-4xl font-bold text-slate-900">
               Yêu cầu hợp tác project
             </h2>
-            <p className="mt-2 text-slate-500">
+            <p className="mt-2 text-slate-500 hidden md:block">
               Theo dõi các yêu cầu hợp tác hoặc xin quyền truy cập project mà
               công ty đã gửi.
             </p>
           </div>
+         
 
           <div className="rounded-2xl bg-slate-50 px-4 py-3">
             <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
@@ -201,7 +202,7 @@ export default function CompanyProjectAccessRequests() {
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-slate-200">
+        <div className=" hidden md:block overflow-hidden rounded-2xl border border-slate-200">
           <table className="w-full border-collapse text-left">
             <thead className="bg-slate-50">
               <tr>
@@ -292,6 +293,69 @@ export default function CompanyProjectAccessRequests() {
             </tbody>
           </table>
         </div>
+        <div className="md:hidden space-y-4">
+  {loading ? (
+    <div className="rounded-2xl border border-slate-200 p-6 text-center text-slate-400">
+      Đang tải dữ liệu...
+    </div>
+  ) : requests.length > 0 ? (
+    requests.map((item) => (
+      <div
+        key={item.id}
+        className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h3 className="font-bold text-slate-900">
+              {item.project_title}
+            </h3>
+
+            <p className="mt-1 text-xs text-slate-500">
+              Sinh viên: {item.student_name}
+            </p>
+          </div>
+
+          <span
+            className={`rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap ${getStatusClass(
+              item.status
+            )}`}
+          >
+            {item.status}
+          </span>
+        </div>
+
+        <div className="mt-4">
+          <p className="text-xs font-semibold text-slate-500 uppercase">
+            Lý do yêu cầu
+          </p>
+
+          <p className="mt-1 text-sm text-slate-600">
+            {item.reason?.length > 120
+              ? item.reason.slice(0, 120) + "..."
+              : item.reason}
+          </p>
+        </div>
+
+        <div className="mt-4 flex items-center gap-2 text-xs text-slate-500">
+          <Clock3 size={14} />
+          {formatDateTime(item.requested_at)}
+        </div>
+
+        <button
+          onClick={() => handleOpenDetail(item.id)}
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+        >
+          <Eye size={16} />
+          Xem chi tiết
+        </button>
+      </div>
+    ))
+  ) : (
+    <div className="rounded-2xl border border-slate-200 p-6 text-center text-slate-400">
+      Bạn chưa gửi yêu cầu hợp tác project nào.
+    </div>
+  )}
+</div>
       </section>
     </>
   );
