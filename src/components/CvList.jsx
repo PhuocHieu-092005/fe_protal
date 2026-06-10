@@ -16,9 +16,7 @@ export default function CvList() {
       const response = await cvService.getPublicCvs({ page: 0, size: 8 });
 
       if (response.code === 200 && response.data?.content) {
-        // Set thẳng mảng raw data từ API vào state
         setCards(response.data.content);
-        // console.log("Danh sách CV đã lấy về:", response.data.content);
       }
     } catch (error) {
       console.error("Lỗi khi lấy danh sách CV:", error);
@@ -38,12 +36,12 @@ export default function CvList() {
         `}
       </style>
 
-      <div className="bg-[#FAFAFA] py-16 px-4 flex flex-col items-center min-h-screen">
-        <div className="text-center mb-15">
-          <h1 className="text-[35px] font-bold text-slate-900 mb-4">
+      <div className="bg-[#FAFAFA] py-12 md:py-16 px-3 md:px-4 flex flex-col items-center min-h-screen">
+        <div className="text-center mb-8 md:mb-15">
+          <h1 className="text-2xl md:text-[35px] font-bold text-slate-900 mb-3 md:mb-4">
             Hồ sơ ứng viên
           </h1>
-          <p className="text-gray-500 mt-2 max-w-2xl mx-auto italic">
+          <p className="text-sm md:text-base text-gray-500 mt-2 max-w-2xl mx-auto italic">
             Xem xét và lựa chọn những ứng viên phù hợp nhất với nhu cầu tuyển
             dụng của doanh nghiệp.
           </p>
@@ -54,9 +52,8 @@ export default function CvList() {
             Đang tải danh sách CV...
           </div>
         ) : cards.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 max-w-5xl w-full mt-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-2 max-w-5xl w-full mt-6">
             {cards.map((cvData) => (
-              // Truyền nguyên object cvData lấy từ API vào component
               <CvCard key={cvData.id} card={cvData} />
             ))}
           </div>

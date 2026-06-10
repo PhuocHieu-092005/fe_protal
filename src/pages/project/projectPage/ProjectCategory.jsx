@@ -6,8 +6,11 @@ import ProjectCard from "./ProjectCard";
 import { getPublicProjects } from "../../../services/projectService";
 import technologyService from "../../../services/technologyService";
 import Pagination from "../../../components/common/Pagination";
+import { SlidersHorizontal, X } from "lucide-react";
 
 export default function ProjectCategory() {
+  const [filterOpen, setFilterOpen] = useState(false);
+
   const [filters, setFilters] = useState({
     title: "",
     priceType: "",
@@ -114,6 +117,7 @@ export default function ProjectCategory() {
     };
 
     setFilters(nextFilters);
+    setFilterOpen(false);
   };
 
   const handleResetFilters = () => {
@@ -127,6 +131,7 @@ export default function ProjectCategory() {
 
     setKeyword("");
     setFilters(resetFilters);
+    setFilterOpen(false);
   };
 
   return (
@@ -138,17 +143,44 @@ export default function ProjectCategory() {
           onSearch={handleSearch}
         />
 
-        <div className="mx-auto mt-10 w-[90%] max-w-[1450px]">
+        <div className="mx-auto mt-8 w-[90%] max-w-[1450px] lg:mt-10">
+          <div className="mb-5 flex items-center justify-between gap-3 lg:hidden">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">
+                Danh sách đồ án
+              </h2>
+              <p className="mt-1 text-xs font-medium text-slate-500">
+                Tìm thấy{" "}
+                <span className="font-bold text-blue-600">
+                  {filters.priceType
+                    ? filteredProjects.length
+                    : pageInfo.totalElements}
+                </span>{" "}
+                đồ án
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setFilterOpen(true)}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm"
+            >
+              <SlidersHorizontal size={18} />
+            </button>
+          </div>
+
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[280px_1fr]">
-            <ProjectFilterSidebar
-              filters={filters}
-              onApply={handleApplyFilters}
-              onReset={handleResetFilters}
-              technologies={technologies}
-            />
+            <div className="hidden lg:block">
+              <ProjectFilterSidebar
+                filters={filters}
+                onApply={handleApplyFilters}
+                onReset={handleResetFilters}
+                technologies={technologies}
+              />
+            </div>
 
             <div className="min-w-0">
-              <div className="mb-7 flex items-center justify-between">
+              <div className="mb-7 hidden items-center justify-between lg:flex">
                 <div>
                   <h2 className="text-2xl font-bold text-slate-900">
                     Danh sách đồ án
@@ -168,7 +200,7 @@ export default function ProjectCategory() {
               </div>
 
               {loading ? (
-                <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
                   {[...Array(6)].map((_, i) => (
                     <div
                       key={i}
@@ -179,29 +211,13 @@ export default function ProjectCategory() {
               ) : (
                 <>
                   {filteredProjects.length > 0 ? (
-                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
                       {filteredProjects.map((p) => (
                         <ProjectCard key={p.id} project={p} />
                       ))}
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white py-20">
-                      <div className="mb-4 text-slate-300">
-                        <svg
-                          className="h-16 w-16"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                      </div>
-
                       <p className="font-medium text-slate-500">
                         Không tìm thấy đồ án nào phù hợp với bộ lọc.
                       </p>
@@ -234,6 +250,36 @@ export default function ProjectCategory() {
       </main>
 
       <Footer />
+
+      {filterOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-[80] bg-black/40 backdrop-blur-sm lg:hidden"
+            onClick={() => setFilterOpen(false)}
+          />
+
+          <div className="fixed inset-y-0 left-0 z-[90] w-[78%] max-w-[310px] overflow-y-auto bg-white p-3 shadow-2xl lg:hidden">
+            <div className="mb-3 flex items-center justify-between border-b border-slate-100 pb-3">
+              <h2 className="text-base font-bold text-slate-900">Bộ lọc</h2>
+
+              <button
+                type="button"
+                onClick={() => setFilterOpen(false)}
+                className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-600"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <ProjectFilterSidebar
+              filters={filters}
+              onApply={handleApplyFilters}
+              onReset={handleResetFilters}
+              technologies={technologies}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }
