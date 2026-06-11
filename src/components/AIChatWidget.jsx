@@ -80,9 +80,15 @@ export default function AIChatWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[90] text-left">
+    // RESPONSIVE MOBILE:
+    // - Mobile: đẩy widget lên để tránh đè Bottom Navigation sau này
+    // - Desktop: giữ nguyên vị trí cũ
+    <div className="fixed bottom-24 right-4 z-[90] text-left sm:bottom-6 sm:right-6">
       {open && (
-        <section className="mb-4 flex h-[520px] w-[360px] max-w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-2xl">
+        // RESPONSIVE MOBILE:
+        // - Mobile: giảm chiều cao popup
+        // - Desktop: giữ nguyên 520px
+        <section className="mb-4 flex h-[440px] w-[360px] max-w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-2xl sm:h-[520px]">
           <header className="flex items-center justify-between border-b border-slate-100 bg-slate-950 px-5 py-4 text-white">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10">

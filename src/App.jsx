@@ -30,13 +30,14 @@ import ApplicationByCompany from "./pages/job/company/ApplicationByCompany";
 
 import AIChatWidget from "./components/AIChatWidget";
 
-
+import MobileBottomNav from "./components/MobileBottomNav";
 
 function App() {
   return (
     <Router>
       <Navbar />
       <AIChatWidget />
+      <MobileBottomNav />
       <Routes>
         <Route path="/" element={<MainLayout />} />
 
@@ -46,10 +47,19 @@ function App() {
         <Route path="/job" element={<JobCategory />} />
 
         <Route path="/job/edit/:id" element={<EditJob />} />
-        <Route path="/companies/jobs/:id/applications" element={<ApplicationList/>} />
-        <Route path="/students/job/favorites" element={<FavoriteJobs/>} />
-        <Route path="/company/applications/approved" element={<ApprovedApplicants/>} />
-        <Route path="/company/applications" element={<ApplicationByCompany/>} />
+        <Route
+          path="/companies/jobs/:id/applications"
+          element={<ApplicationList />}
+        />
+        <Route path="/students/job/favorites" element={<FavoriteJobs />} />
+        <Route
+          path="/company/applications/approved"
+          element={<ApprovedApplicants />}
+        />
+        <Route
+          path="/company/applications"
+          element={<ApplicationByCompany />}
+        />
         {/* ĐẶT CÁC ROUTE CỐ ĐỊNH TRÊN ROUTE BIẾN SỐ (:id) */}
 
         <Route path="/job/manage" element={<JobManage />} />
@@ -71,9 +81,18 @@ function App() {
         <Route path="/project/edit/:id" element={<EditProject />} />
 
         <Route path="/my-wallet" element={<MyWallet />} />
-        <Route path="/payment-success" element={<PaymentResult type="success" />} />
-        <Route path="/payment-cancel" element={<PaymentResult type="cancel" />} />
-        <Route path="/payment-failed" element={<PaymentResult type="failed" />} />
+        <Route
+          path="/payment-success"
+          element={<PaymentResult type="success" />}
+        />
+        <Route
+          path="/payment-cancel"
+          element={<PaymentResult type="cancel" />}
+        />
+        <Route
+          path="/payment-failed"
+          element={<PaymentResult type="failed" />}
+        />
       </Routes>
     </Router>
   );

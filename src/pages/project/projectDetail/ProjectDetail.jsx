@@ -10,17 +10,13 @@ import ProjectCommentSection from "./ProjectCommentSection";
 import ProjectOverviewSection from "./ProjectOverviewSection";
 import ProjectSidebar from "./ProjectSidebar";
 import TeacherEvaluationSection from "./TeacherEvaluationSection";
-// Import alertUtils
 import { alertUtils } from "../../../helpers/alertUtils";
 
 const normalizeUrl = (url) => {
   if (!url || typeof url !== "string") return url;
-
   const trimmedUrl = url.trim();
   const duplicateStartIndex = trimmedUrl.indexOf("http", 1);
-
   if (duplicateStartIndex === -1) return trimmedUrl;
-
   return trimmedUrl.slice(0, duplicateStartIndex);
 };
 
@@ -54,7 +50,6 @@ export default function ProjectDetail() {
       setIsFavorited(false);
       return;
     }
-
     try {
       const ok = await projectService.isFavorited(id);
       setIsFavorited(ok);
@@ -68,9 +63,7 @@ export default function ProjectDetail() {
       alertUtils.info("Yêu cầu đăng nhập", "Vui lòng đăng nhập để lưu đồ án.");
       return;
     }
-
     setLoadingFav(true);
-
     try {
       if (isFavorited) {
         await projectService.deleteFavoriteProject(id);
@@ -79,7 +72,6 @@ export default function ProjectDetail() {
         await projectService.toggleFavorite(id);
         alertUtils.success("Đã thích dự án");
       }
-
       await checkFav();
     } catch (err) {
       console.error("Lỗi xử lý yêu thích:", err);
@@ -93,23 +85,18 @@ export default function ProjectDetail() {
     const fetchDetail = async () => {
       try {
         await checkFav();
-
         const [projectResponse, evaluationsResponse] = await Promise.all([
           projectService.getProjectById(id),
           projectService.getProjectTeacherEvaluations(id),
         ]);
-
         if (projectResponse?.data) {
           setProject(projectResponse.data);
-
           const firstImage =
             projectResponse.data?.images?.[0]?.imageUrl ||
             projectResponse.data?.images?.[0]?.image_url ||
             "";
-
           setSelectedImage(firstImage);
         }
-
         setTeacherEvaluations(
           Array.isArray(evaluationsResponse?.data)
             ? evaluationsResponse.data
@@ -121,14 +108,12 @@ export default function ProjectDetail() {
         setLoading(false);
       }
     };
-
     fetchDetail();
   }, [id]);
 
   useEffect(() => {
     const fetchComments = async () => {
       if (!id) return;
-
       try {
         setCommentLoading(true);
         const response = await projectCommentService.getCommentsByProject(id);
@@ -140,13 +125,11 @@ export default function ProjectDetail() {
         setCommentLoading(false);
       }
     };
-
     fetchComments();
   }, [id]);
 
   const imageList = useMemo(() => {
     if (!project?.images || !Array.isArray(project.images)) return [];
-
     return project.images.map((img) => ({
       id: img.id,
       url: img.imageUrl || img.image_url,
@@ -155,7 +138,6 @@ export default function ProjectDetail() {
 
   const normalizedTechnologies = useMemo(() => {
     if (!Array.isArray(project?.technologies)) return [];
-
     return project.technologies
       .filter((tech) => tech?.name)
       .map((tech) => ({
@@ -203,19 +185,16 @@ export default function ProjectDetail() {
       );
       return;
     }
-
     setRequestReason("");
     setOpenRequestModal(true);
   };
 
   const handleBuyProject = async () => {
     if (!project?.id) return;
-
     if (isPurchased) {
       alertUtils.info("Thông báo", "Bạn đã mua source code của đồ án này.");
       return;
     }
-
     if (!currentUser) {
       alertUtils.info(
         "Yêu cầu đăng nhập",
@@ -223,7 +202,6 @@ export default function ProjectDetail() {
       );
       return;
     }
-
     try {
       setCreatingPaymentLink(true);
       const response = await paymentService.createProjectPaymentLink(
@@ -231,11 +209,9 @@ export default function ProjectDetail() {
       );
       const paymentLink = response?.data || response;
       const checkoutUrl = paymentLink?.checkoutUrl || paymentLink?.checkout_url;
-
       if (!checkoutUrl) {
         throw new Error("Không nhận được link thanh toán từ hệ thống.");
       }
-
       window.location.href = checkoutUrl;
     } catch (error) {
       console.error("Lỗi tạo link thanh toán:", error);
@@ -243,7 +219,6 @@ export default function ProjectDetail() {
         error?.response?.data?.message ||
         error?.message ||
         "Không thể tạo link thanh toán. Vui lòng thử lại.";
-
       navigate(
         `/payment-failed?projectId=${project.id}&message=${encodeURIComponent(message)}`,
       );
@@ -259,7 +234,6 @@ export default function ProjectDetail() {
 
   const handleSubmitAccessRequest = async () => {
     if (!project?.id) return;
-
     if (!requestReason.trim()) {
       alertUtils.error(
         "Thiếu thông tin",
@@ -267,18 +241,14 @@ export default function ProjectDetail() {
       );
       return;
     }
-
     try {
       setRequestLoading(true);
-
       const payload = {
         reason: requestReason.trim(),
         project_id: Number(project.id),
       };
-
       const response =
         await projectAccessRequestService.createProjectAccessRequest(payload);
-
       alertUtils.success(
         response?.message || "Đã gửi yêu cầu hợp tác thành công.",
       );
@@ -287,7 +257,6 @@ export default function ProjectDetail() {
       console.error("Lỗi gửi yêu cầu hợp tác:", error);
       const serverMessage =
         error.response?.data?.data || error.response?.data?.message;
-
       alertUtils.error(
         serverMessage || "Không thể gửi yêu cầu hợp tác. Vui lòng thử lại sau.",
       );
@@ -298,7 +267,6 @@ export default function ProjectDetail() {
 
   const handleSubmitComment = async () => {
     if (!project?.id) return;
-
     if (!currentUser || !accessToken) {
       alertUtils.info(
         "Yêu cầu đăng nhập",
@@ -306,22 +274,16 @@ export default function ProjectDetail() {
       );
       return;
     }
-
     if (!commentContent.trim()) {
       alertUtils.error("Thiếu thông tin", "Vui lòng nhập nội dung bình luận.");
       return;
     }
-
     try {
       setSubmittingComment(true);
-
       const response = await projectCommentService.addCommentToProject(
         project.id,
-        {
-          content: commentContent.trim(),
-        },
+        { content: commentContent.trim() },
       );
-
       setComments((prev) => [response, ...prev]);
       setCommentContent("");
       alertUtils.success("Bình luận thành công.");
@@ -337,22 +299,18 @@ export default function ProjectDetail() {
 
   const formatCommentTime = (dateString) => {
     if (!dateString) return "---";
-
     const date = new Date(dateString);
     if (Number.isNaN(date.getTime())) return "---";
-
     return date.toLocaleString("vi-VN");
   };
 
-  const isLoggedIn = () => {
-    return !!currentUser;
-  };
+  const isLoggedIn = () => !!currentUser;
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50/50 px-6 pb-20 pt-28 text-left">
+      <div className="min-h-screen bg-slate-50/50 px-4 pb-24 pt-16 text-left sm:px-6 md:pt-20">
         <div className="mx-auto max-w-7xl">
-          <div className="rounded-[2rem] border border-slate-100 bg-white p-20 text-center shadow-sm">
+          <div className="rounded-[2rem] border border-slate-100 bg-white p-10 text-center shadow-sm md:p-20">
             <p className="text-lg font-black text-slate-400">ĐANG TẢI...</p>
           </div>
         </div>
@@ -362,9 +320,9 @@ export default function ProjectDetail() {
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-slate-50/50 px-6 pb-20 pt-28 text-left">
+      <div className="min-h-screen bg-slate-50/50 px-4 pb-24 pt-16 text-left sm:px-6 md:pt-20">
         <div className="mx-auto max-w-7xl">
-          <div className="rounded-[2rem] border border-slate-100 bg-white p-20 text-center shadow-sm">
+          <div className="rounded-[2rem] border border-slate-100 bg-white p-10 text-center shadow-sm md:p-20">
             <p className="font-bold text-slate-500">Không tìm thấy đồ án.</p>
             <button
               onClick={() => navigate(-1)}
@@ -391,12 +349,13 @@ export default function ProjectDetail() {
         studentName={studentName}
       />
 
-      <div className="min-h-screen bg-slate-100 px-4 pb-16 pt-28 text-left md:px-6">
-        <div className="mx-auto w-[92%] max-w-[1500px]">
-          <div className="mb-5 flex items-center justify-between">
+      <div className="min-h-screen bg-slate-100 px-3 pb-28 pt-16 text-left sm:px-4 md:px-6 md:pb-16 md:pt-20">
+        <div className="mx-auto w-full max-w-[1500px] md:w-[92%]">
+          {/* ✅ FIX: thêm mt-3 cho mobile, md:mt-4 cho desktop */}
+          <div className="mb-4 mt-3 flex items-center justify-between gap-3 md:mb-5 md:mt-4">
             <button
               onClick={() => navigate(-1)}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm transition hover:text-blue-600"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 shadow-sm transition hover:text-blue-600 sm:px-4 sm:text-sm"
             >
               <ChevronLeft size={18} />
               Quay lại
@@ -405,7 +364,7 @@ export default function ProjectDetail() {
             <button
               onClick={handleToggleFavorite}
               disabled={loadingFav}
-              className={`rounded-xl border px-4 py-2 text-sm font-bold transition ${
+              className={`rounded-xl border px-3 py-2 text-xs font-bold transition sm:px-4 sm:text-sm ${
                 isFavorited
                   ? "border-rose-200 bg-rose-50 text-rose-600"
                   : "border-slate-200 bg-white text-slate-700 hover:text-blue-600"
@@ -415,8 +374,8 @@ export default function ProjectDetail() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 gap-0 xl:grid-cols-[1fr_360px]">
-            <div className="min-w-0 space-y-1">
+          <div className="grid grid-cols-1 gap-0 xl:grid-cols-[minmax(0,1fr)_360px]">
+            <div className="min-w-0">
               <ProjectOverviewSection
                 courseName={courseName}
                 projectTitle={project.title}
@@ -428,16 +387,6 @@ export default function ProjectDetail() {
                 imageList={imageList}
                 selectedImage={selectedImage}
                 onSelectImage={setSelectedImage}
-              />
-
-              <ProjectCommentSection
-                comments={comments}
-                commentLoading={commentLoading}
-                commentContent={commentContent}
-                setCommentContent={setCommentContent}
-                submittingComment={submittingComment}
-                handleSubmitComment={handleSubmitComment}
-                formatCommentTime={formatCommentTime}
               />
             </div>
 
@@ -458,11 +407,22 @@ export default function ProjectDetail() {
                 buyingProject={creatingPaymentLink}
                 isPurchased={isPurchased}
               />
-
               <TeacherEvaluationSection
                 evaluations={normalizedTeacherEvaluations}
               />
             </aside>
+
+            <div className="xl:col-span-1">
+              <ProjectCommentSection
+                comments={comments}
+                commentLoading={commentLoading}
+                commentContent={commentContent}
+                setCommentContent={setCommentContent}
+                submittingComment={submittingComment}
+                handleSubmitComment={handleSubmitComment}
+                formatCommentTime={formatCommentTime}
+              />
+            </div>
           </div>
         </div>
       </div>

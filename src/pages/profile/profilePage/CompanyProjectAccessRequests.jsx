@@ -73,11 +73,13 @@ export default function CompanyProjectAccessRequests() {
   return (
     <>
       {selectedRequest && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white p-8 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-4">
+          {/* RESPONSIVE UI: mobile giảm padding, desktop giữ max width lớn */}
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white p-5 shadow-2xl sm:p-6 md:p-8">
+            {/* RESPONSIVE UI: mobile header modal gọn hơn */}
             <div className="mb-6 flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900">
+                <h2 className="text-xl font-bold text-slate-900 sm:text-2xl">
                   Chi tiết yêu cầu hợp tác
                 </h2>
                 <p className="mt-1 text-sm text-slate-500">
@@ -94,20 +96,20 @@ export default function CompanyProjectAccessRequests() {
             </div>
 
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-slate-900">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5">
+                <h3 className="mb-3 flex items-center gap-2 text-base font-bold text-slate-900 sm:text-lg">
                   <FolderOpen size={18} className="text-blue-600" />
                   Thông tin project
                 </h3>
 
                 <div className="space-y-2 text-sm text-slate-600">
-                  <p>
+                  <p className="break-words">
                     <span className="font-semibold text-slate-700">
                       Project:
                     </span>{" "}
                     {selectedRequest.project_title}
                   </p>
-                  <p>
+                  <p className="break-words">
                     <span className="font-semibold text-slate-700">
                       Sinh viên:
                     </span>{" "}
@@ -116,8 +118,8 @@ export default function CompanyProjectAccessRequests() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-slate-900">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5">
+                <h3 className="mb-3 flex items-center gap-2 text-base font-bold text-slate-900 sm:text-lg">
                   <Building2 size={18} className="text-blue-600" />
                   Trạng thái yêu cầu
                 </h3>
@@ -128,7 +130,7 @@ export default function CompanyProjectAccessRequests() {
                       Trạng thái:
                     </span>{" "}
                     <span
-                      className={`ml-2 rounded-full px-3 py-1 text-xs font-bold ${getStatusClass(
+                      className={`ml-2 inline-flex rounded-full px-3 py-1 text-xs font-bold ${getStatusClass(
                         selectedRequest.status,
                       )}`}
                     >
@@ -151,20 +153,20 @@ export default function CompanyProjectAccessRequests() {
               </div>
             </div>
 
-            <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-5">
-              <h3 className="mb-3 text-lg font-bold text-slate-900">
+            <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+              <h3 className="mb-3 text-base font-bold text-slate-900 sm:text-lg">
                 Lý do gửi yêu cầu
               </h3>
-              <p className="text-sm leading-6 text-slate-600">
+              <p className="break-words text-sm leading-6 text-slate-600">
                 {selectedRequest.reason || "Không có nội dung."}
               </p>
             </div>
 
-            <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-5">
-              <h3 className="mb-3 text-lg font-bold text-slate-900">
+            <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+              <h3 className="mb-3 text-base font-bold text-slate-900 sm:text-lg">
                 Ghi chú phản hồi từ admin
               </h3>
-              <p className="text-sm leading-6 text-slate-600">
+              <p className="break-words text-sm leading-6 text-slate-600">
                 {selectedRequest.approval_note || "Chưa có phản hồi từ admin."}
               </p>
             </div>
@@ -172,7 +174,7 @@ export default function CompanyProjectAccessRequests() {
             <div className="mt-6 flex justify-end">
               <button
                 onClick={handleCloseDetail}
-                className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-bold text-white hover:bg-slate-800"
+                className="w-full rounded-2xl bg-slate-900 px-5 py-3 text-sm font-bold text-white hover:bg-slate-800 sm:w-auto"
               >
                 Đóng
               </button>
@@ -181,19 +183,21 @@ export default function CompanyProjectAccessRequests() {
         </div>
       )}
 
-      <section className="flex-1 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
-        <div className="mb-8 flex items-center justify-between">
+      {/* RESPONSIVE UI: mobile full width + padding nhỏ hơn */}
+      <section className="w-full flex-1 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6 md:p-8">
+        {/* RESPONSIVE UI: mobile header xếp dọc, desktop giữ ngang */}
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="text-4xl font-bold text-slate-900">
+            <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl">
               Yêu cầu hợp tác project
             </h2>
-            <p className="mt-2 text-slate-500">
+            <p className="mt-2 text-sm leading-6 text-slate-500 sm:text-base">
               Theo dõi các yêu cầu hợp tác hoặc xin quyền truy cập project mà
               công ty đã gửi.
             </p>
           </div>
 
-          <div className="rounded-2xl bg-slate-50 px-4 py-3">
+          <div className="w-fit rounded-2xl bg-slate-50 px-4 py-3">
             <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
               Tổng số
             </p>
@@ -201,7 +205,69 @@ export default function CompanyProjectAccessRequests() {
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-slate-200">
+        {/* RESPONSIVE UI: mobile render card riêng, tránh table bị bóp */}
+        <div className="space-y-4 md:hidden">
+          {loading ? (
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-10 text-center text-slate-400">
+              Đang tải dữ liệu...
+            </div>
+          ) : requests.length > 0 ? (
+            requests.map((item) => (
+              <div
+                key={item.id}
+                className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+              >
+                <div className="mb-3 flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="break-words font-bold text-slate-900">
+                      {item.project_title}
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-slate-500">
+                      Sinh viên: {item.student_name}
+                    </p>
+                  </div>
+
+                  <span
+                    className={`shrink-0 rounded-full px-3 py-1 text-[10px] font-bold ${getStatusClass(
+                      item.status,
+                    )}`}
+                  >
+                    {item.status}
+                  </span>
+                </div>
+
+                <div className="mb-3 rounded-xl bg-slate-50 p-3">
+                  <p className="mb-1 text-xs font-bold uppercase text-slate-400">
+                    Lý do
+                  </p>
+                  <p className="break-words text-sm leading-6 text-slate-600">
+                    {item.reason || "Không có nội dung."}
+                  </p>
+                </div>
+
+                <div className="mb-4 flex items-center gap-2 text-xs text-slate-500">
+                  <Clock3 size={14} className="shrink-0 text-slate-400" />
+                  {formatDateTime(item.requested_at)}
+                </div>
+
+                <button
+                  onClick={() => handleOpenDetail(item.id)}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  <Eye size={16} />
+                  Xem chi tiết
+                </button>
+              </div>
+            ))
+          ) : (
+            <div className="rounded-2xl border border-dashed border-slate-300 px-4 py-10 text-center text-slate-400">
+              Bạn chưa gửi yêu cầu hợp tác project nào.
+            </div>
+          )}
+        </div>
+
+        {/* RESPONSIVE UI: desktop md trở lên giữ table cũ */}
+        <div className="hidden overflow-hidden rounded-2xl border border-slate-200 md:block">
           <table className="w-full border-collapse text-left">
             <thead className="bg-slate-50">
               <tr>

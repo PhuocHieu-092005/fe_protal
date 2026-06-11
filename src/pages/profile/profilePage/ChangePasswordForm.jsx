@@ -165,15 +165,16 @@ export default function ChangePasswordForm() {
         </div>
 
         {/* Action Buttons */}
+        {/* RESPONSIVE UI: mobile button full width, cao vừa phải, không bị dẹt */}
         <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center">
+          {" "}
           <button
             type="submit"
             disabled={loading}
-            className="h-12 flex-1 rounded-xl bg-black px-8 text-sm font-bold text-white shadow-lg shadow-black/10 transition-all hover:bg-slate-800 hover:shadow-black/20 disabled:opacity-50"
+            className="flex min-h-12 w-full items-center justify-center rounded-xl bg-black px-6 py-3 text-sm font-bold leading-none text-white shadow-lg shadow-black/10 transition-all hover:bg-slate-800 hover:shadow-black/20 disabled:opacity-50 sm:flex-1"
           >
             {loading ? "Đang xử lý..." : "Cập nhật mật khẩu"}
           </button>
-
           <button
             type="button"
             onClick={() =>
@@ -183,7 +184,7 @@ export default function ChangePasswordForm() {
                 confirm_password: "",
               })
             }
-            className="h-12 rounded-xl border border-slate-200 bg-white px-8 text-sm font-bold text-slate-600 transition-all hover:bg-slate-50 hover:border-slate-300"
+            className="flex min-h-12 w-full items-center justify-center rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-bold leading-none text-slate-600 transition-all hover:bg-slate-50 hover:border-slate-300 sm:w-auto"
           >
             Làm mới
           </button>
