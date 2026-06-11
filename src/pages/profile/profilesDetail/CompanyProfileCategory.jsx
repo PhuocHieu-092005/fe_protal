@@ -22,7 +22,8 @@ export default function CompanyProfileCategory() {
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
-      <main className="container mx-auto mt-16 flex flex-grow gap-8 px-4 py-8">
+      {/* RESPONSIVE UI: mobile xếp dọc, desktop md giữ sidebar trái + content phải */}
+      <main className="container mx-auto mt-16 flex flex-grow flex-col gap-4 overflow-hidden px-3 py-5 sm:px-4 md:flex-row md:gap-8 md:px-4 md:py-8">
         <CompanyProfileSidebar
           activeTab={activeTab}
           setActiveTab={setActiveTab}
@@ -35,7 +36,10 @@ export default function CompanyProfileCategory() {
         )}
 
         {activeTab === "applicants" && (
-             <ApplicationByCompany activeTab={activeTab} setActiveTab={setActiveTab} />
+          <ApplicationByCompany
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
         )}
 
         {activeTab === "favorite-projects" && (

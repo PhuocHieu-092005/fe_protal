@@ -214,7 +214,7 @@ export default function Navbar() {
           >
             <span className="hidden sm:inline">Cổng thông tin việc làm</span>
             <span className="sm:hidden inline font-black tracking-tighter">
-              HITU<span className="text-zinc-800">JOB</span>
+              HITC<span className="text-zinc-800">JOB</span>
             </span>
           </Link>
         </div>
@@ -389,7 +389,7 @@ export default function Navbar() {
                   H
                 </div>
                 <span className="font-black text-zinc-800 tracking-tighter">
-                  HITUJOB
+                  HITCJOB
                 </span>
               </div>
               <button

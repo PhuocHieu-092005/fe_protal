@@ -112,11 +112,13 @@ const CvStatusManager = () => {
 
   return (
     <>
-      <section className="w-full bg-white rounded-xl shadow-sm p-8 border border-gray-100 animate-in fade-in duration-500">
-        <div className="flex justify-between items-center mb-8 pb-4 border-b border-gray-50">
+      {/* RESPONSIVE UI: mobile giảm padding, desktop md giữ p-8 như cũ */}
+      <section className="w-full bg-white rounded-xl shadow-sm p-4 sm:p-5 md:p-8 border border-gray-100 animate-in fade-in duration-500">
+        {/* RESPONSIVE UI: mobile header xếp dọc, desktop md giữ hàng ngang */}
+        <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center mb-8 pb-4 border-b border-gray-50">
           <div>
-            <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
-              <FileText className="text-indigo-600" size={28} />
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-3">
+              <FileText className="text-indigo-600 shrink-0" size={28} />
               Quản lý Hồ sơ CV
             </h2>
             <p className="text-gray-500 mt-2 text-sm">
@@ -130,7 +132,7 @@ const CvStatusManager = () => {
               }
             }}
             disabled={cvs.length >= 2}
-            className={`flex items-center gap-2 px-6 py-3 font-medium rounded-xl transition-all duration-300 ${
+            className={`flex w-full md:w-auto items-center justify-center gap-2 px-6 py-3 font-medium rounded-xl transition-all duration-300 ${
               cvs.length >= 2
                 ? "bg-gray-200 text-gray-500 cursor-not-allowed pointer-events-none"
                 : "bg-slate-900 text-white hover:bg-indigo-600 hover:shadow-lg active:scale-95"
@@ -160,11 +162,13 @@ const CvStatusManager = () => {
               return (
                 <div
                   key={cv.id}
-                  className="group border border-gray-100 rounded-2xl p-5 hover:border-indigo-100 hover:shadow-md transition-all bg-white flex items-center justify-between"
+                  // RESPONSIVE UI: mobile card xếp dọc, desktop md giữ ngang
+                  className="group border border-gray-100 rounded-2xl p-4 md:p-5 hover:border-indigo-100 hover:shadow-md transition-all bg-white flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
                 >
-                  <div className="flex items-center gap-5">
+                  {/* RESPONSIVE UI: mobile căn item lên đầu, desktop giữ icon + info ngang */}
+                  <div className="flex items-start gap-3 sm:gap-5 min-w-0">
                     <div
-                      className={`p-4 rounded-xl ${
+                      className={`shrink-0 p-3 md:p-4 rounded-xl ${
                         cv.type === "FORM"
                           ? "bg-indigo-50 text-indigo-600"
                           : "bg-orange-50 text-orange-600"
@@ -172,14 +176,20 @@ const CvStatusManager = () => {
                     >
                       <FileText size={24} />
                     </div>
-                    <div>
-                      <div className="flex items-center gap-3 mb-1.5">
-                        <h3 className="font-bold text-gray-800 text-lg">
+
+                    <div className="min-w-0 flex-1">
+                      {/* RESPONSIVE UI: title/status mobile cho phép xuống dòng */}
+                      <div className="flex flex-col gap-2 mb-1.5 sm:flex-row sm:items-center sm:gap-3">
+                        <h3 className="font-bold text-gray-800 text-base sm:text-lg break-words">
                           {cv.title || "CV Chưa có tiêu đề"}
                         </h3>
-                        {renderStatus(currentStatus)}
+                        <div className="shrink-0">
+                          {renderStatus(currentStatus)}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
+
+                      {/* RESPONSIVE UI: meta mobile wrap để không tràn ngang */}
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm text-gray-500">
                         <span className="bg-gray-100 px-2 py-0.5 rounded-md text-xs font-semibold">
                           {cv.type}
                         </span>
@@ -193,7 +203,7 @@ const CvStatusManager = () => {
                           <Eye size={14} /> {viewCount} lượt xem
                         </span>
                         {currentStatus === "REJECTED" && cv.admin_note && (
-                          <p className="mt-2 text-sm text-slate-400 italic">
+                          <p className="w-full mt-1 text-sm text-slate-400 italic">
                             * Lý do từ chối: {cv.admin_note}
                           </p>
                         )}
@@ -202,7 +212,8 @@ const CvStatusManager = () => {
                   </div>
 
                   {/* KHỐI NÚT HÀNH ĐỘNG */}
-                  <div className="flex gap-2">
+                  {/* RESPONSIVE UI: mobile đẩy nút xuống dưới, desktop giữ bên phải */}
+                  <div className="flex justify-end gap-2 border-t border-gray-50 pt-3 md:border-t-0 md:pt-0">
                     {/* CHỈ HIỂN THỊ NÚT SỬA NẾU LÀ LOẠI FORM */}
                     {cv.type === "FORM" && (
                       <button

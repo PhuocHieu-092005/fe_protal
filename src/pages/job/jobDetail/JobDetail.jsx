@@ -13,6 +13,7 @@ import {
   Tags,
   ChevronRight,
   ArrowRight,
+  ChevronDown,
 } from "lucide-react";
 
 import Footer from "../../../layouts/Footer";
@@ -34,6 +35,9 @@ export default function JobDetail() {
   const [isApplyOpen, setIsApplyOpen] = useState(false);
   const [showLoginNotice, setShowLoginNotice] = useState(false);
   const [user, setUser] = useState(null);
+
+  // RESPONSIVE UI: mở/đóng custom dropdown CV, thay select native bị phóng to trên mobile
+  const [isCvDropdownOpen, setIsCvDropdownOpen] = useState(false);
 
   const isLoggedIn = () => !!user;
   const checkLogin = () => {
@@ -127,6 +131,24 @@ export default function JobDetail() {
     return cv.title || cv.cvTitle || cv.name || `CV #${cv.id}`;
   };
 
+  // RESPONSIVE UI: rút gọn tên CV dài để custom dropdown không tràn màn hình mobile
+  const getShortCvTitle = (cv) => {
+    if (!cv) return "Chọn CV";
+
+    const title = getCvTitle(cv);
+
+    if (title.length > 35) {
+      return `${title.slice(0, 35)}...`;
+    }
+
+    return title;
+  };
+
+  // RESPONSIVE UI: lấy tên CV đang chọn để hiển thị trên nút dropdown
+  const selectedCvTitle = selectedCv
+    ? getShortCvTitle(cvs.find((cv) => String(cv.id) === String(selectedCv)))
+    : "Chọn CV";
+
   const handleToggleFavorite = async () => {
     if (!isLoggedIn()) {
       requireLogin();
@@ -190,8 +212,14 @@ export default function JobDetail() {
       )}
 
       {isApplyOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md rounded-3xl bg-white p-7 shadow-2xl">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+          onClick={() => setIsCvDropdownOpen(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-3xl bg-white p-7 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h2 className="text-2xl font-bold text-slate-900">
               Ứng tuyển ngay
             </h2>
@@ -204,18 +232,61 @@ export default function JobDetail() {
                 Chọn CV của bạn
               </label>
               {cvs.length > 0 ? (
-                <select
-                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm outline-none transition-all focus:border-slate-950"
-                  value={selectedCv}
-                  onChange={(e) => setSelectedCv(e.target.value)}
-                >
-                  <option value="">Chọn CV</option>
-                  {cvs.map((cv) => (
-                    <option key={cv.id} value={cv.id}>
-                      {getCvTitle(cv)}
-                    </option>
-                  ))}
-                </select>
+                // RESPONSIVE UI: custom dropdown thay select native để option không bị phóng to trên mobile
+                <div className="relative mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsCvDropdownOpen((current) => !current)}
+                    className="flex w-full items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-left text-sm outline-none transition-all hover:bg-white focus:border-slate-950"
+                  >
+                    <span className="min-w-0 truncate">{selectedCvTitle}</span>
+                    <ChevronDown
+                      size={16}
+                      className={`shrink-0 text-slate-400 transition-transform ${
+                        isCvDropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {isCvDropdownOpen && (
+                    <div className="absolute left-0 right-0 top-full z-[70] mt-2 max-h-60 overflow-y-auto rounded-2xl border border-slate-200 bg-white p-1 shadow-xl">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedCv("");
+                          setIsCvDropdownOpen(false);
+                        }}
+                        className={`flex w-full items-center rounded-xl px-4 py-3 text-left text-sm font-medium transition ${
+                          !selectedCv
+                            ? "bg-blue-600 text-white"
+                            : "text-slate-700 hover:bg-slate-50"
+                        }`}
+                      >
+                        Chọn CV
+                      </button>
+
+                      {cvs.map((cv) => (
+                        <button
+                          key={cv.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedCv(cv.id);
+                            setIsCvDropdownOpen(false);
+                          }}
+                          className={`flex w-full items-center rounded-xl px-4 py-3 text-left text-sm font-medium transition ${
+                            String(selectedCv) === String(cv.id)
+                              ? "bg-blue-600 text-white"
+                              : "text-slate-700 hover:bg-slate-50"
+                          }`}
+                        >
+                          <span className="min-w-0 truncate">
+                            {getShortCvTitle(cv)}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ) : (
                 <div className="mt-2 rounded-2xl border border-dashed border-slate-300 p-4 text-center">
                   <p className="text-sm text-slate-500">Bạn chưa có CV nào.</p>
@@ -230,7 +301,10 @@ export default function JobDetail() {
             </div>
             <div className="mt-8 flex gap-3">
               <button
-                onClick={() => setIsApplyOpen(false)}
+                onClick={() => {
+                  setIsCvDropdownOpen(false);
+                  setIsApplyOpen(false);
+                }}
                 className="flex-1 rounded-2xl border border-slate-200 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
               >
                 Hủy bỏ

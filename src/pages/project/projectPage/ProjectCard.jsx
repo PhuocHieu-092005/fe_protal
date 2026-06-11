@@ -16,10 +16,14 @@ export default function ProjectCard({ project }) {
     ? "0đ"
     : `${Number(project.price_download || 0).toLocaleString("vi-VN")}đ`;
 
+  const techList = project.technologies || project.techStack || [];
+  const visibleTechList = techList.slice(0, 2);
+  const hiddenTechCount = Math.max(techList.length - 2, 0);
+
   return (
-    <div className="flex h-[390px] flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:border-slate-300 hover:shadow-md">
+    <div className="flex h-[430px] flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:border-slate-300 hover:shadow-md">
       {/* Ảnh */}
-      <div className="relative h-[150px] w-full overflow-hidden bg-slate-100">
+      <div className="relative h-[185px] w-full shrink-0 overflow-hidden bg-slate-100">
         <img
           src={imageUrl}
           alt={project.title || "Đồ án"}
@@ -37,36 +41,37 @@ export default function ProjectCard({ project }) {
 
       {/* Nội dung */}
       <div className="flex flex-1 flex-col p-4">
-        {/* Công nghệ */}
-        <div className="mb-2 flex flex-wrap gap-1.5">
-          {(project.technologies || project.techStack || [])
-            .slice(0, 3)
-            .map((tech) => (
-              <span
-                key={`${project.id}-${tech.id || tech.name || tech}`}
-                className="rounded-md bg-blue-50 px-2.5 py-1 text-[12px] font-semibold text-blue-600"
-              >
-                {tech.name || tech}
-              </span>
-            ))}
-        </div>
+        {/* Công nghệ - ngoài card chỉ hiện 2 công nghệ + số còn lại */}
+        <div className="mb-3 flex h-[34px] flex-nowrap items-center gap-1.5 overflow-hidden">
+          {visibleTechList.map((tech) => (
+            <span
+              key={`${project.id}-${tech.id || tech.name || tech}`}
+              className="shrink-0 rounded-md bg-blue-50 px-2.5 py-1 text-[12px] font-semibold text-blue-600"
+            >
+              {tech.name || tech}
+            </span>
+          ))}
 
+          {hiddenTechCount > 0 && (
+            <span className="shrink-0 rounded-md bg-slate-100 px-2.5 py-1 text-[12px] font-semibold text-slate-500">
+              +{hiddenTechCount}
+            </span>
+          )}
+        </div>
         {/* Tiêu đề */}
         <h3 className="line-clamp-2 min-h-[48px] text-[16px] font-bold leading-6 text-slate-900">
           {project.title || "Chưa cập nhật tiêu đề"}
         </h3>
-
         {/* Tác giả */}
         <div className="mt-2 flex items-center gap-2 text-sm text-slate-500">
-          <User size={15} />
-          <span>
+          <User size={15} className="shrink-0" />
+          <span className="line-clamp-1">
             Tác giả:{" "}
             <span className="font-bold text-slate-800">
               {project.student_name || "Chưa cập nhật"}
             </span>
           </span>
         </div>
-
         {/* View / download / giá */}
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center gap-4 text-sm text-slate-500">
@@ -83,26 +88,18 @@ export default function ProjectCard({ project }) {
 
           <div className="text-[18px] font-bold text-blue-600">{priceText}</div>
         </div>
+        <button
+          onClick={() => navigate(`/project/${project.id}`)}
+          className="group flex w-full items-center justify-between rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-900 transition-all duration-200 hover:border-blue-500 hover:text-blue-600 active:scale-[0.99]"
+        >
+          <span>Xem chi tiết đồ án</span>
 
-        {/* Đẩy button xuống dưới */}
-        <div className="mt-auto pt-4">
-          <button
-            onClick={() => navigate(`/project/${project.id}`)}
-            className="group relative flex w-full items-center justify-between overflow-hidden rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-900 transition-all duration-300 active:scale-[0.99]"
-          >
-            <span className="absolute inset-y-0 left-0 w-0 bg-slate-900 transition-all duration-300 group-hover:w-full"></span>
-
-            <span className="relative z-10 transition-colors duration-300 group-hover:text-white">
-              Xem chi tiết đồ án
-            </span>
-
-            <ChevronRight
-              size={18}
-              strokeWidth={2.3}
-              className="relative z-10 transition-all duration-300 group-hover:translate-x-1 group-hover:text-white"
-            />
-          </button>
-        </div>
+          <ChevronRight
+            size={18}
+            strokeWidth={2.3}
+            className="transition-transform duration-200 group-hover:translate-x-1"
+          />
+        </button>
       </div>
     </div>
   );

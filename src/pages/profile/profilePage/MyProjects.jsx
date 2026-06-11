@@ -294,8 +294,9 @@ export default function MyProjects() {
                   key={project.id}
                   className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
                 >
-                  <div className="grid min-w-0 grid-cols-1 sm:grid-cols-[150px_minmax(0,1fr)]">
-                    <div className="relative h-[150px] bg-slate-100 sm:h-[190px]">
+                  {/* RESPONSIVE UI: mobile vẫn giữ bố cục ngang nhưng ảnh nhỏ hơn, desktop sm trở lên giữ kích thước cũ */}
+                  <div className="grid min-w-0 grid-cols-[96px_minmax(0,1fr)] sm:grid-cols-[150px_minmax(0,1fr)]">
+                    <div className="relative h-full min-h-[132px] bg-slate-100 sm:h-[190px]">
                       <img
                         src={thumbnail}
                         alt={project.title}
@@ -303,7 +304,7 @@ export default function MyProjects() {
                       />
 
                       <span
-                        className={`absolute left-2.5 top-2.5 inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold ${getStatusStyle(
+                        className={`absolute left-2 top-2 inline-flex rounded-full px-2 py-0.5 text-[9px] font-bold sm:left-2.5 sm:top-2.5 sm:px-2.5 sm:py-1 sm:text-[10px] ${getStatusStyle(
                           project.status,
                         )}`}
                       >
@@ -311,23 +312,26 @@ export default function MyProjects() {
                       </span>
                     </div>
 
-                    <div className="min-w-0 p-3">
+                    <div className="min-w-0 p-2.5 sm:p-3">
                       <div className="flex min-w-0 items-start justify-between gap-2">
                         <div className="min-w-0 flex-1">
-                          <h3 className="line-clamp-2 text-[16px] font-black leading-snug text-slate-900">
+                          {/* RESPONSIVE UI: mobile giảm font và giữ line-clamp để tiêu đề nằm ngang dài hơn */}
+                          <h3 className="line-clamp-2 text-[13px] font-black leading-5 text-slate-900 sm:text-[16px] sm:leading-snug">
                             {project.title}
                           </h3>
 
-                          <p className="mt-1.5 line-clamp-2 text-[12px] leading-5 text-slate-500">
+                          <p className="mt-1 line-clamp-1 text-[11px] leading-5 text-slate-500 sm:mt-1.5 sm:line-clamp-2 sm:text-[12px]">
                             {project.description ||
                               "Chưa có mô tả cho đồ án này."}
                           </p>
                         </div>
 
-                        <div className="shrink-0 rounded-xl bg-slate-50 px-2.5 py-2 text-right">
-                          <p className="text-[10px] text-slate-500">Giá</p>
+                        <div className="shrink-0 rounded-xl bg-slate-50 px-2 py-1.5 text-right sm:px-2.5 sm:py-2">
+                          <p className="text-[9px] text-slate-500 sm:text-[10px]">
+                            Giá
+                          </p>
 
-                          <p className="mt-1 text-base font-black text-slate-900">
+                          <p className="mt-0.5 text-[13px] font-black text-slate-900 sm:mt-1 sm:text-base">
                             {priceType === "PAID"
                               ? `${Number(priceDownload).toLocaleString(
                                   "vi-VN",
@@ -337,12 +341,12 @@ export default function MyProjects() {
                         </div>
                       </div>
 
-                      <div className="mt-2.5 flex flex-wrap gap-1.5">
+                      <div className="mt-2 flex flex-wrap gap-1 sm:mt-2.5 sm:gap-1.5">
                         {project.technologies?.length > 0 ? (
                           project.technologies.slice(0, 3).map((tech) => (
                             <span
                               key={tech.id || tech.name}
-                              className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-semibold text-slate-600"
+                              className="rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-semibold text-slate-600 sm:px-2.5 sm:py-1 sm:text-[10px]"
                             >
                               {tech.name}
                             </span>
@@ -354,34 +358,38 @@ export default function MyProjects() {
                         )}
                       </div>
 
-                      <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-slate-700">
-                        <div className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-1">
+                      <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[10px] font-semibold text-slate-700 sm:mt-3 sm:gap-2 sm:text-[11px]">
+                        <div className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 sm:px-2.5 sm:py-1">
                           <Eye size={12} />
                           <span>{viewCount}</span>
-                          <span className="text-slate-500">lượt xem</span>
+                          <span className="hidden text-slate-500 sm:inline">
+                            lượt xem
+                          </span>
                         </div>
 
-                        <div className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-1">
+                        <div className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 sm:px-2.5 sm:py-1">
                           <Download size={12} />
                           <span>{downloadCount}</span>
-                          <span className="text-slate-500">lượt tải</span>
+                          <span className="hidden text-slate-500 sm:inline">
+                            lượt tải
+                          </span>
                         </div>
 
-                        <div className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-1">
+                        <div className="hidden items-center gap-1 rounded-full bg-slate-50 px-2.5 py-1 sm:inline-flex">
                           <span className="text-slate-500">Hình thức:</span>
                           <span>
                             {priceType === "PAID" ? "Bán code" : "Miễn phí"}
                           </span>
                         </div>
 
-                        <div className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2.5 py-1">
+                        <div className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 sm:px-2.5 sm:py-1">
                           <CalendarDays size={12} />
                           <span>{formatDate(createdAt)}</span>
                         </div>
                       </div>
 
                       {adminNote && (
-                        <div className="mt-2.5 rounded-xl border border-rose-200 bg-rose-50 px-2.5 py-2">
+                        <div className="mt-2 rounded-xl border border-rose-200 bg-rose-50 px-2.5 py-2 sm:mt-2.5">
                           <p className="mb-1 text-[11px] font-bold text-rose-700">
                             Ghi chú từ admin
                           </p>
@@ -392,10 +400,10 @@ export default function MyProjects() {
                         </div>
                       )}
 
-                      <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                      <div className="mt-2.5 flex flex-wrap items-center gap-1 sm:mt-3 sm:gap-1.5">
                         <button
                           onClick={() => navigate(`/project/${project.id}`)}
-                          className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-2.5 py-1.5 text-[11px] font-semibold text-slate-700 transition-all hover:bg-slate-50"
+                          className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-2 py-1 text-[10px] font-semibold text-slate-700 transition-all hover:bg-slate-50 sm:px-2.5 sm:py-1.5 sm:text-[11px]"
                         >
                           Chi tiết
                           <ArrowRight size={13} />
@@ -405,15 +413,15 @@ export default function MyProjects() {
                           onClick={() =>
                             navigate(`/project/edit/${project.id}`)
                           }
-                          className="inline-flex items-center gap-1 rounded-lg border border-blue-200 px-2.5 py-1.5 text-[11px] font-semibold text-blue-600 transition-all hover:bg-blue-50"
+                          className="inline-flex items-center gap-1 rounded-lg border border-blue-200 px-2 py-1 text-[10px] font-semibold text-blue-600 transition-all hover:bg-blue-50 sm:px-2.5 sm:py-1.5 sm:text-[11px]"
                         >
                           <Pencil size={13} />
-                          Chỉnh sửa
+                          Sửa
                         </button>
 
                         <button
                           onClick={() => handleDelete(project.id)}
-                          className="inline-flex items-center gap-1 rounded-lg border border-rose-200 px-2.5 py-1.5 text-[11px] font-semibold text-rose-600 transition-all hover:bg-rose-50"
+                          className="inline-flex items-center gap-1 rounded-lg border border-rose-200 px-2 py-1 text-[10px] font-semibold text-rose-600 transition-all hover:bg-rose-50 sm:px-2.5 sm:py-1.5 sm:text-[11px]"
                         >
                           <Trash2 size={13} />
                           Xóa

@@ -9,7 +9,6 @@ import {
   Lock,
   ShoppingCart,
   Send,
-  User,
   ShieldCheck,
 } from "lucide-react";
 
@@ -32,7 +31,8 @@ export default function ProjectSidebar({
   return (
     <>
       {/* GIÁ SOURCE */}
-      <section className="rounded-none border border-blue-100 bg-blue-50/40 p-4 shadow-sm">
+      {/* RESPONSIVE UI: mobile bo góc, desktop giữ kiểu block phẳng */}
+      <section className="rounded-2xl border border-blue-100 bg-blue-50/40 p-4 shadow-sm md:rounded-none">
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
@@ -54,7 +54,7 @@ export default function ProjectSidebar({
           </div>
 
           <span
-            className={`rounded-full px-3 py-1 text-xs font-black text-white ${
+            className={`shrink-0 rounded-full px-3 py-1 text-xs font-black text-white ${
               isPaidProject ? "bg-blue-600" : "bg-emerald-500"
             }`}
           >
@@ -65,9 +65,9 @@ export default function ProjectSidebar({
 
       {/* HỢP TÁC PROJECT - Dành cho Công ty */}
       {currentUserRole === "COMPANY" && (
-        <section className="rounded-none border border-slate-200 bg-white p-4 shadow-sm">
+        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:rounded-none">
           <div className="mb-3 flex items-start gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
               <Handshake size={18} />
             </div>
 
@@ -85,7 +85,7 @@ export default function ProjectSidebar({
           <button
             type="button"
             onClick={onOpenRequestModal}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-2.5 text-xs font-black text-white transition hover:bg-blue-600"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-xs font-black text-white transition hover:bg-blue-600 md:rounded-lg md:py-2.5"
           >
             <Send size={15} />
             Gửi yêu cầu hợp tác
@@ -94,7 +94,7 @@ export default function ProjectSidebar({
       )}
 
       {/* TÀI NGUYÊN */}
-      <section className="rounded-none border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:rounded-none">
         <h3 className="mb-3 flex items-center gap-2 text-base font-black text-slate-900">
           <BookOpen size={18} className="text-blue-600" />
           Tài nguyên
@@ -104,11 +104,11 @@ export default function ProjectSidebar({
           {sourceCodeUrl && (
             <>
               {isPaidProject && !isPurchased ? (
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 md:rounded-lg">
                   <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <Lock size={16} className="text-blue-600" />
-                      <div>
+                    <div className="flex min-w-0 items-center gap-2">
+                      <Lock size={16} className="shrink-0 text-blue-600" />
+                      <div className="min-w-0">
                         <p className="text-sm font-black text-slate-900">
                           GitHub Source
                         </p>
@@ -118,7 +118,7 @@ export default function ProjectSidebar({
                       </div>
                     </div>
 
-                    <span className="rounded-full bg-slate-900 px-2.5 py-1 text-[10px] font-black text-white">
+                    <span className="shrink-0 rounded-full bg-slate-900 px-2.5 py-1 text-[10px] font-black text-white">
                       LOCKED
                     </span>
                   </div>
@@ -131,7 +131,7 @@ export default function ProjectSidebar({
                     type="button"
                     onClick={onBuyProject}
                     disabled={buyingProject}
-                    className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-black text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-sm font-black text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60 md:rounded-lg md:py-2.5"
                   >
                     <ShoppingCart size={16} />
                     {buyingProject ? "Đang tạo link..." : "Mua source code"}
@@ -142,9 +142,9 @@ export default function ProjectSidebar({
                   href={sourceCodeUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 transition hover:bg-blue-50"
+                  className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 transition hover:bg-blue-50 md:rounded-lg md:py-2.5"
                 >
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-sm font-black text-slate-900">
                       GitHub Source
                     </p>
@@ -154,9 +154,15 @@ export default function ProjectSidebar({
                   </div>
 
                   {isPaidProject ? (
-                    <CheckCircle2 className="text-emerald-500" size={18} />
+                    <CheckCircle2
+                      className="shrink-0 text-emerald-500"
+                      size={18}
+                    />
                   ) : (
-                    <ExternalLink className="text-blue-600" size={17} />
+                    <ExternalLink
+                      className="shrink-0 text-blue-600"
+                      size={17}
+                    />
                   )}
                 </a>
               )}
@@ -168,23 +174,23 @@ export default function ProjectSidebar({
               href={demoUrl}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 transition hover:bg-blue-50"
+              className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 transition hover:bg-blue-50 md:rounded-lg md:py-2.5"
             >
-              <div>
+              <div className="min-w-0">
                 <p className="text-sm font-black text-slate-900">Video Demo</p>
                 <p className="text-xs text-slate-500">
                   Xem video giới thiệu dự án
                 </p>
               </div>
 
-              <ExternalLink className="text-blue-600" size={17} />
+              <ExternalLink className="shrink-0 text-blue-600" size={17} />
             </a>
           )}
         </div>
       </section>
 
       {/* CÔNG NGHỆ */}
-      <section className="rounded-none border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:rounded-none">
         <h3 className="mb-3 flex items-center gap-2 text-base font-black text-slate-900">
           <Layers3 size={18} className="text-blue-600" />
           Công nghệ
@@ -195,7 +201,7 @@ export default function ProjectSidebar({
             technologies.map((tech) => (
               <span
                 key={tech.id}
-                className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-600"
+                className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-600 md:py-1"
               >
                 {tech.name}
               </span>
@@ -207,31 +213,33 @@ export default function ProjectSidebar({
       </section>
 
       {/* TÁC GIẢ */}
-      <section className="rounded-none border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:rounded-none">
         <p className="mb-3 text-xs font-black uppercase tracking-widest text-slate-400">
           Tác giả
         </p>
 
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-50 text-sm font-black text-emerald-700">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-sm font-black text-emerald-700 md:rounded-lg">
             {studentName?.charAt(0) || "U"}
           </div>
 
-          <div>
-            <p className="text-sm font-black text-slate-900">{studentName}</p>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-black text-slate-900">
+              {studentName}
+            </p>
             <p className="text-xs text-slate-500">Sinh viên thực hiện</p>
           </div>
         </div>
       </section>
 
       {/* THÔNG TIN THÊM */}
-      <section className="rounded-none border border-slate-200 bg-white p-4 shadow-sm">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:rounded-none">
         <h3 className="mb-4 flex items-center gap-2 text-base font-black text-slate-900">
           <BadgeDollarSign size={18} className="text-blue-600" />
           Thông tin thêm
         </h3>
 
-        <div className="grid grid-cols-2 gap-x-5 gap-y-1.5 text-xs">
+        <div className="grid grid-cols-2 gap-x-5 gap-y-3 text-xs md:gap-y-1.5">
           <div>
             <p className="text-slate-400">Mã đồ án</p>
             <p className="mt-1 font-bold text-slate-900">#{projectId}</p>
@@ -264,13 +272,15 @@ export default function ProjectSidebar({
 
       {/* GHI CHÚ ADMIN */}
       {adminNote && (
-        <section className="rounded-none border border-amber-200 bg-amber-50 p-4 shadow-sm">
+        <section className="rounded-2xl border border-amber-200 bg-amber-50 p-4 shadow-sm md:rounded-none">
           <h3 className="mb-2 flex items-center gap-2 text-sm font-black text-amber-700">
             <ShieldCheck size={17} />
             Ghi chú từ admin
           </h3>
 
-          <p className="text-xs leading-5 text-amber-700">{adminNote}</p>
+          <p className="break-words text-xs leading-5 text-amber-700">
+            {adminNote}
+          </p>
         </section>
       )}
     </>

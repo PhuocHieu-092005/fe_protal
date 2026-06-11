@@ -94,13 +94,17 @@ const ProfileForm = ({ profile, setProfile }) => {
     "input input-bordered w-full bg-gray-100 text-gray-500 cursor-not-allowed focus:!outline-none focus:!border-transparent focus:!ring-0";
 
   return (
-    <section className="w-3/4 bg-white rounded-lg shadow-sm p-8 border border-gray-100">
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900">Cập nhật hồ sơ</h2>
+    // RESPONSIVE UI: mobile full width, desktop giữ w-3/4
+    <section className="w-full rounded-lg border border-gray-100 bg-white p-5 shadow-sm sm:p-6 md:w-3/4 md:p-8">
+      {/* RESPONSIVE UI: mobile xếp dọc, desktop giữ ngang */}
+      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+          Cập nhật hồ sơ
+        </h2>
         <button
           onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
           disabled={isSaving}
-          className={`px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition-all duration-300 text-white
+          className={`flex w-full items-center justify-center gap-2 rounded-lg px-5 py-3 font-medium text-white transition-all duration-300 sm:w-auto sm:px-6
             ${
               isSaving
                 ? "bg-gray-400 cursor-not-allowed opacity-70"
@@ -129,7 +133,7 @@ const ProfileForm = ({ profile, setProfile }) => {
 
       {/* Avatar Section */}
       <div className="flex flex-col items-center mb-10 relative">
-        <div className="w-32 h-32 rounded-full border-4 border-blue-50 shadow-md overflow-hidden bg-gray-100">
+        <div className="h-28 w-28 overflow-hidden rounded-full border-4 border-blue-50 bg-gray-100 shadow-md sm:h-32 sm:w-32">
           <img
             src={previewUrl || profile?.avatar_url || defaultAvatar}
             alt="Avatar"
@@ -154,14 +158,15 @@ const ProfileForm = ({ profile, setProfile }) => {
             />
           </>
         )}
-        <p className="text-xs text-gray-400 mt-4 italic">
+        <p className="text-xs text-gray-400 mt-4 italic text-center">
           {isEditing
             ? "Nhấp vào biểu tượng máy ảnh để thay đổi ảnh"
             : "Kích cỡ tệp ảnh tối đa 1MB (*.jpg, *.png)"}
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
+      {/* RESPONSIVE UI: mobile 1 cột, desktop 2 cột */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
         {/* Họ tên */}
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-gray-600">

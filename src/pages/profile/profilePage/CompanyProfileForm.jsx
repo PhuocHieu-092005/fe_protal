@@ -244,7 +244,8 @@ export default function CompanyProfileForm() {
 
   if (loading) {
     return (
-      <section className="flex-1 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+      // RESPONSIVE UI: mobile full width + padding nhỏ hơn, desktop giữ rộng theo flex
+      <section className="w-full flex-1 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6 md:p-8">
         <div className="flex min-h-[400px] flex-col items-center justify-center">
           <div className="h-10 w-10 animate-spin rounded-full border-2 border-slate-200 border-t-blue-600"></div>
           <p className="mt-4 text-sm font-medium text-slate-400">
@@ -256,13 +257,15 @@ export default function CompanyProfileForm() {
   }
 
   return (
-    <section className="flex-1 rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
+    // RESPONSIVE UI: mobile full width + padding nhỏ hơn, desktop giữ layout cũ
+    <section className="w-full flex-1 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6 md:p-8">
       <div className="mb-8 flex flex-col gap-5 border-b border-slate-100 pb-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h2 className="text-4xl font-bold text-slate-900">
+          {/* RESPONSIVE UI: title nhỏ hơn trên mobile, desktop giữ text-4xl */}
+          <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl lg:text-4xl">
             Thông tin công ty
           </h2>
-          <p className="mt-2 text-slate-500">
+          <p className="mt-2 text-sm leading-6 text-slate-500 sm:text-base">
             Cập nhật hồ sơ công ty để tăng độ tin cậy và thu hút ứng viên tốt
             hơn.
           </p>
@@ -289,11 +292,12 @@ export default function CompanyProfileForm() {
         </div>
       </div>
 
-      <div className="mb-8 flex flex-col items-center gap-4 rounded-3xl bg-slate-50 p-6">
+      {/* RESPONSIVE UI: giảm padding mobile */}
+      <div className="mb-8 flex flex-col items-center gap-4 rounded-3xl bg-slate-50 p-5 sm:p-6">
         <img
           src={previewAvatar}
           alt="Avatar công ty"
-          className="h-28 w-28 rounded-full border-4 border-white object-cover shadow"
+          className="h-24 w-24 rounded-full border-4 border-white object-cover shadow sm:h-28 sm:w-28"
           onError={(e) => {
             e.currentTarget.src = DEFAULT_COMPANY_AVATAR;
           }}
@@ -303,14 +307,15 @@ export default function CompanyProfileForm() {
           <p className="text-sm font-medium text-slate-600">
             Ảnh đại diện công ty
           </p>
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-1 text-xs leading-5 text-slate-400">
             Nếu không chọn ảnh mới, hệ thống sẽ giữ ảnh cũ hoặc dùng ảnh mặc
             định để hiển thị.
           </p>
         </div>
       </div>
 
-      <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {/* RESPONSIVE UI: mobile 1 cột, sm 2 cột, desktop lớn 4 cột */}
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-2xl bg-slate-50 p-4">
           <div className="mb-3 flex items-center gap-2 text-slate-400">
             <Building2 size={16} />
@@ -318,7 +323,7 @@ export default function CompanyProfileForm() {
               Tên công ty
             </span>
           </div>
-          <p className="font-bold text-slate-900">
+          <p className="break-words font-bold text-slate-900">
             {companyInfo?.companyName || "Chưa rõ"}
           </p>
         </div>
@@ -342,7 +347,7 @@ export default function CompanyProfileForm() {
               Mã số thuế
             </span>
           </div>
-          <p className="font-bold text-slate-900">
+          <p className="break-words font-bold text-slate-900">
             {companyInfo?.taxCode || "Chưa rõ"}
           </p>
         </div>
@@ -448,8 +453,8 @@ export default function CompanyProfileForm() {
           </label>
 
           <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-5 py-4 transition-all hover:border-slate-400 hover:bg-slate-100">
-            <ImageIcon size={18} className="text-slate-500" />
-            <span className="text-sm font-medium text-slate-600">
+            <ImageIcon size={18} className="shrink-0 text-slate-500" />
+            <span className="min-w-0 truncate text-sm font-medium text-slate-600">
               {selectedAvatarFile
                 ? selectedAvatarFile.name
                 : "Chọn file ảnh từ máy tính"}
@@ -462,7 +467,7 @@ export default function CompanyProfileForm() {
             />
           </label>
 
-          <p className="mt-2 text-xs text-slate-400">
+          <p className="mt-2 text-xs leading-5 text-slate-400">
             Backend đang yêu cầu avatarUrl là file ảnh, không phải link text.
           </p>
         </div>
@@ -480,11 +485,12 @@ export default function CompanyProfileForm() {
           />
         </div>
 
-        <div className="md:col-span-2 flex flex-wrap gap-3 pt-2">
+        {/* RESPONSIVE UI: mobile button full width, desktop tự co theo nội dung */}
+        <div className="flex flex-col gap-3 pt-2 sm:flex-row md:col-span-2">
           <button
             type="submit"
             disabled={saving}
-            className="rounded-2xl bg-black px-6 py-3 text-sm font-black text-white transition-all hover:bg-slate-800 disabled:opacity-60"
+            className="flex min-h-12 w-full items-center justify-center rounded-2xl bg-black px-6 py-3 text-sm font-black text-white transition-all hover:bg-slate-800 disabled:opacity-60 sm:w-auto"
           >
             {saving ? "Đang lưu..." : "Lưu thông tin công ty"}
           </button>
@@ -492,7 +498,7 @@ export default function CompanyProfileForm() {
           <button
             type="button"
             onClick={fetchCompanyProfile}
-            className="rounded-2xl border border-slate-200 px-6 py-3 text-sm font-black text-slate-600 transition-all hover:bg-slate-50"
+            className="flex min-h-12 w-full items-center justify-center rounded-2xl border border-slate-200 px-6 py-3 text-sm font-black text-slate-600 transition-all hover:bg-slate-50 sm:w-auto"
           >
             Tải lại dữ liệu
           </button>

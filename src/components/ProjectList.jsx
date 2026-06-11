@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import projectService from "../services/projectService";
-
+import { Download, Eye } from "lucide-react";
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80";
 
@@ -65,6 +65,7 @@ const ProjectCard = ({ project }) => {
           className="h-full w-full object-cover"
         />
         <div className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white/90 px-2 py-0.5 text-[10px] font-bold text-slate-700 shadow-sm backdrop-blur-sm md:right-3 md:top-3 md:px-2.5 md:py-1 md:text-[11px]">
+          <Eye size={13} className="text-slate-500" />
           <span>{project.views.toLocaleString()}</span>
         </div>
       </div>
@@ -96,11 +97,9 @@ const ProjectCard = ({ project }) => {
         </div>
 
         <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-sm text-slate-500 md:mt-4 md:pt-4">
-          <span className="text-[10px] md:text-xs">
-            <span className="font-bold text-slate-700">
-              {project.downloads}
-            </span>{" "}
-            tải
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 md:text-xs">
+            <Download size={13} className="text-slate-400" />
+            {project.downloads} tải
           </span>
 
           <Link
