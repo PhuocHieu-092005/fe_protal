@@ -181,11 +181,12 @@ const ProjectList = () => {
       `}</style>
 
       <div className="mb-8 px-4 text-center md:mb-10">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+        <h1 className="font-display text-3xl font-extrabold tracking-tight text-slate-950 md:text-4xl">
           Đồ án sinh viên nổi bật
         </h1>
-        <p className="mx-auto mt-2 max-w-2xl text-sm italic text-gray-500 md:text-base">
-          Các giải pháp công nghệ sáng tạo được đánh giá cao.
+        <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-slate-500 md:text-base">
+          Các giải pháp công nghệ sáng tạo được đánh giá cao, phù hợp để tham
+          khảo ý tưởng và cách triển khai thực tế.
         </p>
       </div>
 

@@ -29,7 +29,6 @@ export default function PostList() {
         const normalizedJobs = normalizeJobsResponse(response);
 
         setJobs(normalizedJobs);
-        // console.log("Danh sách việc làm đã tải:", normalizedJobs);
       } catch (err) {
         console.error("Lỗi tải danh sách việc làm:", err);
         setErrorText("Không thể tải danh sách việc làm.");
@@ -57,15 +56,16 @@ export default function PostList() {
   }, [currentPage, jobs]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] py-10 font-sans text-slate-900">
+    <section className="bg-[#F8FAFC] py-12 font-sans text-slate-900 md:py-16">
       <div className="mx-auto w-[90%] max-w-[1320px]">
-        <div className="mb-7">
-          <h2 className="text-3xl font-bold tracking-tight text-slate-900">
+        <div className="mb-8">
+          <h2 className="font-display text-3xl font-extrabold tracking-tight text-slate-950 md:text-4xl">
             Việc làm nổi bật
           </h2>
 
-          <p className="mt-2 text-base leading-relaxed text-slate-500">
-            Những công việc đang được tuyển dụng nhiều và phù hợp với bạn.
+          <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-500">
+            Những công việc đang được tuyển dụng nhiều và phù hợp với định
+            hướng phát triển của sinh viên CNTT.
           </p>
         </div>
 
@@ -97,6 +97,6 @@ export default function PostList() {
           />
         </div>
       </div>
-    </div>
+    </section>
   );
 }
