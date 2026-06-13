@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import authService from "../services/authService";
+import { alertUtils } from "../helpers/alertUtils";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -72,7 +73,7 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
 
       await authService.register(registerData);
 
-      alert(
+      alertUtils.success(
         "Đăng ký tài khoản thành công! Vui lòng kiểm tra email để xác thực.",
       );
       onSwitchSignIn();

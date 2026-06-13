@@ -40,7 +40,7 @@ export default function JobSearchBar() {
             type="text"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            placeholder="Tìm kiếm công việc, vị trí, kỹ năng..."
+            placeholder="Tìm kiếm công việc..."
             className="min-w-0 flex-1 bg-transparent px-2 py-2 text-xs text-slate-700 outline-none placeholder:text-slate-400 sm:px-3 sm:text-sm"
           />
         </div>

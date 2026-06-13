@@ -21,11 +21,11 @@ export default function BannerHero() {
   }, [backgrounds.length]);
 
   return (
-    <section className="relative min-h-[620px] md:h-[670px] w-full overflow-hidden flex items-center">
+    <section className="relative flex min-h-[620px] w-full items-center overflow-hidden md:h-[670px]">
       <div className="absolute inset-0">
         {backgrounds.map((bg, i) => (
           <img
-            key={i}
+            key={bg}
             src={bg}
             alt={`banner-${i}`}
             className={`absolute h-full w-full object-cover transition-opacity duration-1000 ${
@@ -36,58 +36,63 @@ export default function BannerHero() {
         <div className="absolute inset-0 bg-gradient-to-br from-slate-950/85 via-slate-900/75 to-sky-950/70" />
       </div>
 
-      {/* Thêm pt-24 để đẩy nội dung xuống dưới Header Fixed trên mobile */}
       <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pt-24 pb-12 md:pt-0 md:pb-0">
-        <div className="max-w-4xl text-center text-white mx-auto">
-          <div className="mb-6 inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-sky-300 backdrop-blur-md border border-white/10">
+        <div className="mx-auto max-w-4xl text-center text-white">
+          <div className="mb-6 inline-flex items-center rounded-full border border-white/10 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-sky-300 backdrop-blur-md">
             Hệ thống kết nối thực chiến
           </div>
 
-          {/* Sửa leading-[1.2] để dòng không bị dính nhau trên mobile */}
-          <h1 className="text-3xl font-black leading-[1.2] md:text-6xl md:leading-tight">
+          <h1 className="font-display text-3xl font-extrabold leading-[1.12] tracking-tight md:text-6xl md:leading-[1.08]">
             Cổng thông tin việc làm
-            <span className="block text-sky-400 mt-2">và đồ án công nghệ</span>
+            <span className="mt-2 block text-sky-400">
+              và đồ án công nghệ
+            </span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-slate-300 md:text-lg">
-            Kết nối sinh viên, doanh nghiệp và những cơ hội thực chiến. Khám phá
-            việc làm phù hợp hoặc xem các đồ án nổi bật ngay hôm nay.
+            Kết nối sinh viên, doanh nghiệp và những cơ hội thực chiến. Khám
+            phá việc làm phù hợp hoặc xem các đồ án nổi bật ngay hôm nay.
           </p>
 
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <button
               onClick={() => navigate("/job")}
-              className="w-full sm:w-auto rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-slate-900 shadow-xl transition-all hover:-translate-y-1 active:scale-95"
+              className="w-full rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-slate-900 shadow-xl transition-all hover:-translate-y-1 active:scale-95 sm:w-auto"
             >
               Khám phá việc làm
             </button>
 
             <button
               onClick={() => navigate("/project")}
-              className="w-full sm:w-auto rounded-xl border border-white/30 bg-white/10 px-8 py-3.5 text-sm font-bold text-white backdrop-blur-md transition-all hover:-translate-y-1 active:scale-95"
+              className="w-full rounded-xl border border-white/30 bg-white/10 px-8 py-3.5 text-sm font-bold text-white backdrop-blur-md transition-all hover:-translate-y-1 active:scale-95 sm:w-auto"
             >
               Xem đồ án nổi bật
             </button>
           </div>
 
-          {/* Stats Cards */}
           <div className="mt-12 grid grid-cols-3 gap-2 md:gap-4">
             <div className="rounded-xl border border-white/10 bg-white/5 p-3 backdrop-blur-md">
-              <p className="text-xl font-black text-white md:text-3xl">120+</p>
+              <p className="font-display text-xl font-extrabold text-white md:text-3xl">
+                120+
+              </p>
               <p className="mt-1 text-[9px] font-bold uppercase text-slate-400 md:text-xs">
                 Việc làm
               </p>
             </div>
 
             <div className="rounded-xl border border-white/10 bg-white/5 p-3 backdrop-blur-md">
-              <p className="text-xl font-black text-white md:text-3xl">80+</p>
+              <p className="font-display text-xl font-extrabold text-white md:text-3xl">
+                80+
+              </p>
               <p className="mt-1 text-[9px] font-bold uppercase text-slate-400 md:text-xs">
                 Đồ án
               </p>
             </div>
 
             <div className="rounded-xl border border-white/10 bg-white/5 p-3 backdrop-blur-md">
-              <p className="text-xl font-black text-white md:text-3xl">35+</p>
+              <p className="font-display text-xl font-extrabold text-white md:text-3xl">
+                35+
+              </p>
               <p className="mt-1 text-[9px] font-bold uppercase text-slate-400 md:text-xs">
                 Đối tác
               </p>

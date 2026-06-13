@@ -6,6 +6,7 @@ export default {
       // Cấu hình nhận font
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
+        display: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
       },
     },
   },

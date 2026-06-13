@@ -19,7 +19,7 @@ export default function Search() {
 
       <input
         type="text"
-        placeholder="Tìm kiếm công việc, vị trí, kỹ năng..."
+        placeholder="Tìm kiếm công việc..."
         className="flex-1 h-10 bg-transparent outline-none text-sm text-slate-700 placeholder:text-slate-400"
       />
 
