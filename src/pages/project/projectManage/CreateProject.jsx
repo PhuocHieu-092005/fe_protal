@@ -193,7 +193,18 @@ export default function CreateProject() {
       navigate("/my-projects");
     } catch (error) {
       console.log("Lỗi chi tiết từ Server:", error.response?.data);
-
+      // --- Bắt 413 VÀ bắt luôn trường hợp Server ngắt kết nối đột ngột ---
+      if (
+        error?.response?.status === 413 ||
+        error?.message === "Network Error"
+      ) {
+        Swal.fire(
+          "Ảnh quá nặng! 🚀",
+          "Tổng dung lượng hình ảnh bạn tải lên vượt quá giới hạn của máy chủ. Vui lòng nén ảnh lại hoặc chọn ảnh nhẹ hơn rồi thử lại nhé!",
+          "error",
+        );
+        return;
+      }
       const errorMsg =
         error.response?.data?.data ||
         error.response?.data?.message ||
