@@ -3,6 +3,41 @@ import jobService from "../../../services/jobService";
 import { useNavigate, useParams } from "react-router-dom";
 import cvService from "../../../services/cvService";
 import { alertUtils } from "../../../helpers/alertUtils";
+
+const parseCvContent = (content) => {
+  if (!content) return {};
+  if (typeof content === "string") {
+    try {
+      return JSON.parse(content);
+    } catch (error) {
+      console.error("Lỗi parse content_json CV:", error);
+      return {};
+    }
+  }
+  return content;
+};
+
+const normalizeSkills = (skills) => {
+  if (Array.isArray(skills)) return skills;
+  if (!skills || typeof skills !== "object") return [];
+
+  return Object.values(skills)
+    .flatMap((group) => (Array.isArray(group) ? group : []))
+    .filter(Boolean);
+};
+
+const formatEducation = (education) => {
+  if (Array.isArray(education)) {
+    return education
+      .map((item) =>
+        [item?.school, item?.major, item?.period].filter(Boolean).join(" - "),
+      )
+      .filter(Boolean)
+      .join("; ");
+  }
+  return education || "";
+};
+
 export default function ApplicationList() {
   const [applicants, setApplicants] = useState([]);
   const [selectedApp, setSelectedApp] = useState(null);
@@ -42,6 +77,10 @@ export default function ApplicationList() {
     fetchApplicants();
   }, [id]);
   const handleViewCv = async (cvId) => {
+    if (!cvId) return;
+    navigate(`/cv/${cvId}`);
+    return;
+
     try {
       console.log("giá trị cv id", cvId);
       const response = await cvService.getCvById(cvId);
@@ -69,7 +108,15 @@ export default function ApplicationList() {
             <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
               {viewingCv.type === "FORM" ? (
                 (() => {
-                  const cvData = viewingCv.content_json;
+                  const cvData = parseCvContent(viewingCv.content_json);
+                  const personalInfo = cvData.personalInfo || {};
+                  const fullName =
+                    personalInfo.fullName || cvData.full_name || cvData.fullName;
+                  const phone = personalInfo.phone || cvData.phone;
+                  const email = personalInfo.email || cvData.email;
+                  const education = formatEducation(cvData.education);
+                  const skills = normalizeSkills(cvData.skills);
+                  const summary = cvData.objective || cvData.summary;
 
                   return (
                     <>
@@ -80,16 +127,16 @@ export default function ApplicationList() {
 
                         <div className="grid grid-cols-2 gap-4 text-sm">
                           <div>
-                            <strong>Họ tên:</strong> {cvData?.full_name}
+                            <strong>Họ tên:</strong> {fullName || "---"}
                           </div>
                           <div>
-                            <strong>SĐT:</strong> {cvData?.phone}
+                            <strong>SĐT:</strong> {phone || "---"}
                           </div>
                           <div>
-                            <strong>Email:</strong> {cvData?.email}
+                            <strong>Email:</strong> {email || "---"}
                           </div>
                           <div>
-                            <strong>Học vấn:</strong> {cvData?.education}
+                            <strong>Học vấn:</strong> {education || "---"}
                           </div>
                         </div>
 
@@ -98,15 +145,19 @@ export default function ApplicationList() {
                         <div>
                           <h4 className="font-semibold mb-2">Kỹ năng</h4>
                           <ul className="list-disc list-inside text-sm">
-                            {cvData?.skills?.map((skill, idx) => (
-                              <li key={idx}>{skill}</li>
-                            ))}
+                            {skills.length > 0 ? (
+                              skills.map((skill, idx) => (
+                                <li key={idx}>{skill}</li>
+                              ))
+                            ) : (
+                              <li>---</li>
+                            )}
                           </ul>
                         </div>
 
                         <div>
                           <h4 className="font-semibold mb-2">Giới thiệu</h4>
-                          <p className="text-sm">{cvData?.summary}</p>
+                          <p className="text-sm">{summary || "---"}</p>
                         </div>
                       </div>
                       <div className="block md:hidden bg-white p-8 rounded-xl shadow-sm space-y-6">
@@ -116,16 +167,16 @@ export default function ApplicationList() {
 
                         <div className="grid grid-cols-1 gap-4 text-sm">
                           <div>
-                            <strong>Họ tên:</strong> {cvData?.full_name}
+                            <strong>Họ tên:</strong> {fullName || "---"}
                           </div>
                           <div>
-                            <strong>SĐT:</strong> {cvData?.phone}
+                            <strong>SĐT:</strong> {phone || "---"}
                           </div>
                           <div>
-                            <strong>Email:</strong> {cvData?.email}
+                            <strong>Email:</strong> {email || "---"}
                           </div>
                           <div>
-                            <strong>Học vấn:</strong> {cvData?.education}
+                            <strong>Học vấn:</strong> {education || "---"}
                           </div>
                         </div>
 
@@ -134,15 +185,19 @@ export default function ApplicationList() {
                         <div>
                           <h4 className="font-semibold mb-2">Kỹ năng</h4>
                           <ul className="list-disc list-inside text-sm">
-                            {cvData?.skills?.map((skill, idx) => (
-                              <li key={idx}>{skill}</li>
-                            ))}
+                            {skills.length > 0 ? (
+                              skills.map((skill, idx) => (
+                                <li key={idx}>{skill}</li>
+                              ))
+                            ) : (
+                              <li>---</li>
+                            )}
                           </ul>
                         </div>
 
                         <div>
                           <h4 className="font-semibold mb-2">Giới thiệu</h4>
-                          <p className="text-sm">{cvData?.summary}</p>
+                          <p className="text-sm">{summary || "---"}</p>
                         </div>
                       </div>
                     </>

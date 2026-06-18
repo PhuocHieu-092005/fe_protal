@@ -9,6 +9,7 @@ import {
   ChevronUp,
   FileEdit,
   Heart,
+  ShoppingBag,
   Handshake,
   Menu,
   X,
@@ -164,6 +165,17 @@ export default function CompanyProfileSidebar({ activeTab, setActiveTab }) {
                     <Handshake size={17} />
                     Yêu cầu hợp tác project
                   </button>
+                  <button
+                    onClick={() => handleMobileTabChange("purchased-projects")}
+                    className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold transition-all ${
+                      activeTab === "purchased-projects"
+                        ? "bg-blue-50 text-blue-600"
+                        : "text-slate-600 hover:bg-slate-50"
+                    }`}
+                  >
+                    <ShoppingBag size={17} />
+                    Project đã mua
+                  </button>
                 </div>
               </div>
 
@@ -297,6 +309,20 @@ export default function CompanyProfileSidebar({ activeTab, setActiveTab }) {
                   >
                     <Handshake size={16} />
                     Yêu cầu hợp tác project
+                  </button>
+                </li>
+
+                <li>
+                  <button
+                    onClick={() => setActiveTab("purchased-projects")}
+                    className={`flex w-full items-center gap-3 rounded-md p-2 text-sm transition-all ${
+                      activeTab === "purchased-projects"
+                        ? "bg-blue-50 font-semibold text-blue-600"
+                        : "text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    <ShoppingBag size={16} />
+                    Project đã mua
                   </button>
                 </li>
               </ul>
