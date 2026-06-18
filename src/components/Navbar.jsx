@@ -14,6 +14,7 @@ import {
   ShieldHalf,
   LogOut,
   Bell,
+  ShoppingBag,
   Menu, // Icon mở menu mobile
   X, // Icon đóng menu mobile
   ChevronRight, // Mũi tên nhỏ cho menu mobile
@@ -21,15 +22,20 @@ import {
 import { connectWebSocket, disconnectWebSocket } from "../services/wsService";
 import { alertUtils } from "../helpers/alertUtils";
 
-const DEFAULT_USER_AVATAR =
-  "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200";
-
 function getCompanyData(response) {
   return response?.data || response || null;
 }
 
 function getCompanyAvatarUrl(company) {
   return company?.avatarUrl || company?.avatar_url || "";
+}
+
+function AvatarSlot({ src, className, alt = "avatar" }) {
+  if (!src) {
+    return <span aria-label={alt} className={`${className} inline-block`} />;
+  }
+
+  return <img src={src} className={className} alt={alt} />;
 }
 
 export default function Navbar() {
@@ -51,10 +57,9 @@ export default function Navbar() {
   const closeAuth = () => setAuthMode(null);
   const displayAvatarUrl =
     user?.role === "COMPANY"
-      ? getCompanyAvatarUrl(companyProfile) ||
-        user?.avatar_url ||
-        DEFAULT_USER_AVATAR
-      : user?.avatar_url || DEFAULT_USER_AVATAR;
+      ? getCompanyAvatarUrl(companyProfile) || user?.avatar_url || ""
+      : user?.avatar_url || "";
+      
   const displayName =
     user?.role === "COMPANY"
       ? companyProfile?.companyName || user?.full_name
@@ -337,6 +342,21 @@ export default function Navbar() {
             )}
           </div>
 
+          {user && ["STUDENT", "COMPANY"].includes(user.role) && (
+            <Link
+              to="/profile?tab=purchased-projects"
+              title="Project đã mua"
+              className={`relative flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border transition-all ${
+                location.pathname === "/profile" &&
+                location.search.includes("purchased-projects")
+                  ? "border-blue-600 bg-blue-600 text-white"
+                  : "border-slate-200 bg-white text-slate-600 hover:border-blue-600 hover:text-blue-600"
+              }`}
+            >
+              <ShoppingBag size={20} />
+            </Link>
+          )}
+
           {!isLoggedIn ? (
             <div className="flex items-center gap-1">
               <button
@@ -361,10 +381,9 @@ export default function Navbar() {
                   : "bg-zinc-50 border-zinc-200"
               }`}
             >
-              <img
+              <AvatarSlot
                 src={displayAvatarUrl}
                 className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-full object-cover"
-                alt="avatar"
               />
               <span className="min-w-0 truncate text-xs sm:text-sm font-semibold text-zinc-800">
                 {displayName}
@@ -486,7 +505,7 @@ export default function Navbar() {
                 </div>
               ) : (
                 <div className="flex items-center gap-3 p-3 rounded-2xl bg-zinc-50">
-                  <img
+                  <AvatarSlot
                     src={displayAvatarUrl}
                     className="w-10 h-10 rounded-full object-cover"
                     alt=""
@@ -517,10 +536,9 @@ export default function Navbar() {
             className={`fixed top-0 right-0 w-72 h-full bg-white shadow-2xl z-[70] p-6 flex flex-col transform transition-transform duration-300 ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
           >
             <div className="flex items-center gap-4 mb-8 pb-6 border-b border-zinc-100">
-              <img
+              <AvatarSlot
                 src={displayAvatarUrl}
                 className="w-12 h-12 rounded-xl object-cover border border-zinc-100"
-                alt="avatar"
               />
               <div>
                 <span className="font-bold text-zinc-900 block leading-tight">

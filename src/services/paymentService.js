@@ -5,8 +5,14 @@ export const createProjectPaymentLink = async (projectId) => {
   return response.data;
 };
 
+export const getMyPurchasedProjects = async () => {
+  const response = await api.get("/payments/purchases/me");
+  return response.data;
+};
+
 const paymentService = {
   createProjectPaymentLink,
+  getMyPurchasedProjects,
 };
 
 export default paymentService;

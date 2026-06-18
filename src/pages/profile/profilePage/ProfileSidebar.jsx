@@ -7,6 +7,7 @@ import {
   Briefcase,
   Star,
   Heart,
+  ShoppingBag,
   Lock,
   LogOut,
   ChevronDown,
@@ -191,6 +192,17 @@ const ProfileSidebar = ({ activeTab, setActiveTab }) => {
                     <Heart size={17} />
                     Dự án yêu thích
                   </button>
+                  <button
+                    onClick={() => handleMobileTabChange("purchased-projects")}
+                    className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold transition-all ${
+                      activeTab === "purchased-projects"
+                        ? "bg-blue-50 text-blue-600"
+                        : "text-slate-600 hover:bg-slate-50"
+                    }`}
+                  >
+                    <ShoppingBag size={17} />
+                    Project đã mua
+                  </button>
                 </div>
               </div>
 
@@ -365,6 +377,20 @@ const ProfileSidebar = ({ activeTab, setActiveTab }) => {
                   >
                     <Heart size={16} />
                     Dự án yêu thích
+                  </button>
+                </li>
+
+                <li>
+                  <button
+                    onClick={() => setActiveTab("purchased-projects")}
+                    className={`flex items-center gap-3 p-2 text-sm w-full rounded-md transition-all ${
+                      activeTab === "purchased-projects"
+                        ? "text-blue-600 font-semibold bg-blue-50"
+                        : "text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    <ShoppingBag size={16} />
+                    Project đã mua
                   </button>
                 </li>
               </ul>

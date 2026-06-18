@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Footer from "../../../layouts/Footer";
 import CompanyProfileSidebar from "../profilePage/CompanyProfileSidebar";
 import ChangePasswordForm from "../profilePage/ChangePasswordForm";
@@ -7,6 +9,7 @@ import CompanyJobs from "../profilePage/CompanyJobs";
 import ProjectFavorite from "../profilePage/ProjectFavorite";
 import CompanyProjectAccessRequests from "../profilePage/CompanyProjectAccessRequests";
 import ApplicationByCompany from "../../job/company/ApplicationByCompany";
+import PurchasedProjects from "../profilePage/PurchasedProjects";
 
 function CompanyProfilePlaceholder({ title, description }) {
   return (
@@ -18,7 +21,15 @@ function CompanyProfilePlaceholder({ title, description }) {
 }
 
 export default function CompanyProfileCategory() {
-  const [activeTab, setActiveTab] = useState("company-profile");
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(
+    new URLSearchParams(location.search).get("tab") || "company-profile",
+  );
+
+  useEffect(() => {
+    const tab = new URLSearchParams(location.search).get("tab");
+    if (tab) setActiveTab(tab);
+  }, [location.search]);
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
@@ -49,6 +60,8 @@ export default function CompanyProfileCategory() {
         {activeTab === "project-access-requests" && (
           <CompanyProjectAccessRequests />
         )}
+
+        {activeTab === "purchased-projects" && <PurchasedProjects />}
 
         {activeTab === "change-password" && <ChangePasswordForm />}
       </main>

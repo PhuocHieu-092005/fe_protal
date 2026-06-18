@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import Footer from "../../../layouts/Footer";
 import studentService from "../../../services/studentService";
 import ProfileSidebar from "../profilePage/ProfileSidebar";
@@ -11,11 +12,20 @@ import MyProjects from "../profilePage/MyProjects";
 
 import FavoriteJobs from "../profilePage/FavoriteJobs";
 import ProjectFavorite from "../profilePage/ProjectFavorite";
+import PurchasedProjects from "../profilePage/PurchasedProjects";
 
 export default function StudentProfileCategory() {
+  const location = useLocation();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("update-profile");
+  const [activeTab, setActiveTab] = useState(
+    new URLSearchParams(location.search).get("tab") || "update-profile",
+  );
+
+  useEffect(() => {
+    const tab = new URLSearchParams(location.search).get("tab");
+    if (tab) setActiveTab(tab);
+  }, [location.search]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -64,6 +74,7 @@ export default function StudentProfileCategory() {
         {activeTab === "change-password" && <ChangePasswordForm />}
         {activeTab === "favorite-jobs" && <FavoriteJobs />}
         {activeTab === "favorite-projects" && <ProjectFavorite />}
+        {activeTab === "purchased-projects" && <PurchasedProjects />}
       </main>
 
       <Footer />
