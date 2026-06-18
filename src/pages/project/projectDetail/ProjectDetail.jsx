@@ -147,6 +147,20 @@ export default function ProjectDetail() {
       }));
   }, [project]);
 
+  const normalizedMembers = useMemo(() => {
+    if (!Array.isArray(project?.members)) return [];
+
+    return project.members
+      .map((member) => ({
+        id: member.studentId || member.student_id || member.mssv,
+        mssv: member.mssv || "---",
+        studentName:
+          member.studentName || member.student_name || "Thành viên",
+        role: member.role || "MEMBER",
+      }))
+      .filter((member) => member.id || member.mssv || member.studentName);
+  }, [project]);
+
   const normalizedTeacherEvaluations = useMemo(
     () =>
       teacherEvaluations.map((item) => ({
@@ -374,8 +388,8 @@ export default function ProjectDetail() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 gap-0 xl:grid-cols-[minmax(0,1fr)_360px]">
-            <div className="min-w-0">
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-start">
+            <div className="min-w-0 space-y-6">
               <ProjectOverviewSection
                 courseName={courseName}
                 projectTitle={project.title}
@@ -388,31 +402,10 @@ export default function ProjectDetail() {
                 selectedImage={selectedImage}
                 onSelectImage={setSelectedImage}
               />
-            </div>
 
-            <aside className="space-y-0">
-              <ProjectSidebar
-                currentUserRole={currentUser?.role}
-                isPaidProject={isPaidProject}
-                priceDownload={priceDownload}
-                sourceCodeUrl={sourceCodeUrl}
-                demoUrl={demoUrl}
-                technologies={normalizedTechnologies}
-                studentName={studentName}
-                projectId={project.id}
-                projectStatus={project.status}
-                adminNote={adminNote}
-                onOpenRequestModal={handleOpenRequestModal}
-                onBuyProject={handleBuyProject}
-                buyingProject={creatingPaymentLink}
-                isPurchased={isPurchased}
-              />
               <TeacherEvaluationSection
                 evaluations={normalizedTeacherEvaluations}
               />
-            </aside>
-
-            <div className="xl:col-span-1">
               <ProjectCommentSection
                 comments={comments}
                 commentLoading={commentLoading}
@@ -423,6 +416,26 @@ export default function ProjectDetail() {
                 formatCommentTime={formatCommentTime}
               />
             </div>
+
+            <aside className="space-y-6 xl:sticky xl:top-24">
+              <ProjectSidebar
+                currentUserRole={currentUser?.role}
+                isPaidProject={isPaidProject}
+                priceDownload={priceDownload}
+                sourceCodeUrl={sourceCodeUrl}
+                demoUrl={demoUrl}
+                technologies={normalizedTechnologies}
+                studentName={studentName}
+                members={normalizedMembers}
+                projectId={project.id}
+                projectStatus={project.status}
+                adminNote={adminNote}
+                onOpenRequestModal={handleOpenRequestModal}
+                onBuyProject={handleBuyProject}
+                buyingProject={creatingPaymentLink}
+                isPurchased={isPurchased}
+              />
+            </aside>
           </div>
         </div>
       </div>

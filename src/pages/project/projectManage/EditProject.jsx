@@ -12,12 +12,93 @@ import {
   BookOpen,
   Info,
   PencilLine,
-  ChevronDown, // Thêm icon mũi tên
+  ChevronDown,
+  GitBranch,
+  PlayCircle,
 } from "lucide-react";
 
 import projectService from "../../../services/projectService";
 import technologyService from "../../../services/technologyService";
 import courseService from "../../../services/courseService";
+import studentService from "../../../services/studentService";
+import ProjectMembersSection from "./ProjectMembersSection";
+
+const normalizeMember = (member, fallback = {}) => {
+  if (!member && !fallback) return null;
+
+  const resolvedMember =
+    typeof member === "string" ? { mssv: member } : member || {};
+  const mssv =
+    resolvedMember.mssv ||
+    resolvedMember.studentCode ||
+    resolvedMember.student_code ||
+    fallback.mssv ||
+    "";
+  const fullName =
+    resolvedMember.fullName ||
+    resolvedMember.full_name ||
+    resolvedMember.studentName ||
+    resolvedMember.student_name ||
+    resolvedMember.name ||
+    fallback.fullName ||
+    "";
+  const id = resolvedMember.id || fallback.id || mssv || fullName;
+
+  if (!mssv && !fullName) return null;
+
+  return {
+    id,
+    mssv,
+    fullName,
+    isLeader: Boolean(
+      resolvedMember.isLeader ??
+        resolvedMember.leader ??
+        fallback.isLeader,
+    ),
+  };
+};
+
+const normalizeProjectMembers = (project) => {
+  const rawMembers = [
+    ...(Array.isArray(project?.members) ? project.members : []),
+    ...(Array.isArray(project?.memberMssvs) ? project.memberMssvs : []),
+    ...(Array.isArray(project?.students) ? project.students : []),
+  ];
+
+  const mappedMembers = rawMembers
+    .map((member) => normalizeMember(member))
+    .filter(Boolean);
+
+  const uniqueMembers = [];
+  const seen = new Set();
+
+  mappedMembers.forEach((member) => {
+    const key = member.mssv || member.id;
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    uniqueMembers.push(member);
+  });
+
+  return uniqueMembers.map((member) => ({
+    ...member,
+    isLeader: false,
+  }));
+};
+
+const normalizeProjectLeader = (project, profile) => {
+  const leaderFromProfile = normalizeMember(profile, { isLeader: true });
+
+  if (leaderFromProfile) {
+    return leaderFromProfile;
+  }
+
+  return normalizeMember(null, {
+    id: project?.studentId || project?.student_id || project?.id,
+    mssv: project?.studentMssv || project?.student_mssv || "",
+    fullName: project?.studentName || project?.student_name || "",
+    isLeader: true,
+  });
+};
 
 export default function EditProject() {
   const navigate = useNavigate();
@@ -33,8 +114,9 @@ export default function EditProject() {
   const [removedImageIds, setRemovedImageIds] = useState([]);
   const [newImages, setNewImages] = useState([]);
   const [newPreviews, setNewPreviews] = useState([]);
-
   const [selectedTechs, setSelectedTechs] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [leader, setLeader] = useState(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -51,10 +133,11 @@ export default function EditProject() {
       try {
         setLoading(true);
 
-        const [projectRes, techRes, courseRes] = await Promise.all([
+        const [projectRes, techRes, courseRes, profile] = await Promise.all([
           projectService.getProjectById(id),
           technologyService.getAllTechnologies(),
           courseService.getAllCourses(),
+          studentService.getProfileMe(),
         ]);
 
         const project = projectRes?.data;
@@ -73,18 +156,24 @@ export default function EditProject() {
         setAvailableCourses(courses);
 
         if (project) {
-          // --- PHẦN SỬA LỖI GÁN MÔN HỌC ---
-          // Vì Backend trả về course_name, ta tìm ID tương ứng trong danh sách môn học
-          const foundCourse = courses.find(
-            (c) => c.name === project.course_name,
-          );
+          const foundCourse = courses.find((course) => {
+            return (
+              course.id === project.courseId ||
+              course.id === project.course_id ||
+              course.name === project.courseName ||
+              course.name === project.course_name
+            );
+          });
+
           const initialCourseId =
             project.courseId || project.course_id || foundCourse?.id || "";
+
+          const normalizedMembers = normalizeProjectMembers(project);
+          const normalizedLeader = normalizeProjectLeader(project, profile);
 
           setFormData({
             title: project.title || "",
             description: project.description || "",
-            // Ép kiểu String để select option nhận diện chính xác
             course_id: String(initialCourseId),
             source_code_url:
               project.sourceCodeUrl || project.source_code_url || "",
@@ -97,10 +186,12 @@ export default function EditProject() {
 
           setSelectedTechs(project.technologies || []);
           setExistingImages(project.images || []);
+          setMembers(normalizedMembers);
+          setLeader(normalizedLeader);
         }
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu edit project:", error);
-        Swal.fire("Lỗi", "Không thể tải dữ liệu đồ án để chỉnh sửa", "error");
+        Swal.fire("Lỗi", "Không thể tải dữ liệu đồ án để chỉnh sửa.", "error");
       } finally {
         setLoading(false);
       }
@@ -110,7 +201,7 @@ export default function EditProject() {
   }, [id]);
 
   const visibleExistingImages = useMemo(() => {
-    return existingImages.filter((img) => !removedImageIds.includes(img.id));
+    return existingImages.filter((image) => !removedImageIds.includes(image.id));
   }, [existingImages, removedImageIds]);
 
   const totalVisibleImages = visibleExistingImages.length + newImages.length;
@@ -124,8 +215,8 @@ export default function EditProject() {
     return value.replace(/,/g, "");
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
 
     if (name === "price_download") {
       const onlyNumber = parseNumber(value).replace(/[^0-9]/g, "");
@@ -142,8 +233,8 @@ export default function EditProject() {
     }));
   };
 
-  const handleTechSelect = (e) => {
-    const techId = Number(e.target.value);
+  const handleTechSelect = (event) => {
+    const techId = Number(event.target.value);
     if (!techId) return;
 
     const selectedTech = availableTechs.find((tech) => tech.id === techId);
@@ -152,7 +243,7 @@ export default function EditProject() {
       setSelectedTechs((prev) => [...prev, selectedTech]);
     }
 
-    e.target.value = "";
+    event.target.value = "";
   };
 
   const removeTech = (techId) => {
@@ -163,8 +254,8 @@ export default function EditProject() {
     setRemovedImageIds((prev) => [...prev, imageId]);
   };
 
-  const handleAddNewImages = (e) => {
-    const files = Array.from(e.target.files || []);
+  const handleAddNewImages = (event) => {
+    const files = Array.from(event.target.files || []);
     if (!files.length) return;
 
     const remainSlots = 3 - totalVisibleImages;
@@ -179,6 +270,7 @@ export default function EditProject() {
 
     setNewImages((prev) => [...prev, ...acceptedFiles]);
     setNewPreviews((prev) => [...prev, ...previews]);
+    event.target.value = "";
 
     if (files.length > remainSlots) {
       Swal.fire(
@@ -190,12 +282,14 @@ export default function EditProject() {
   };
 
   const removeNewImage = (index) => {
-    setNewImages((prev) => prev.filter((_, i) => i !== index));
-    setNewPreviews((prev) => prev.filter((_, i) => i !== index));
+    setNewImages((prev) => prev.filter((_, itemIndex) => itemIndex !== index));
+    setNewPreviews((prev) =>
+      prev.filter((_, itemIndex) => itemIndex !== index),
+    );
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     if (!formData.title.trim()) {
       return Swal.fire("Lưu ý", "Vui lòng nhập tên đề tài!", "warning");
@@ -245,18 +339,13 @@ export default function EditProject() {
       data.append("technologyIds", String(tech.id));
     });
 
-    visibleExistingImages.forEach((img) => {
-      data.append("retainedImageIds", String(img.id));
+    visibleExistingImages.forEach((image) => {
+      data.append("retainedImageIds", String(image.id));
     });
 
     newImages.forEach((file) => {
       data.append("newImages", file);
     });
-
-    console.log("===== UPDATE FORM DATA SEND =====");
-    for (const pair of data.entries()) {
-      console.log(pair[0], pair[1]);
-    }
 
     try {
       setSubmitting(true);
@@ -274,18 +363,19 @@ export default function EditProject() {
       navigate("/my-projects");
     } catch (error) {
       console.error("Lỗi cập nhật project:", error.response?.data);
-      // --- Bắt 413 VÀ bắt luôn trường hợp Server ngắt kết nối đột ngột ---
+
       if (
         error?.response?.status === 413 ||
         error?.message === "Network Error"
       ) {
         Swal.fire(
-          "Ảnh quá nặng! 🚀",
+          "Ảnh quá nặng!",
           "Tổng dung lượng hình ảnh bạn tải lên vượt quá giới hạn của máy chủ. Vui lòng nén ảnh lại hoặc chọn ảnh nhẹ hơn rồi thử lại nhé!",
           "error",
         );
         return;
       }
+
       const errorMsg =
         error.response?.data?.data ||
         error.response?.data?.message ||
@@ -339,8 +429,8 @@ export default function EditProject() {
             </button>
 
             <button
-              type="button"
-              onClick={handleSubmit}
+              type="submit"
+              form="edit-project-form"
               disabled={submitting}
               className="rounded-2xl bg-zinc-900 px-8 py-3 font-bold text-white shadow-xl shadow-zinc-200 transition-all hover:bg-blue-600 disabled:opacity-60"
             >
@@ -350,6 +440,7 @@ export default function EditProject() {
         </div>
 
         <form
+          id="edit-project-form"
           onSubmit={handleSubmit}
           className="grid grid-cols-1 gap-8 lg:grid-cols-3"
         >
@@ -384,13 +475,12 @@ export default function EditProject() {
                       Học phần <span className="text-rose-500">*</span>
                     </label>
 
-                    {/* --- PHẦN HIỆN LẠI MŨI TÊN --- */}
                     <div className="relative">
                       <select
                         name="course_id"
                         value={formData.course_id}
                         onChange={handleInputChange}
-                        className="w-full appearance-none rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 font-semibold outline-none focus:border-blue-500 focus:bg-white cursor-pointer"
+                        className="w-full appearance-none rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 font-semibold outline-none focus:border-blue-500 focus:bg-white"
                       >
                         <option value="">Chọn môn học...</option>
                         {availableCourses.map((course) => (
@@ -486,13 +576,13 @@ export default function EditProject() {
               </p>
 
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                {visibleExistingImages.map((img) => (
+                {visibleExistingImages.map((image) => (
                   <div
-                    key={img.id}
+                    key={image.id}
                     className="group relative aspect-video overflow-hidden rounded-3xl border-2 border-slate-100 shadow-md"
                   >
                     <img
-                      src={img.imageUrl}
+                      src={image.imageUrl}
                       alt="existing"
                       className="h-full w-full object-cover"
                     />
@@ -502,7 +592,7 @@ export default function EditProject() {
                     <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-all group-hover:opacity-100">
                       <button
                         type="button"
-                        onClick={() => handleRemoveExistingImage(img.id)}
+                        onClick={() => handleRemoveExistingImage(image.id)}
                         className="rounded-full bg-white p-2 text-rose-500 shadow-xl hover:scale-110"
                       >
                         <X size={20} />
@@ -513,7 +603,7 @@ export default function EditProject() {
 
                 {newPreviews.map((src, index) => (
                   <div
-                    key={`new-${index}`}
+                    key={`${src}-${index}`}
                     className="group relative aspect-video overflow-hidden rounded-3xl border-2 border-slate-100 shadow-md"
                   >
                     <img
@@ -567,7 +657,7 @@ export default function EditProject() {
               <div className="space-y-8 text-left">
                 <div>
                   <label className="mb-3 ml-1 flex items-center gap-2 text-sm font-bold text-zinc-500">
-                    <i className="fa-brands fa-github text-lg"></i>
+                    <GitBranch size={16} />
                     GitHub
                   </label>
                   <input
@@ -582,7 +672,7 @@ export default function EditProject() {
 
                 <div>
                   <label className="mb-3 ml-1 flex items-center gap-2 text-sm font-bold text-zinc-500">
-                    <i className="fa-brands fa-youtube text-lg text-red-600"></i>
+                    <PlayCircle size={16} className="text-red-500" />
                     Video Demo
                   </label>
                   <input
@@ -660,6 +750,12 @@ export default function EditProject() {
                 </div>
               </div>
             </section>
+
+            <ProjectMembersSection
+              mode="edit"
+              leader={leader}
+              members={members}
+            />
           </div>
         </form>
       </div>

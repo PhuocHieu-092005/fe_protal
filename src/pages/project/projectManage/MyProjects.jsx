@@ -163,7 +163,7 @@ export default function MyProjects() {
               size={20}
               className="transition-transform group-hover:rotate-90"
             />
-            Đăng đồ án mới
+            Tạo dự án mới
           </Link>
         </div>
 
