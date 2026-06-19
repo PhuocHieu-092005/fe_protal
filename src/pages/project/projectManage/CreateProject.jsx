@@ -12,11 +12,33 @@ import {
   BookOpen,
   Info,
   Rocket,
+  GitBranch,
+  PlayCircle,
 } from "lucide-react";
 
 import projectService from "../../../services/projectService";
 import technologyService from "../../../services/technologyService";
 import courseService from "../../../services/courseService";
+import studentService from "../../../services/studentService";
+import ProjectMembersSection from "./ProjectMembersSection";
+
+const normalizeStudent = (student, fallback = {}) => {
+  if (!student) return null;
+
+  const mssv = student.mssv || "mssv không xác định";
+  const fullName =
+    student.fullName || student.full_name || "họ và tên không xác định";
+  const id = student.id;
+
+  if (!mssv && !fullName) return null;
+
+  return {
+    id,
+    mssv,
+    fullName,
+    isLeader: Boolean(student.isLeader ?? fallback.isLeader),
+  };
+};
 
 export default function CreateProject() {
   const navigate = useNavigate();
@@ -26,6 +48,11 @@ export default function CreateProject() {
   const [availableTechs, setAvailableTechs] = useState([]);
   const [availableCourses, setAvailableCourses] = useState([]);
   const [selectedTechs, setSelectedTechs] = useState([]);
+  const [leader, setLeader] = useState(null);
+  const [members, setMembers] = useState([]);
+  const [searchMssv, setSearchMssv] = useState("");
+  const [searchResult, setSearchResult] = useState(null);
+  const [searchLoading, setSearchLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -40,9 +67,10 @@ export default function CreateProject() {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const [techRes, courseRes] = await Promise.all([
+        const [techRes, courseRes, profile] = await Promise.all([
           technologyService.getAllTechnologies(),
           courseService.getAllCourses(),
+          studentService.getProfileMe(),
         ]);
 
         const techs = Array.isArray(techRes)
@@ -57,12 +85,18 @@ export default function CreateProject() {
             ? courseRes.data
             : [];
 
+        const leaderInfo = normalizeStudent(profile, { isLeader: true });
+
         setAvailableTechs(techs);
         setAvailableCourses(courses);
+        setLeader(leaderInfo);
+        setMembers(leaderInfo ? [leaderInfo] : []);
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu khởi tạo:", error);
         setAvailableTechs([]);
         setAvailableCourses([]);
+        setLeader(null);
+        setMembers([]);
       }
     };
 
@@ -78,8 +112,8 @@ export default function CreateProject() {
     return value.replace(/,/g, "");
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
 
     if (name === "price_download") {
       const onlyNumber = parseNumber(value).replace(/[^0-9]/g, "");
@@ -96,23 +130,24 @@ export default function CreateProject() {
     }));
   };
 
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files || []);
+  const handleImageChange = (event) => {
+    const files = Array.from(event.target.files || []);
     if (files.length === 0) return;
 
     const newPreviews = files.map((file) => URL.createObjectURL(file));
 
     setImages((prev) => [...prev, ...files]);
     setPreviews((prev) => [...prev, ...newPreviews]);
+    event.target.value = "";
   };
 
   const removeImage = (index) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
-    setPreviews((prev) => prev.filter((_, i) => i !== index));
+    setImages((prev) => prev.filter((_, itemIndex) => itemIndex !== index));
+    setPreviews((prev) => prev.filter((_, itemIndex) => itemIndex !== index));
   };
 
-  const handleTechSelect = (e) => {
-    const techId = Number(e.target.value);
+  const handleTechSelect = (event) => {
+    const techId = Number(event.target.value);
     if (!techId) return;
 
     const selectedTech = availableTechs.find((tech) => tech.id === techId);
@@ -121,15 +156,93 @@ export default function CreateProject() {
       setSelectedTechs((prev) => [...prev, selectedTech]);
     }
 
-    e.target.value = "";
+    event.target.value = "";
   };
 
   const removeTech = (techId) => {
     setSelectedTechs((prev) => prev.filter((tech) => tech.id !== techId));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSearchMember = async () => {
+    const trimmedMssv = searchMssv.trim();
+
+    if (!trimmedMssv) {
+      await Swal.fire("Lưu ý", "Vui lòng nhập MSSV cần tìm.", "warning");
+      return;
+    }
+
+    try {
+      setSearchLoading(true);
+      setSearchResult(null);
+
+      const response = await studentService.searchByMssv(trimmedMssv);
+      const student = normalizeStudent(response?.data);
+
+      if (!student) {
+        await Swal.fire(
+          "Không tìm thấy",
+          "Sinh viên không tồn tại hoặc dữ liệu trả về không hợp lệ.",
+          "warning",
+        );
+        return;
+      }
+
+      if (members.some((member) => member.mssv === student.mssv)) {
+        await Swal.fire(
+          "Đã tồn tại",
+          "Sinh viên này đã có trong danh sách thành viên.",
+          "info",
+        );
+        return;
+      }
+
+      setSearchResult(student);
+    } catch (error) {
+      console.error("Lỗi tìm sinh viên theo MSSV:", error);
+      const errorMsg =
+        error.response?.data?.data ||
+        error.response?.data?.message ||
+        "Không thể tìm thấy sinh viên với MSSV này.";
+
+      await Swal.fire("Thất bại", errorMsg, "error");
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
+  const handleConfirmMember = async () => {
+    if (!searchResult) return;
+
+    if (members.some((member) => member.mssv === searchResult.mssv)) {
+      await Swal.fire(
+        "Đã tồn tại",
+        "Sinh viên này đã có trong danh sách thành viên.",
+        "info",
+      );
+      return;
+    }
+
+    setMembers((prev) => [...prev, searchResult]);
+    setSearchResult(null);
+    setSearchMssv("");
+  };
+
+  const handleRemoveMember = (mssv) => {
+    setMembers((prev) =>
+      prev.filter((member) => member.isLeader || member.mssv !== mssv),
+    );
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!leader?.mssv) {
+      return Swal.fire(
+        "Thiếu thông tin",
+        "Không lấy được MSSV của leader. Vui lòng kiểm tra lại hồ sơ sinh viên.",
+        "warning",
+      );
+    }
 
     if (!formData.title.trim()) {
       return Swal.fire("Lưu ý", "Vui lòng nhập tên đề tài!", "warning");
@@ -143,6 +256,14 @@ export default function CreateProject() {
       return Swal.fire(
         "Lưu ý",
         "Vui lòng chọn ít nhất 1 công nghệ!",
+        "warning",
+      );
+    }
+
+    if (members.length === 0) {
+      return Swal.fire(
+        "Lưu ý",
+        "Vui lòng xác nhận ít nhất leader trong danh sách thành viên.",
         "warning",
       );
     }
@@ -171,14 +292,15 @@ export default function CreateProject() {
       data.append("technologyIds", String(tech.id));
     });
 
+    members
+      .filter((member) => !member.isLeader)
+      .forEach((member) => {
+        data.append("memberMssvs", member.mssv);
+      });
+
     images.forEach((file) => {
       data.append("images", file);
     });
-
-    console.log("===== FORM DATA SEND =====");
-    for (const pair of data.entries()) {
-      console.log(pair[0], pair[1]);
-    }
 
     Swal.fire({
       title: "Đang xử lý...",
@@ -193,18 +315,19 @@ export default function CreateProject() {
       navigate("/my-projects");
     } catch (error) {
       console.log("Lỗi chi tiết từ Server:", error.response?.data);
-      // --- Bắt 413 VÀ bắt luôn trường hợp Server ngắt kết nối đột ngột ---
+
       if (
         error?.response?.status === 413 ||
         error?.message === "Network Error"
       ) {
         Swal.fire(
-          "Ảnh quá nặng! 🚀",
+          "Ảnh quá nặng!",
           "Tổng dung lượng hình ảnh bạn tải lên vượt quá giới hạn của máy chủ. Vui lòng nén ảnh lại hoặc chọn ảnh nhẹ hơn rồi thử lại nhé!",
           "error",
         );
         return;
       }
+
       const errorMsg =
         error.response?.data?.data ||
         error.response?.data?.message ||
@@ -230,7 +353,7 @@ export default function CreateProject() {
 
             <h1 className="flex items-center gap-3 text-4xl font-black tracking-tight">
               <Rocket className="text-blue-600" size={36} />
-              Đăng Đồ Án Mới
+              Tạo dự án mới
             </h1>
           </div>
 
@@ -244,8 +367,8 @@ export default function CreateProject() {
             </button>
 
             <button
-              type="button"
-              onClick={handleSubmit}
+              type="submit"
+              form="create-project-form"
               className="rounded-2xl bg-zinc-900 px-8 py-3 font-bold text-white shadow-xl shadow-zinc-200 transition-all hover:bg-blue-600"
             >
               Gửi duyệt đồ án
@@ -254,6 +377,7 @@ export default function CreateProject() {
         </div>
 
         <form
+          id="create-project-form"
           onSubmit={handleSubmit}
           className="grid grid-cols-1 gap-8 lg:grid-cols-3"
         >
@@ -375,7 +499,7 @@ export default function CreateProject() {
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                 {previews.map((src, index) => (
                   <div
-                    key={index}
+                    key={src}
                     className="group relative aspect-video overflow-hidden rounded-3xl border-2 border-slate-100 shadow-md"
                   >
                     <img
@@ -424,7 +548,7 @@ export default function CreateProject() {
               <div className="space-y-8 text-left">
                 <div>
                   <label className="mb-3 ml-1 flex items-center gap-2 text-sm font-bold text-zinc-500">
-                    <i className="fa-brands fa-github text-lg"></i>
+                    <GitBranch size={16} />
                     GitHub
                   </label>
                   <input
@@ -439,7 +563,7 @@ export default function CreateProject() {
 
                 <div>
                   <label className="mb-3 ml-1 flex items-center gap-2 text-sm font-bold text-zinc-500">
-                    <i className="fa-brands fa-youtube text-lg text-red-600"></i>
+                    <PlayCircle size={16} className="text-red-500" />
                     Video Demo
                   </label>
                   <input
@@ -517,6 +641,18 @@ export default function CreateProject() {
                 </div>
               </div>
             </section>
+
+            <ProjectMembersSection
+              leader={leader}
+              members={members}
+              searchMssv={searchMssv}
+              onSearchMssvChange={setSearchMssv}
+              onSearchMember={handleSearchMember}
+              searchLoading={searchLoading}
+              searchResult={searchResult}
+              onConfirmMember={handleConfirmMember}
+              onRemoveMember={handleRemoveMember}
+            />
           </div>
         </form>
       </div>

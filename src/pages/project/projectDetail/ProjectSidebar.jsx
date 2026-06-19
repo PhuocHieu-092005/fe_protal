@@ -10,6 +10,7 @@ import {
   ShoppingCart,
   Send,
   ShieldCheck,
+  Users,
 } from "lucide-react";
 
 export default function ProjectSidebar({
@@ -20,6 +21,7 @@ export default function ProjectSidebar({
   demoUrl,
   technologies,
   studentName,
+  members,
   projectId,
   projectStatus,
   adminNote,
@@ -30,8 +32,6 @@ export default function ProjectSidebar({
 }) {
   return (
     <>
-      {/* GIÁ SOURCE */}
-      {/* RESPONSIVE UI: mobile bo góc, desktop giữ kiểu block phẳng */}
       <section className="rounded-2xl border border-blue-100 bg-blue-50/40 p-4 shadow-sm md:rounded-none">
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -63,7 +63,6 @@ export default function ProjectSidebar({
         </div>
       </section>
 
-      {/* HỢP TÁC PROJECT - Dành cho Công ty */}
       {currentUserRole === "COMPANY" && (
         <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:rounded-none">
           <div className="mb-3 flex items-start gap-3">
@@ -93,7 +92,6 @@ export default function ProjectSidebar({
         </section>
       )}
 
-      {/* TÀI NGUYÊN */}
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:rounded-none">
         <h3 className="mb-3 flex items-center gap-2 text-base font-black text-slate-900">
           <BookOpen size={18} className="text-blue-600" />
@@ -189,7 +187,6 @@ export default function ProjectSidebar({
         </div>
       </section>
 
-      {/* CÔNG NGHỆ */}
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:rounded-none">
         <h3 className="mb-3 flex items-center gap-2 text-base font-black text-slate-900">
           <Layers3 size={18} className="text-blue-600" />
@@ -212,7 +209,6 @@ export default function ProjectSidebar({
         </div>
       </section>
 
-      {/* TÁC GIẢ */}
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:rounded-none">
         <p className="mb-3 text-xs font-black uppercase tracking-widest text-slate-400">
           Tác giả
@@ -232,7 +228,35 @@ export default function ProjectSidebar({
         </div>
       </section>
 
-      {/* THÔNG TIN THÊM */}
+      {members?.length > 0 && (
+        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:rounded-none">
+          <h3 className="mb-3 flex items-center gap-2 text-base font-black text-slate-900">
+            <Users size={18} className="text-blue-600" />
+            Thành viên nhóm
+          </h3>
+
+          <div className="space-y-2.5">
+            {members.map((member) => (
+              <div
+                key={member.id || member.mssv}
+                className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 md:rounded-lg"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-black text-slate-900">
+                    {member.studentName}
+                  </p>
+                  <p className="text-xs text-slate-500">{member.mssv}</p>
+                </div>
+
+                <span className="shrink-0 rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-black text-blue-600">
+                  {member.role}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:rounded-none">
         <h3 className="mb-4 flex items-center gap-2 text-base font-black text-slate-900">
           <BadgeDollarSign size={18} className="text-blue-600" />
@@ -270,7 +294,6 @@ export default function ProjectSidebar({
         </div>
       </section>
 
-      {/* GHI CHÚ ADMIN */}
       {adminNote && (
         <section className="rounded-2xl border border-amber-200 bg-amber-50 p-4 shadow-sm md:rounded-none">
           <h3 className="mb-2 flex items-center gap-2 text-sm font-black text-amber-700">

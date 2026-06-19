@@ -1,4 +1,3 @@
-
 export const API_ORIGIN = "https://hoaitam123.xyz"; // domain production
 // export const API_ORIGIN = "http://localhost:8080"; //domain local
 

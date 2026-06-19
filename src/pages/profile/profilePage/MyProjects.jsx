@@ -167,7 +167,7 @@ export default function MyProjects() {
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white transition-all hover:bg-blue-700"
         >
           <Plus size={16} />
-          Đăng đồ án mới
+          Tạo dự án mới
         </button>
       </div>
 
@@ -254,7 +254,7 @@ export default function MyProjects() {
             onClick={() => navigate("/project/create")}
             className="mt-5 rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
           >
-            Đăng đồ án mới
+            Tạo đồ án mới
           </button>
         </div>
       ) : (

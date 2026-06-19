@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   RotateCcw,
   CheckCircle2,
@@ -23,6 +23,33 @@ export default function ProjectFilterSidebar({
 
   const handleLocalChange = (field, value) => {
     setTempFilters((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const selectedTechnologyIds = Array.isArray(tempFilters.technologyIds)
+    ? tempFilters.technologyIds.map(String)
+    : tempFilters.technologyId
+      ? [String(tempFilters.technologyId)]
+      : [];
+
+  const handleTechnologyToggle = (technologyId) => {
+    const value = String(technologyId);
+    const nextTechnologyIds = selectedTechnologyIds.includes(value)
+      ? selectedTechnologyIds.filter((id) => id !== value)
+      : [...selectedTechnologyIds, value];
+
+    setTempFilters((prev) => ({
+      ...prev,
+      technologyId: "",
+      technologyIds: nextTechnologyIds,
+    }));
+  };
+
+  const handleClearTechnologies = () => {
+    setTempFilters((prev) => ({
+      ...prev,
+      technologyId: "",
+      technologyIds: [],
+    }));
   };
 
   const categories = [
@@ -93,32 +120,14 @@ export default function ProjectFilterSidebar({
           </h3>
         </div>
 
-        {/* Desktop: dropdown cho gọn */}
-        <div className="hidden lg:block">
-          <select
-            value={tempFilters.technologyId || ""}
-            onChange={(e) => handleLocalChange("technologyId", e.target.value)}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm font-semibold text-slate-700 outline-none transition-all focus:border-blue-500 focus:bg-white"
-          >
-            <option value="">Tất cả công nghệ</option>
-
-            {technologies.map((tech) => (
-              <option key={tech.id} value={tech.id}>
-                {tech.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Mobile: chip cho dễ bấm */}
-        <div className="flex flex-wrap gap-2 lg:hidden">
+        <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            onClick={() => handleLocalChange("technologyId", "")}
+            onClick={handleClearTechnologies}
             className={`rounded-full border px-3 py-1.5 text-[11px] font-bold transition-all ${
-              !tempFilters.technologyId
+              selectedTechnologyIds.length === 0
                 ? "border-slate-950 bg-slate-950 text-white"
-                : "border-slate-200 bg-white text-slate-600"
+                : "border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
             }`}
           >
             Tất cả
@@ -126,20 +135,21 @@ export default function ProjectFilterSidebar({
 
           {technologies.map((tech) => {
             const value = String(tech.id);
-            const isActive = String(tempFilters.technologyId || "") === value;
+            const isActive = selectedTechnologyIds.includes(value);
 
             return (
               <button
                 key={tech.id}
                 type="button"
-                onClick={() => handleLocalChange("technologyId", value)}
-                className={`rounded-full border px-3 py-1.5 text-[11px] font-bold transition-all ${
+                onClick={() => handleTechnologyToggle(value)}
+                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold transition-all ${
                   isActive
                     ? "border-slate-950 bg-slate-950 text-white"
-                    : "border-slate-200 bg-white text-slate-600"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
                 }`}
               >
                 {tech.name}
+                {isActive && <CheckCircle2 size={13} />}
               </button>
             );
           })}
