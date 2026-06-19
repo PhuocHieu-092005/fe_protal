@@ -25,19 +25,10 @@ import ProjectMembersSection from "./ProjectMembersSection";
 const normalizeStudent = (student, fallback = {}) => {
   if (!student) return null;
 
-  const mssv =
-    student.mssv ||
-    student.studentCode ||
-    student.student_code ||
-    fallback.mssv ||
-    "";
+  const mssv = student.mssv || "mssv không xác định";
   const fullName =
-    student.fullName ||
-    student.full_name ||
-    student.name ||
-    fallback.fullName ||
-    "";
-  const id = student.id || fallback.id || mssv || fullName;
+    student.fullName || student.full_name || "họ và tên không xác định";
+  const id = student.id;
 
   if (!mssv && !fullName) return null;
 

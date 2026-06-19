@@ -23,7 +23,6 @@ export default function MyProjects() {
 
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [keyword, setKeyword] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(1);
@@ -110,7 +109,7 @@ export default function MyProjects() {
 
   const totalViews = useMemo(() => {
     return projects.reduce(
-      (sum, p) => sum + (p.viewCount ?? p.view_count ?? 0),
+      (sum, project) => sum + (project.viewCount ?? project.view_count ?? 0),
       0,
     );
   }, [projects]);
@@ -134,11 +133,12 @@ export default function MyProjects() {
       fetchProjects();
     } catch (error) {
       console.error("Lỗi xóa project:", error?.response?.data || error);
-      Swal.fire(
-        "Thất bại",
-        error?.response?.data?.message || "Không thể xóa đồ án.",
-        "error",
-      );
+      const errorMsg =
+        error?.response?.data?.data ||
+        error?.response?.data?.message ||
+        "Không thể xóa đồ án.";
+
+      Swal.fire("Thất bại", errorMsg, "error");
     }
   };
 
@@ -206,14 +206,14 @@ export default function MyProjects() {
               type="text"
               placeholder="Tìm kiếm đồ án trong kho..."
               value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
+              onChange={(event) => setKeyword(event.target.value)}
               className="w-full rounded-xl border border-transparent bg-slate-50 py-2.5 pl-12 pr-4 text-sm outline-none transition-all focus:border-blue-500 focus:bg-white"
             />
           </div>
 
           <select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={(event) => setStatusFilter(event.target.value)}
             className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-blue-500"
           >
             <option value="ALL">Tất cả trạng thái</option>

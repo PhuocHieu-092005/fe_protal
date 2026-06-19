@@ -14,7 +14,7 @@ export default function ProjectCategory() {
   const [filters, setFilters] = useState({
     title: "",
     priceType: "",
-    technologyId: "",
+    technologyIds: [],
     page: 0,
     size: 9,
   });
@@ -34,7 +34,7 @@ export default function ProjectCategory() {
     try {
       const params = {
         title: customFilters.title || "",
-        technologyId: customFilters.technologyId || "",
+        technologyIds: customFilters.technologyIds || [],
         page: customFilters.page ?? 0,
         size: customFilters.size ?? 9,
       };
@@ -83,7 +83,7 @@ export default function ProjectCategory() {
   useEffect(() => {
     fetchProjects(filters);
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [filters.page, filters.technologyId, filters.size]);
+  }, [filters.page, filters.technologyIds, filters.size]);
 
   const filteredProjects = useMemo(() => {
     if (!filters.priceType) return projects;
@@ -110,9 +110,9 @@ export default function ProjectCategory() {
       ...filters,
       ...tempFilters,
       title: keyword.trim(),
-      technologyId: tempFilters.technologyId
-        ? Number(tempFilters.technologyId)
-        : "",
+      technologyIds: Array.isArray(tempFilters.technologyIds)
+        ? tempFilters.technologyIds.map(Number).filter(Boolean)
+        : [],
       page: 0,
     };
 
@@ -124,7 +124,7 @@ export default function ProjectCategory() {
     const resetFilters = {
       title: "",
       priceType: "",
-      technologyId: "",
+      technologyIds: [],
       page: 0,
       size: 9,
     };

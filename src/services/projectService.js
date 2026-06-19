@@ -2,13 +2,41 @@ import api from "./api";
 
 // 1. DÀNH CHO PUBLIC (Trang chủ)
 export const getPublicProjects = async (params = {}) => {
+  const technologyIds = Array.isArray(params.technologyIds)
+    ? params.technologyIds
+    : params.technologyId
+      ? [params.technologyId]
+      : [];
+
   const queryParams = {
     title: params.title || undefined,
-    technologyId: params.technologyId || undefined,
+    technologyIds: technologyIds.length ? technologyIds : undefined,
     page: params.page ?? 0,
     size: params.size ?? 9,
   };
-  const response = await api.get("/projects", { params: queryParams });
+  const response = await api.get("/projects", {
+    params: queryParams,
+    paramsSerializer: {
+      serialize: (currentParams) => {
+        const searchParams = new URLSearchParams();
+
+        Object.entries(currentParams).forEach(([key, value]) => {
+          if (value === undefined || value === null || value === "") return;
+
+          if (Array.isArray(value)) {
+            value.forEach((item) => {
+              searchParams.append(key, String(item));
+            });
+            return;
+          }
+
+          searchParams.append(key, String(value));
+        });
+
+        return searchParams.toString();
+      },
+    },
+  });
   return response.data;
 };
 export const deleteFavoriteProject = async(projectId)=>{

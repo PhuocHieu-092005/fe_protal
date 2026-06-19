@@ -86,18 +86,18 @@ const normalizeProjectMembers = (project) => {
 };
 
 const normalizeProjectLeader = (project, profile) => {
-  const leaderFromProfile = normalizeMember(profile, { isLeader: true });
-
-  if (leaderFromProfile) {
-    return leaderFromProfile;
-  }
-
-  return normalizeMember(null, {
+  const leaderFromProject = normalizeMember(null, {
     id: project?.studentId || project?.student_id || project?.id,
     mssv: project?.studentMssv || project?.student_mssv || "",
     fullName: project?.studentName || project?.student_name || "",
     isLeader: true,
   });
+
+  if (leaderFromProject) {
+    return leaderFromProject;
+  }
+
+  return normalizeMember(profile, { isLeader: true });
 };
 
 export default function EditProject() {
