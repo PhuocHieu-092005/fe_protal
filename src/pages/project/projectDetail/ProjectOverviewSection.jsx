@@ -55,7 +55,7 @@ export default function ProjectOverviewSection({
 
   return (
     // RESPONSIVE UI: mobile bo góc + padding nhỏ, desktop vẫn rộng
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:rounded-none md:p-5">
+    <section className="rounded-[1.65rem] border border-slate-200 bg-white p-3 shadow-sm md:rounded-[1.4rem] md:p-3.5">
       <div>
         <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-600">
           <Tag size={14} />
@@ -73,7 +73,7 @@ export default function ProjectOverviewSection({
 
       {/* RESPONSIVE UI: mobile 2 cột gọn, desktop 4 cột */}
       <div className="my-4 grid grid-cols-2 gap-3 md:mb-3 md:grid-cols-4">
-        <div className="rounded-xl border border-slate-200 bg-white p-3 sm:p-4">
+        <div className="rounded-xl border border-slate-200 bg-white p-2.5 sm:p-3">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
               <Eye size={18} />
@@ -88,7 +88,7 @@ export default function ProjectOverviewSection({
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-3 sm:p-4">
+        <div className="rounded-xl border border-slate-200 bg-white p-2.5 sm:p-3">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
               <Download size={18} />
@@ -103,7 +103,7 @@ export default function ProjectOverviewSection({
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-3 sm:p-4">
+        <div className="rounded-xl border border-slate-200 bg-white p-2.5 sm:p-3">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
               <Tag size={18} />
@@ -118,7 +118,7 @@ export default function ProjectOverviewSection({
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-3 sm:p-4">
+        <div className="rounded-xl border border-slate-200 bg-white p-2.5 sm:p-3">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
               <Tag size={18} />

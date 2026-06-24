@@ -366,7 +366,7 @@ export default function ProjectDetail() {
       <div className="min-h-screen bg-slate-100 px-3 pb-28 pt-16 text-left sm:px-4 md:px-6 md:pb-16 md:pt-20">
         <div className="mx-auto w-full max-w-[1500px] md:w-[92%]">
           {/* ✅ FIX: thêm mt-3 cho mobile, md:mt-4 cho desktop */}
-          <div className="mb-4 mt-3 flex items-center justify-between gap-3 md:mb-5 md:mt-4">
+          <div className="mb-3 mt-3 flex items-center justify-between gap-3 md:mb-4 md:mt-4">
             <button
               onClick={() => navigate(-1)}
               className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-600 shadow-sm transition hover:text-blue-600 sm:px-4 sm:text-sm"
@@ -388,8 +388,8 @@ export default function ProjectDetail() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-start">
-            <div className="min-w-0 space-y-6">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-start">
+            <div className="min-w-0 space-y-4">
               <ProjectOverviewSection
                 courseName={courseName}
                 projectTitle={project.title}
@@ -417,7 +417,7 @@ export default function ProjectDetail() {
               />
             </div>
 
-            <aside className="space-y-6 xl:sticky xl:top-24">
+            <aside className="space-y-4 xl:sticky xl:top-24">
               <ProjectSidebar
                 currentUserRole={currentUser?.role}
                 isPaidProject={isPaidProject}
