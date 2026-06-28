@@ -186,7 +186,7 @@ export default function Navbar() {
   const navLinks = [
     { name: "Trang chủ", path: "/" },
     { name: "Công việc", path: "/job" },
-    { name: "dự án", path: "/project" },
+    { name: "Dự án", path: "/project" },
     { name: "Mẫu CV", path: "/template", hideForCompany: true },
   ];
 
@@ -247,7 +247,7 @@ export default function Navbar() {
           )}
           <li>
             <Link to="/project" className={menuLinkStyles}>
-              dự án
+              Dự án
             </Link>
           </li>
           {user?.role !== "COMPANY" ? (
@@ -568,7 +568,7 @@ export default function Navbar() {
                     className={`px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${location.pathname === "/my-projects" ? "bg-zinc-900 text-white shadow-lg shadow-zinc-200" : "text-zinc-700 hover:bg-zinc-50"}`}
                   >
                     <FolderOpen size={20} />
-                    <span>dự án của tôi</span>
+                    <span>Dự án của tôi</span>
                   </Link>
                   <Link
                     to="/my-wallet"
@@ -597,7 +597,7 @@ export default function Navbar() {
                   className={`px-4 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${location.pathname === "/evaluations" ? "bg-zinc-900 text-white shadow-lg shadow-zinc-200" : "text-zinc-700 hover:bg-zinc-50"}`}
                 >
                   <FileSignature size={20} />
-                  <span>Đánh giá dự án</span>
+                  <span>Đánh giá Dự án</span>
                 </Link>
               )}
               {user?.role === "ADMIN" && (

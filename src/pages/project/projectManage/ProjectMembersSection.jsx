@@ -34,7 +34,7 @@ export default function ProjectMembersSection({
           </h2>
           <p className="mt-1.5 max-w-md text-xs leading-6 text-slate-500">
             {isEditMode
-              ? "Danh sách sinh viên đang tham gia thực hiện dự án."
+              ? "Danh sách sinh viên đang tham gia thực hiện Dự án."
               : "Bạn có thể tìm và xác nhận thêm sinh viên bằng MSSV trước khi gửi."}
           </p>
         </div>

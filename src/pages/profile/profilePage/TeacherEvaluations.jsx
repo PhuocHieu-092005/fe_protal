@@ -54,7 +54,7 @@ const TeacherEvaluations = () => {
         id: item.id,
         projectId: item.project_id || item.projectId || null,
         projectTitle:
-          item.project_title || item.projectTitle || "Chưa có tên dự án",
+          item.project_title || item.projectTitle || "Chưa có tên Dự án",
         courseName:
           item.course_name || item.courseName || "Chưa có tên môn học",
         teacherName: item.teacher_name || item.teacherName || "Giảng viên",
@@ -153,7 +153,7 @@ const TeacherEvaluations = () => {
 
                   {item.projectId && (
                     <p className="mt-1 text-right text-[11px] font-medium text-blue-600">
-                      Bấm để xem chi tiết dự án
+                      Bấm để xem chi tiết Dự án
                     </p>
                   )}
                 </div>
@@ -166,7 +166,7 @@ const TeacherEvaluations = () => {
             <table className="table w-full border-separate border-spacing-y-3">
               <thead>
                 <tr className="text-xs uppercase tracking-wider text-gray-500">
-                  <th className="pb-4 pl-4">dự án / Môn học</th>
+                  <th className="pb-4 pl-4">Dự án / Môn học</th>
                   <th className="pb-4">Giảng viên</th>
                   <th className="pb-4 pr-4">Nhận xét & Gợi ý</th>
                 </tr>
@@ -222,7 +222,7 @@ const TeacherEvaluations = () => {
                         </p>
                         {item.projectId && (
                           <p className="text-right text-[11px] font-medium text-blue-600">
-                            Bấm để xem chi tiết dự án
+                            Bấm để xem chi tiết Dự án
                           </p>
                         )}
                       </div>

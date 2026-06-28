@@ -41,15 +41,15 @@ export default function ProjectHero({ keyword, onKeywordChange, onSearch }) {
         <div className="mx-auto max-w-4xl text-center text-white">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs backdrop-blur md:px-4 md:text-sm">
             <FolderOpen className="h-4 w-4 text-sky-300" />
-            Kho lưu trữ dự án sinh viên IT
+            Kho lưu trữ Dự án sinh viên IT
           </span>
 
           <h1 className="mt-5 text-3xl font-bold leading-tight md:mt-6 md:text-6xl">
-            Khám phá dự án chất lượng cao từ sinh viên Khoa CNTT
+            Khám phá Dự án chất lượng cao từ sinh viên Khoa CNTT
           </h1>
 
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-200 md:mt-5 md:text-lg">
-            Tìm kiếm dự án tốt nghiệp, sản phẩm thực chiến và công nghệ phù hợp
+            Tìm kiếm Dự án tốt nghiệp, sản phẩm thực chiến và công nghệ phù hợp
             để tham khảo ý tưởng, học hỏi cách triển khai hoặc kết nối hợp tác.
           </p>
 
@@ -81,7 +81,7 @@ export default function ProjectHero({ keyword, onKeywordChange, onSearch }) {
                   type="text"
                   value={keyword}
                   onChange={(e) => onKeywordChange(e.target.value)}
-                  placeholder="Tìm tên dự án..."
+                  placeholder="Tìm tên Dự án..."
                   className="min-w-0 flex-1 bg-transparent px-2 py-2 text-xs text-slate-700 outline-none placeholder:text-slate-400 sm:px-3 sm:text-sm"
                 />
               </div>

@@ -32,7 +32,7 @@ export default function MobileBottomNav() {
       icon: Briefcase,
     },
     {
-      label: "dự án",
+      label: "Dự án",
       path: "/project",
       icon: FolderOpen,
     },

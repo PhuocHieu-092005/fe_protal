@@ -44,12 +44,12 @@ export default function BannerHero() {
 
           <h1 className="font-display text-3xl font-extrabold leading-[1.12] tracking-tight md:text-6xl md:leading-[1.08]">
             Cổng thông tin việc làm
-            <span className="mt-2 block text-sky-400">và dự án công nghệ</span>
+            <span className="mt-2 block text-sky-400">và Dự án công nghệ</span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-slate-300 md:text-lg">
             Kết nối sinh viên, doanh nghiệp và những cơ hội thực chiến. Khám phá
-            việc làm phù hợp hoặc xem các dự án nổi bật ngay hôm nay.
+            việc làm phù hợp hoặc xem các Dự án nổi bật ngay hôm nay.
           </p>
 
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -64,7 +64,7 @@ export default function BannerHero() {
               onClick={() => navigate("/project")}
               className="w-full rounded-xl border border-white/30 bg-white/10 px-8 py-3.5 text-sm font-bold text-white backdrop-blur-md transition-all hover:-translate-y-1 active:scale-95 sm:w-auto"
             >
-              Xem dự án nổi bật
+              Xem Dự án nổi bật
             </button>
           </div>
 
@@ -83,7 +83,7 @@ export default function BannerHero() {
                 80+
               </p>
               <p className="mt-1 text-[9px] font-bold uppercase text-slate-400 md:text-xs">
-                dự án
+                Dự án
               </p>
             </div>
 

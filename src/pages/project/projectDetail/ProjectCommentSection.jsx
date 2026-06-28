@@ -18,7 +18,7 @@ export default function ProjectCommentSection({
 
       <h3 className="relative mb-5 flex items-center gap-3 text-xl font-black text-slate-900 md:mb-8 md:text-2xl">
         <MessageSquareText className="text-blue-500" size={28} />
-        Bình luận dự án
+        Bình luận Dự án
       </h3>
 
       {/* RESPONSIVE UI: mobile giảm bo/gap/padding, desktop giữ style cũ */}

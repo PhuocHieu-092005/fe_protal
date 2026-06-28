@@ -147,7 +147,7 @@ export default function ProjectCategory() {
           <div className="mb-5 flex items-center justify-between gap-3 lg:hidden">
             <div>
               <h2 className="text-xl font-bold text-slate-900">
-                Danh sách dự án
+                Danh sách Dự án
               </h2>
               <p className="mt-1 text-xs font-medium text-slate-500">
                 Tìm thấy{" "}
@@ -156,7 +156,7 @@ export default function ProjectCategory() {
                     ? filteredProjects.length
                     : pageInfo.totalElements}
                 </span>{" "}
-                dự án
+                Dự án
               </p>
             </div>
 
@@ -183,7 +183,7 @@ export default function ProjectCategory() {
               <div className="mb-7 hidden items-center justify-between lg:flex">
                 <div>
                   <h2 className="text-2xl font-bold text-slate-900">
-                    Danh sách dự án
+                    Danh sách Dự án
                   </h2>
                   <div className="mt-2 h-1 w-12 rounded-full bg-blue-600"></div>
                 </div>
@@ -195,7 +195,7 @@ export default function ProjectCategory() {
                       ? filteredProjects.length
                       : pageInfo.totalElements}
                   </span>{" "}
-                  dự án
+                  Dự án
                 </p>
               </div>
 
@@ -219,7 +219,7 @@ export default function ProjectCategory() {
                   ) : (
                     <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white py-20">
                       <p className="font-medium text-slate-500">
-                        Không tìm thấy dự án nào phù hợp với bộ lọc.
+                        Không tìm thấy Dự án nào phù hợp với bộ lọc.
                       </p>
 
                       <button

@@ -89,7 +89,7 @@ export default function PaymentResult({ type = "success" }) {
             )}
             {projectId && (
               <div className="flex items-center justify-between gap-4 pt-3">
-                <span>Mã dự án</span>
+                <span>Mã Dự án</span>
                 <span className="font-black text-slate-900">#{projectId}</span>
               </div>
             )}

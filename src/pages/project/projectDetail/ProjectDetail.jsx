@@ -60,17 +60,17 @@ export default function ProjectDetail() {
 
   const handleToggleFavorite = async () => {
     if (!isLoggedIn()) {
-      alertUtils.info("Yêu cầu đăng nhập", "Vui lòng đăng nhập để lưu dự án.");
+      alertUtils.info("Yêu cầu đăng nhập", "Vui lòng đăng nhập để lưu Dự án.");
       return;
     }
     setLoadingFav(true);
     try {
       if (isFavorited) {
         await projectService.deleteFavoriteProject(id);
-        alertUtils.success("Đã gỡ thích dự án");
+        alertUtils.success("Đã gỡ thích Dự án");
       } else {
         await projectService.toggleFavorite(id);
-        alertUtils.success("Đã thích dự án");
+        alertUtils.success("Đã thích Dự án");
       }
       await checkFav();
     } catch (err) {
@@ -207,7 +207,7 @@ export default function ProjectDetail() {
     [teacherEvaluations],
   );
 
-  const courseName = project?.courseName || project?.course_name || "dự án";
+  const courseName = project?.courseName || project?.course_name || "Dự án";
   const studentName =
     project?.studentName || project?.student_name || "Sinh viên";
   const sourceCodeUrl = normalizeUrl(
@@ -238,7 +238,7 @@ export default function ProjectDetail() {
   const handleBuyProject = async () => {
     if (!project?.id) return;
     if (isPurchased) {
-      alertUtils.info("Thông báo", "Bạn đã mua source code của dự án này.");
+      alertUtils.info("Thông báo", "Bạn đã mua source code của Dự án này.");
       return;
     }
     if (!currentUser) {
@@ -369,7 +369,7 @@ export default function ProjectDetail() {
       <div className="min-h-screen bg-slate-50/50 px-4 pb-24 pt-16 text-left sm:px-6 md:pt-20">
         <div className="mx-auto max-w-7xl">
           <div className="rounded-[2rem] border border-slate-100 bg-white p-10 text-center shadow-sm md:p-20">
-            <p className="font-bold text-slate-500">Không tìm thấy dự án.</p>
+            <p className="font-bold text-slate-500">Không tìm thấy Dự án.</p>
             <button
               onClick={() => navigate(-1)}
               className="mt-4 text-blue-600 underline"
@@ -416,7 +416,7 @@ export default function ProjectDetail() {
                   : "border-slate-200 bg-white text-slate-700 hover:text-blue-600"
               }`}
             >
-              {loadingFav ? "Đang xử lý..." : "Lưu dự án"}
+              {loadingFav ? "Đang xử lý..." : "Lưu Dự án"}
             </button>
           </div>
 

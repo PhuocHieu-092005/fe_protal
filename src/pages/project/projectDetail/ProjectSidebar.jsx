@@ -86,7 +86,7 @@ export default function ProjectSidebar({
                 Hợp tác project
               </h3>
               <p className="mt-1 text-xs leading-5 text-slate-500">
-                Doanh nghiệp quan tâm đến dự án này? Gửi yêu cầu hợp tác để trao
+                Doanh nghiệp quan tâm đến Dự án này? Gửi yêu cầu hợp tác để trao
                 đổi chi tiết.
               </p>
             </div>
@@ -188,7 +188,7 @@ export default function ProjectSidebar({
               <div className="min-w-0">
                 <p className="text-sm font-black text-slate-900">Video Demo</p>
                 <p className="text-xs text-slate-500">
-                  Xem video giới thiệu dự án
+                  Xem video giới thiệu Dự án
                 </p>
               </div>
 
@@ -262,7 +262,7 @@ export default function ProjectSidebar({
 
         <div className="grid grid-cols-2 gap-x-5 gap-y-3 text-xs md:gap-y-1.5">
           <div>
-            <p className="text-slate-400">Mã dự án</p>
+            <p className="text-slate-400">Mã Dự án</p>
             <p className="mt-1 font-bold text-slate-900">#{projectId}</p>
           </div>
 

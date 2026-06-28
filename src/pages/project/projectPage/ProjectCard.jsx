@@ -26,7 +26,7 @@ export default function ProjectCard({ project }) {
       <div className="relative h-[185px] w-full shrink-0 overflow-hidden bg-slate-100">
         <img
           src={imageUrl}
-          alt={project.title || "dự án"}
+          alt={project.title || "Dự án"}
           className="h-full w-full object-cover"
         />
 
@@ -92,7 +92,7 @@ export default function ProjectCard({ project }) {
           onClick={() => navigate(`/project/${project.id}`)}
           className="group flex w-full items-center justify-between rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-900 transition-all duration-200 hover:border-blue-500 hover:text-blue-600 active:scale-[0.99]"
         >
-          <span>Xem chi tiết dự án</span>
+          <span>Xem chi tiết Dự án</span>
 
           <ChevronRight
             size={18}

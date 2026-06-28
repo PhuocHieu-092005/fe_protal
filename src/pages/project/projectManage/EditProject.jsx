@@ -189,7 +189,7 @@ export default function EditProject() {
         }
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu edit project:", error);
-        Swal.fire("Lỗi", "Không thể tải dữ liệu dự án để Chỉnh sửa.", "error");
+        Swal.fire("Lỗi", "Không thể tải dữ liệu Dự án để Chỉnh sửa.", "error");
       } finally {
         setLoading(false);
       }
@@ -314,7 +314,7 @@ export default function EditProject() {
     if (totalVisibleImages !== 3) {
       return Swal.fire(
         "Lưu ý",
-        "dự án bắt buộc phải có đúng 3 ảnh minh họa.",
+        "Dự án bắt buộc phải có đúng 3 ảnh minh họa.",
         "warning",
       );
     }
@@ -359,7 +359,7 @@ export default function EditProject() {
 
       await projectService.updateProject(id, data);
 
-      await Swal.fire("Thành công!", "dự án đã được cập nhật.", "success");
+      await Swal.fire("Thành công!", "Dự án đã được cập nhật.", "success");
       navigate("/my-projects");
     } catch (error) {
       console.error("Lỗi cập nhật project:", error.response?.data);
@@ -392,7 +392,7 @@ export default function EditProject() {
       <div className="min-h-screen bg-slate-50/50 px-4 pb-16 pt-24 md:px-10">
         <div className="mx-auto max-w-6xl rounded-[2rem] bg-white p-12 text-center shadow-sm">
           <p className="text-lg font-bold text-slate-500">
-            Đang tải dữ liệu dự án...
+            Đang tải dữ liệu Dự án...
           </p>
         </div>
       </div>
@@ -415,7 +415,7 @@ export default function EditProject() {
 
             <h1 className="flex items-center gap-3 text-4xl font-black tracking-tight">
               <PencilLine className="text-blue-600" size={36} />
-              Chỉnh sửa dự án
+              Chỉnh sửa Dự án
             </h1>
           </div>
 
@@ -450,7 +450,7 @@ export default function EditProject() {
 
               <h2 className="mb-8 flex items-center gap-2 text-xl font-black">
                 <Info size={22} className="text-blue-600" />
-                1. Nội dung dự án
+                1. Nội dung Dự án
               </h2>
 
               <div className="space-y-6">
