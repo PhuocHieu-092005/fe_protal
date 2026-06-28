@@ -67,7 +67,7 @@ export default function ProjectOverviewSection({
         </h1>
 
         <p className="mt-3 break-words text-sm leading-6 text-slate-600 md:text-base">
-          {description || "Chưa có mô tả cho đồ án này."}
+          {description || "Chưa có mô tả cho dự án này."}
         </p>
       </div>
 
@@ -207,7 +207,7 @@ export default function ProjectOverviewSection({
         <div className="flex aspect-[4/3] items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 text-slate-400 md:h-[360px] md:aspect-auto md:rounded-xl">
           <div className="text-center">
             <ImageIcon className="mx-auto mb-3" size={42} />
-            <p className="text-sm font-semibold">Chưa có hình ảnh đồ án</p>
+            <p className="text-sm font-semibold">Chưa có hình ảnh dự án</p>
           </div>
         </div>
       )}

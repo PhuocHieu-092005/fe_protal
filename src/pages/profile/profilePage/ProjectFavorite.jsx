@@ -17,7 +17,7 @@ export default function FavoriteProjects() {
 
   // --- Cấu hình phân trang ---
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Số lượng đồ án trên mỗi trang
+  const itemsPerPage = 5; // Số lượng dự án trên mỗi trang
 
   const fetchFavorites = async () => {
     try {
@@ -35,10 +35,10 @@ export default function FavoriteProjects() {
   const handleRemoveFavorite = async (projectId) => {
     try {
       await projectService.deleteFavoriteProject(projectId);
-      alertUtils.success("Đã bỏ lưu đồ án");
+      alertUtils.success("Đã bỏ lưu dự án");
       fetchFavorites();
     } catch (err) {
-      console.error("lỗi khi bỏ lưu đồ án: ", err);
+      console.error("lỗi khi bỏ lưu dự án: ", err);
     }
   };
 
@@ -63,7 +63,7 @@ export default function FavoriteProjects() {
       <div className="px-6 py-4 border-b border-gray-100 bg-slate-50/50 flex justify-between items-center">
         <h1 className="text-lg font-bold text-slate-800 flex items-center gap-2">
           <FolderKanban size={20} className="text-indigo-600" />
-          Đồ án đã lưu ({favorites.length})
+          dự án đã lưu ({favorites.length})
         </h1>
       </div>
 
@@ -71,7 +71,7 @@ export default function FavoriteProjects() {
       <div className="flex-1 flex flex-col gap-0 divide-y divide-gray-100">
         {loading ? (
           <div className="p-10 text-center text-slate-400 animate-pulse font-medium">
-            Đang tải danh sách đồ án...
+            Đang tải danh sách dự án...
           </div>
         ) : currentItems.length > 0 ? (
           currentItems.map((fav) => (
@@ -140,7 +140,7 @@ export default function FavoriteProjects() {
                 <button
                   onClick={() => handleRemoveFavorite(fav.project_id)}
                   className="p-3 rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm active:scale-90"
-                  title="Bỏ lưu đồ án"
+                  title="Bỏ lưu dự án"
                 >
                   <Heart size={20} fill="currentColor" />
                 </button>
@@ -153,13 +153,13 @@ export default function FavoriteProjects() {
               <FolderKanban size={64} />
             </div>
             <p className="text-slate-400 font-medium">
-              Bạn chưa lưu đồ án nào.
+              Bạn chưa lưu dự án nào.
             </p>
             <Link
               to="/project"
               className="mt-4 inline-block text-indigo-600 font-bold hover:underline"
             >
-              Khám phá đồ án ngay
+              Khám phá dự án ngay
             </Link>
           </div>
         )}

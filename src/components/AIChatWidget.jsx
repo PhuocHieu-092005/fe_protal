@@ -6,7 +6,7 @@ const initialMessages = [
   {
     id: "welcome",
     role: "assistant",
-    content: "Xin chào, mình có thể hỗ trợ bạn tìm việc, CV và đồ án.",
+    content: "Xin chào, mình có thể hỗ trợ bạn tìm việc, CV và dự án.",
   },
 ];
 

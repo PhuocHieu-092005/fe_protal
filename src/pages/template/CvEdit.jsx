@@ -159,7 +159,7 @@ const CvEdit = () => {
     if (!reason) {
       alertUtils.error(
         "Thiếu lý do",
-        "Vui lòng nhập lý do bạn muốn chỉnh sửa CV.",
+        "Vui lòng nhập lý do bạn muốn Chỉnh sửa CV.",
       );
       return;
     }
@@ -167,20 +167,21 @@ const CvEdit = () => {
     try {
       setIsSaving(true); // Bắt đầu trạng thái lưu
       const token = localStorage.getItem("accessToken");
-      const response = await fetch(`${API_BASE_URL}/cvs/${id}/unlock-requests`, {
-        method: "POST",
-        headers: {
-          ...NGROK_SKIP_BROWSER_WARNING_HEADER,
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        `${API_BASE_URL}/cvs/${id}/unlock-requests`,
+        {
+          method: "POST",
+          headers: {
+            ...NGROK_SKIP_BROWSER_WARNING_HEADER,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ reason }),
         },
-        body: JSON.stringify({ reason }),
-      });
+      );
       const result = await response.json();
       if (response.ok) {
-        alertUtils.success(
-          "Gửi yêu cầu thành công! Vui lòng chờ Admin duyệt.",
-        );
+        alertUtils.success("Gửi yêu cầu thành công! Vui lòng chờ Admin duyệt.");
         setIsUnlockModalOpen(false);
         setUnlockReason("");
         navigate("/profile");
@@ -333,17 +334,18 @@ const CvEdit = () => {
             className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
           >
             <h2 className="text-xl font-semibold text-gray-900">
-              Yêu cầu mở khóa chỉnh sửa CV
+              Yêu cầu mở khóa Chỉnh sửa CV
             </h2>
             <p className="mt-2 text-sm text-gray-600">
-              CV đã được duyệt. Vui lòng nhập lý do bạn muốn chỉnh sửa để Admin mở khóa.
+              CV đã được duyệt. Vui lòng nhập lý do bạn muốn Chỉnh sửa để Admin
+              mở khóa.
             </p>
 
             <textarea
               value={unlockReason}
               onChange={(e) => setUnlockReason(e.target.value)}
               className="mt-5 min-h-32 w-full resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-800 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
-              placeholder="Nhập lý do chỉnh sửa CV..."
+              placeholder="Nhập lý do Chỉnh sửa CV..."
               disabled={isSaving}
               autoFocus
             />

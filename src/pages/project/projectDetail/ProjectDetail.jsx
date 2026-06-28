@@ -60,7 +60,7 @@ export default function ProjectDetail() {
 
   const handleToggleFavorite = async () => {
     if (!isLoggedIn()) {
-      alertUtils.info("Yêu cầu đăng nhập", "Vui lòng đăng nhập để lưu đồ án.");
+      alertUtils.info("Yêu cầu đăng nhập", "Vui lòng đăng nhập để lưu dự án.");
       return;
     }
     setLoadingFav(true);
@@ -148,15 +148,47 @@ export default function ProjectDetail() {
   }, [project]);
 
   const normalizedMembers = useMemo(() => {
-    if (!Array.isArray(project?.members)) return [];
+    if (!Array.isArray(project?.members)) {
+      const fallbackStudentName =
+        project?.studentName || project?.student_name || "";
+      const fallbackMssv = project?.studentMssv || project?.student_mssv || "";
+
+      if (!fallbackStudentName && !fallbackMssv) {
+        return [];
+      }
+
+      return [
+        {
+          id: fallbackMssv || fallbackStudentName,
+          mssv: fallbackMssv || "---",
+          studentName: fallbackStudentName || "Sinh viên",
+        },
+      ];
+    }
+
+    if (project.members.length === 0) {
+      const fallbackStudentName =
+        project?.studentName || project?.student_name || "";
+      const fallbackMssv = project?.studentMssv || project?.student_mssv || "";
+
+      if (!fallbackStudentName && !fallbackMssv) {
+        return [];
+      }
+
+      return [
+        {
+          id: fallbackMssv || fallbackStudentName,
+          mssv: fallbackMssv || "---",
+          studentName: fallbackStudentName || "Sinh viên",
+        },
+      ];
+    }
 
     return project.members
       .map((member) => ({
         id: member.studentId || member.student_id || member.mssv,
         mssv: member.mssv || "---",
-        studentName:
-          member.studentName || member.student_name || "Thành viên",
-        role: member.role || "MEMBER",
+        studentName: member.studentName || member.student_name || "Thành viên",
       }))
       .filter((member) => member.id || member.mssv || member.studentName);
   }, [project]);
@@ -175,7 +207,7 @@ export default function ProjectDetail() {
     [teacherEvaluations],
   );
 
-  const courseName = project?.courseName || project?.course_name || "Đồ án";
+  const courseName = project?.courseName || project?.course_name || "dự án";
   const studentName =
     project?.studentName || project?.student_name || "Sinh viên";
   const sourceCodeUrl = normalizeUrl(
@@ -206,7 +238,7 @@ export default function ProjectDetail() {
   const handleBuyProject = async () => {
     if (!project?.id) return;
     if (isPurchased) {
-      alertUtils.info("Thông báo", "Bạn đã mua source code của đồ án này.");
+      alertUtils.info("Thông báo", "Bạn đã mua source code của dự án này.");
       return;
     }
     if (!currentUser) {
@@ -337,7 +369,7 @@ export default function ProjectDetail() {
       <div className="min-h-screen bg-slate-50/50 px-4 pb-24 pt-16 text-left sm:px-6 md:pt-20">
         <div className="mx-auto max-w-7xl">
           <div className="rounded-[2rem] border border-slate-100 bg-white p-10 text-center shadow-sm md:p-20">
-            <p className="font-bold text-slate-500">Không tìm thấy đồ án.</p>
+            <p className="font-bold text-slate-500">Không tìm thấy dự án.</p>
             <button
               onClick={() => navigate(-1)}
               className="mt-4 text-blue-600 underline"

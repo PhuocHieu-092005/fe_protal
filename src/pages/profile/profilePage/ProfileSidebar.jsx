@@ -157,7 +157,7 @@ const ProfileSidebar = ({ activeTab, setActiveTab }) => {
                     }`}
                   >
                     <BarChart3 size={17} />
-                    Thống kê đồ án
+                    Thống kê dự án
                   </button>
                 </div>
               </div>
@@ -312,7 +312,7 @@ const ProfileSidebar = ({ activeTab, setActiveTab }) => {
                     }`}
                   >
                     <BarChart3 size={16} />
-                    Thống kê đồ án
+                    Thống kê dự án
                   </button>
                 </li>
               </ul>

@@ -60,7 +60,7 @@ export default function CvCategory() {
             Hồ Sơ Ứng Viên
           </h1>
           <p className="mt-4 text-gray-500 text-lg max-w-2xl mx-auto italic">
-            Khám phá kho hồ sơ và kinh nghiệm đồ án của sinh viên, giúp doanh
+            Khám phá kho hồ sơ và kinh nghiệm dự án của sinh viên, giúp doanh
             nghiệp dễ dàng tìm kiếm ứng viên phù hợp.
           </p>
         </div>

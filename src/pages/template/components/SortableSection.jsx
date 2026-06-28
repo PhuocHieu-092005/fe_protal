@@ -59,7 +59,7 @@ const SortableSection = ({ section, cvData, updateCvData }) => {
       {/* ==================== Nội dung form của section ==================== */}
       {/* 
         SectionComponent là component động (PersonalSection, EducationSection, ...)
-        Chúng ta truyền cvData và updateCvData vào để section con có thể đọc và chỉnh sửa dữ liệu
+        Chúng ta truyền cvData và updateCvData vào để section con có thể đọc và Chỉnh sửa dữ liệu
       */}
       <SectionComponent cvData={cvData} updateCvData={updateCvData} />
     </div>

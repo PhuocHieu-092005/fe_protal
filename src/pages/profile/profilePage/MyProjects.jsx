@@ -69,7 +69,7 @@ export default function MyProjects() {
       setProjects(list);
     } catch (error) {
       console.error("Lỗi lấy danh sách project cá nhân:", error);
-      Swal.fire("Lỗi", "Không thể tải danh sách đồ án cá nhân", "error");
+      Swal.fire("Lỗi", "Không thể tải danh sách dự án cá nhân", "error");
     } finally {
       setLoading(false);
     }
@@ -119,8 +119,8 @@ export default function MyProjects() {
   const handleDelete = async (projectId) => {
     // 1. Sử dụng alertUtils để hỏi xác nhận xóa
     const confirmed = await alertUtils.confirmDelete(
-      "Xóa đồ án?",
-      "Đồ án sẽ được đóng và không còn hiển thị trong danh sách của bạn.",
+      "Xóa dự án?",
+      "dự án sẽ được đóng và không còn hiển thị trong danh sách của bạn.",
     );
 
     if (!confirmed) return;
@@ -130,9 +130,9 @@ export default function MyProjects() {
       await projectService.deleteProject(projectId);
 
       // 3. Thông báo thành công bằng Toast ở góc
-      alertUtils.success("Đã xóa đồ án thành công.");
+      alertUtils.success("Đã xóa dự án thành công.");
 
-      // 4. Load lại danh sách đồ án
+      // 4. Load lại danh sách dự án
       fetchMyProjects();
     } catch (error) {
       console.error("Lỗi xóa project:", error?.response?.data || error);
@@ -140,7 +140,7 @@ export default function MyProjects() {
       const errorMsg =
         error?.response?.data?.data ||
         error?.response?.data?.message ||
-        "Không thể xóa đồ án.";
+        "Không thể xóa dự án.";
 
       // 5. Thông báo lỗi chi tiết bằng Modal
       alertUtils.error("Thất bại", errorMsg);
@@ -153,11 +153,11 @@ export default function MyProjects() {
         <div className="min-w-0">
           <h2 className="flex items-center gap-2 text-xl font-black text-slate-900">
             <BarChart3 className="text-blue-600" size={22} />
-            Thống kê đồ án
+            Thống kê dự án
           </h2>
 
           <p className="mt-1 max-w-xl text-sm leading-6 text-slate-500">
-            Quản lý đồ án bạn đã tạo, theo dõi trạng thái duyệt, lượt xem và
+            Quản lý dự án bạn đã tạo, theo dõi trạng thái duyệt, lượt xem và
             lượt tải.
           </p>
         </div>
@@ -173,7 +173,7 @@ export default function MyProjects() {
 
       <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
-          <p className="text-xs text-slate-500">Tổng đồ án</p>
+          <p className="text-xs text-slate-500">Tổng dự án</p>
           <h3 className="mt-1 text-2xl font-black text-slate-900">
             {stats.total}
           </h3>
@@ -210,7 +210,7 @@ export default function MyProjects() {
 
           <input
             type="text"
-            placeholder="Tìm theo tên đồ án..."
+            placeholder="Tìm theo tên dự án..."
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:border-blue-500"
@@ -243,18 +243,18 @@ export default function MyProjects() {
           <FolderOpen size={40} className="mx-auto mb-3 text-slate-300" />
 
           <h3 className="text-lg font-bold text-slate-700">
-            Chưa có đồ án nào
+            Chưa có dự án nào
           </h3>
 
           <p className="mt-2 text-sm text-slate-500">
-            Hãy đăng đồ án đầu tiên của bạn để bắt đầu.
+            Hãy đăng dự án đầu tiên của bạn để bắt đầu.
           </p>
 
           <button
             onClick={() => navigate("/project/create")}
             className="mt-5 rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
           >
-            Tạo đồ án mới
+            Tạo dự án mới
           </button>
         </div>
       ) : (
@@ -269,7 +269,7 @@ export default function MyProjects() {
               <span className="font-bold text-slate-700">
                 {filteredProjects.length}
               </span>{" "}
-              đồ án
+              dự án
             </p>
           </div>
 
@@ -322,7 +322,7 @@ export default function MyProjects() {
 
                           <p className="mt-1 line-clamp-1 text-[11px] leading-5 text-slate-500 sm:mt-1.5 sm:line-clamp-2 sm:text-[12px]">
                             {project.description ||
-                              "Chưa có mô tả cho đồ án này."}
+                              "Chưa có mô tả cho dự án này."}
                           </p>
                         </div>
 

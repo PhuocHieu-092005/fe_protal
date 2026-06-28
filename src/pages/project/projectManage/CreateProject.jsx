@@ -311,7 +311,7 @@ export default function CreateProject() {
 
     try {
       await projectService.createProject(data);
-      await Swal.fire("Thành công!", "Đồ án đã được gửi duyệt.", "success");
+      await Swal.fire("Thành công!", "dự án đã được gửi duyệt.", "success");
       navigate("/my-projects");
     } catch (error) {
       console.log("Lỗi chi tiết từ Server:", error.response?.data);
@@ -371,7 +371,7 @@ export default function CreateProject() {
               form="create-project-form"
               className="rounded-2xl bg-zinc-900 px-8 py-3 font-bold text-white shadow-xl shadow-zinc-200 transition-all hover:bg-blue-600"
             >
-              Gửi duyệt đồ án
+              Gửi duyệt dự án
             </button>
           </div>
         </div>
@@ -387,7 +387,7 @@ export default function CreateProject() {
 
               <h2 className="mb-8 flex items-center gap-2 text-xl font-black">
                 <Info size={22} className="text-blue-600" />
-                1. Nội dung đồ án
+                1. Nội dung dự án
               </h2>
 
               <div className="space-y-6">

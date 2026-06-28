@@ -20,7 +20,6 @@ export default function ProjectSidebar({
   sourceCodeUrl,
   demoUrl,
   technologies,
-  studentName,
   members,
   projectId,
   projectStatus,
@@ -30,6 +29,18 @@ export default function ProjectSidebar({
   buyingProject,
   isPurchased,
 }) {
+  const displayStudents = [];
+  const seenStudents = new Set();
+
+  (Array.isArray(members) ? members : [])
+    .filter((member) => member?.studentName)
+    .forEach((member) => {
+      const key = member.mssv || member.id || member.studentName;
+      if (!key || seenStudents.has(key)) return;
+      seenStudents.add(key);
+      displayStudents.push(member);
+    });
+
   return (
     <>
       <section className="rounded-[1.4rem] border border-blue-100 bg-blue-50/40 p-3 shadow-sm">
@@ -210,52 +221,38 @@ export default function ProjectSidebar({
       </section>
 
       <section className="rounded-[1.4rem] border border-slate-200 bg-white p-3 shadow-sm">
-        <p className="mb-3 text-xs font-black uppercase tracking-widest text-slate-400">
-          Tác giả
-        </p>
+        <h3 className="mb-3 flex items-center gap-2 text-base font-black text-slate-900">
+          <Users size={18} className="text-blue-600" />
+          Sinh viên thực hiện
+        </h3>
 
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-sm font-black text-emerald-700 md:rounded-lg">
-            {studentName?.charAt(0) || "U"}
-          </div>
-
-          <div className="min-w-0">
-            <p className="truncate text-sm font-black text-slate-900">
-              {studentName}
-            </p>
-            <p className="text-xs text-slate-500">Sinh viên thực hiện</p>
-          </div>
-        </div>
-      </section>
-
-      {members?.length > 0 && (
-        <section className="rounded-[1.4rem] border border-slate-200 bg-white p-3 shadow-sm">
-          <h3 className="mb-3 flex items-center gap-2 text-base font-black text-slate-900">
-            <Users size={18} className="text-blue-600" />
-            Thành viên nhóm
-          </h3>
-
-          <div className="space-y-2.5">
-            {members.map((member) => (
+        <div className="space-y-2.5">
+          {displayStudents.length > 0 ? (
+            displayStudents.map((member) => (
               <div
                 key={member.id || member.mssv}
                 className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 md:rounded-lg"
               >
-                <div className="min-w-0">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-sm font-black text-emerald-700 md:rounded-lg">
+                    {member.studentName?.charAt(0) || "U"}
+                  </div>
                   <p className="truncate text-sm font-black text-slate-900">
                     {member.studentName}
                   </p>
-                  <p className="text-xs text-slate-500">{member.mssv}</p>
                 </div>
-
-                <span className="shrink-0 rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-black text-blue-600">
-                  {member.role}
-                </span>
+                <p className="shrink-0 text-xs text-slate-500">
+                  {member.mssv || "---"}
+                </p>
               </div>
-            ))}
-          </div>
-        </section>
-      )}
+            ))
+          ) : (
+            <p className="text-sm text-slate-400">
+              Chưa có thông tin sinh viên.
+            </p>
+          )}
+        </div>
+      </section>
 
       <section className="rounded-[1.4rem] border border-slate-200 bg-white p-3 shadow-sm">
         <h3 className="mb-4 flex items-center gap-2 text-base font-black text-slate-900">
@@ -265,7 +262,7 @@ export default function ProjectSidebar({
 
         <div className="grid grid-cols-2 gap-x-5 gap-y-3 text-xs md:gap-y-1.5">
           <div>
-            <p className="text-slate-400">Mã đồ án</p>
+            <p className="text-slate-400">Mã dự án</p>
             <p className="mt-1 font-bold text-slate-900">#{projectId}</p>
           </div>
 

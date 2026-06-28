@@ -21,7 +21,7 @@ export default function JobHero() {
 
             <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-200 md:mt-5 md:text-lg">
               Khám phá các vị trí việc làm, thực tập và cơ hội hợp tác từ các
-              doanh nghiệp. Kết nối nhà tuyển dụng với CV và đồ án của sinh viên
+              doanh nghiệp. Kết nối nhà tuyển dụng với CV và dự án của sinh viên
               một cách hiệu quả nhất.
             </p>
 

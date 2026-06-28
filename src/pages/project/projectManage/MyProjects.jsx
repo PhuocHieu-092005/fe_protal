@@ -34,8 +34,8 @@ export default function MyProjects() {
       const list = res?.data || [];
       setProjects(list);
     } catch (error) {
-      console.error("Lỗi lấy danh sách đồ án:", error);
-      Swal.fire("Lỗi", "Không thể tải danh sách đồ án", "error");
+      console.error("Lỗi lấy danh sách dự án:", error);
+      Swal.fire("Lỗi", "Không thể tải danh sách dự án", "error");
     } finally {
       setLoading(false);
     }
@@ -116,7 +116,7 @@ export default function MyProjects() {
 
   const handleDelete = async (projectId) => {
     const result = await Swal.fire({
-      title: "Xóa đồ án?",
+      title: "Xóa dự án?",
       text: "Bạn sẽ không thể hoàn tác thao tác này.",
       icon: "warning",
       showCancelButton: true,
@@ -129,14 +129,14 @@ export default function MyProjects() {
 
     try {
       await projectService.deleteProject(projectId);
-      await Swal.fire("Thành công", "Đã xóa đồ án.", "success");
+      await Swal.fire("Thành công", "Đã xóa dự án.", "success");
       fetchProjects();
     } catch (error) {
       console.error("Lỗi xóa project:", error?.response?.data || error);
       const errorMsg =
         error?.response?.data?.data ||
         error?.response?.data?.message ||
-        "Không thể xóa đồ án.";
+        "Không thể xóa dự án.";
 
       Swal.fire("Thất bại", errorMsg, "error");
     }
@@ -148,7 +148,7 @@ export default function MyProjects() {
         <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
           <div>
             <h1 className="text-3xl font-black tracking-tight text-zinc-900">
-              Đồ Án Của Tôi
+              dự án Của Tôi
             </h1>
             <p className="font-medium text-slate-500">
               Nơi lưu trữ và quản lý các sản phẩm sáng tạo của bạn.
@@ -188,7 +188,7 @@ export default function MyProjects() {
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
-              Số đồ án hiển thị
+              Số dự án hiển thị
             </p>
             <h3 className="mt-1 text-3xl font-black text-emerald-600">
               {filteredProjects.length}
@@ -204,7 +204,7 @@ export default function MyProjects() {
             />
             <input
               type="text"
-              placeholder="Tìm kiếm đồ án trong kho..."
+              placeholder="Tìm kiếm dự án trong kho..."
               value={keyword}
               onChange={(event) => setKeyword(event.target.value)}
               className="w-full rounded-xl border border-transparent bg-slate-50 py-2.5 pl-12 pr-4 text-sm outline-none transition-all focus:border-blue-500 focus:bg-white"
@@ -229,7 +229,7 @@ export default function MyProjects() {
             <table className="w-full border-collapse text-left">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                  <th className="px-8 py-5">Thông tin đồ án</th>
+                  <th className="px-8 py-5">Thông tin dự án</th>
                   <th className="px-6 py-5 text-center">Trạng thái</th>
                   <th className="px-6 py-5 text-center">Tương tác</th>
                   <th className="px-6 py-5">Giá</th>
@@ -319,7 +319,7 @@ export default function MyProjects() {
                           <button
                             onClick={() => handleDelete(item.id)}
                             className="rounded-xl border border-transparent p-2 text-slate-400 shadow-sm shadow-transparent transition-all hover:border-slate-100 hover:bg-white hover:text-rose-600 hover:shadow-slate-100"
-                            title="Xóa đồ án"
+                            title="Xóa dự án"
                           >
                             <Trash2 size={18} />
                           </button>
@@ -327,7 +327,7 @@ export default function MyProjects() {
                           <button
                             onClick={() => navigate(`/project/${item.id}`)}
                             className="rounded-xl border border-transparent p-2 text-slate-400 shadow-sm shadow-transparent transition-all hover:border-slate-100 hover:bg-white hover:text-zinc-900 hover:shadow-slate-100"
-                            title="Xem chi tiết đồ án"
+                            title="Xem chi tiết dự án"
                           >
                             <ExternalLink size={18} />
                           </button>
@@ -344,7 +344,7 @@ export default function MyProjects() {
             <div className="py-20 text-center">
               <div className="mb-4 text-4xl">📭</div>
               <p className="font-medium text-slate-400">
-                Bạn chưa có đồ án nào. Hãy đăng ngay!
+                Bạn chưa có dự án nào. Hãy đăng ngay!
               </p>
             </div>
           )}

@@ -14,6 +14,15 @@ export default function ProjectMembersSection({
   onRemoveMember,
 }) {
   const isEditMode = mode === "edit";
+  const displayMembers = [];
+  const seenMembers = new Set();
+
+  [leader, ...members].filter(Boolean).forEach((member) => {
+    const key = member.mssv || member.id || member.fullName;
+    if (!key || seenMembers.has(key)) return;
+    seenMembers.add(key);
+    displayMembers.push(member);
+  });
 
   return (
     <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
@@ -21,12 +30,12 @@ export default function ProjectMembersSection({
         <div>
           <h2 className="flex items-center gap-2 text-lg font-black">
             <Users size={18} className="text-amber-500" />
-            {isEditMode ? "4. Thành viên đồ án" : "4. Thành viên thực hiện"}
+            4. Sinh viên thực hiện
           </h2>
           <p className="mt-1.5 max-w-md text-xs leading-6 text-slate-500">
             {isEditMode
-              ? "Danh sách thành viên."
-              : "Leader mặc định là người tạo đồ án. Thêm thành viên bằng MSSV rồi xác nhận trước khi gửi."}
+              ? "Danh sách sinh viên đang tham gia thực hiện dự án."
+              : "Bạn có thể tìm và xác nhận thêm sinh viên bằng MSSV trước khi gửi."}
           </p>
         </div>
 
@@ -39,30 +48,6 @@ export default function ProjectMembersSection({
       </div>
 
       <div className="space-y-4">
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
-          <div className="mb-2 flex items-center gap-2 text-xs font-bold text-slate-600">
-            <Check size={14} className="text-emerald-500" />
-            Leader
-          </div>
-          {leader ? (
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-amber-700">
-                Leader
-              </span>
-              <div>
-                <p className="text-base font-bold text-zinc-900">
-                  {leader.fullName || "Chưa có tên"}
-                </p>
-                <p className="text-sm text-slate-500">{leader.mssv || "---"}</p>
-              </div>
-            </div>
-          ) : (
-            <p className="text-xs font-medium text-slate-500">
-              Chưa tải được thông tin người tạo đồ án.
-            </p>
-          )}
-        </div>
-
         {!isEditMode && (
           <>
             <div>
@@ -79,7 +64,7 @@ export default function ProjectMembersSection({
                     type="text"
                     value={searchMssv}
                     onChange={(event) => onSearchMssvChange(event.target.value)}
-                    placeholder="Nhập MSSV để tìm thành viên"
+                    placeholder="Nhập MSSV để tìm sinh viên"
                     className="w-full rounded-xl border border-slate-100 bg-slate-50 px-10 py-3 text-sm font-semibold uppercase outline-none focus:border-blue-500 focus:bg-white"
                   />
                 </div>
@@ -130,16 +115,16 @@ export default function ProjectMembersSection({
         <div>
           <div className="mb-3 flex items-center justify-between">
             <p className="text-xs font-bold text-zinc-500">
-              Danh sách thành viên xác nhận
+              Danh sách sinh viên thực hiện
             </p>
             <span className="text-xs font-semibold text-slate-500">
-              {members.length} thành viên
+              {displayMembers.length} sinh viên
             </span>
           </div>
 
-          {members.length > 0 ? (
+          {displayMembers.length > 0 ? (
             <div className="space-y-2.5">
-              {members.map((member) => (
+              {displayMembers.map((member) => (
                 <div
                   key={member.mssv || member.id}
                   className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white px-3.5 py-3.5 md:flex-row md:items-center md:justify-between"
@@ -159,12 +144,6 @@ export default function ProjectMembersSection({
                   </div>
 
                   <div className="flex items-center gap-2">
-                    {member.isLeader && (
-                      <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-black uppercase tracking-wide text-amber-700">
-                        Leader
-                      </span>
-                    )}
-
                     {!isEditMode && !member.isLeader && (
                       <button
                         type="button"
@@ -181,7 +160,7 @@ export default function ProjectMembersSection({
             </div>
           ) : (
             <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-xs font-medium text-slate-500">
-              Chưa có thành viên nào.
+              Chưa có sinh viên nào.
             </div>
           )}
         </div>
