@@ -12,7 +12,7 @@ export const getPublicProjects = async (params = {}) => {
     title: params.title || undefined,
     technologyIds: technologyIds.length ? technologyIds : undefined,
     page: params.page ?? 0,
-    size: params.size ?? 9,
+    size: params.size ?? 12,
   };
   const response = await api.get("/projects", {
     params: queryParams,

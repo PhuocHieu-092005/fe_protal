@@ -6,9 +6,10 @@ export default function Pagination({
   setCurrentPage,
 }) {
   const pages = Array.from({ length: totalPages });
+
   return (
-    <div className="flex justify-center mt-10">
-      <div className="flex items-center justify-between w-full max-w-80 text-gray-500 font-medium">
+    <div className="flex justify-center">
+      <div className="flex w-full max-w-80 items-center justify-between font-medium text-gray-500">
         {/* Prev */}
         <button
           onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
@@ -29,13 +30,14 @@ export default function Pagination({
         <div className="flex items-center gap-2 text-sm">
           {pages.map((_, i) => {
             const page = i + 1;
+
             return (
               <button
                 key={i}
                 onClick={() => setCurrentPage(page)}
-                className={`h-10 w-10 flex items-center justify-center ${
+                className={`flex h-10 w-10 items-center justify-center ${
                   currentPage === page
-                    ? "text-indigo-500 border border-indigo-200 rounded-full"
+                    ? "rounded-full border border-indigo-200 text-indigo-500"
                     : ""
                 }`}
               >

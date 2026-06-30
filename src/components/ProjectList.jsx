@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import projectService from "../services/projectService";
 import { Download, Eye } from "lucide-react";
+
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80";
 
@@ -13,6 +14,7 @@ function normalizeProjectsResponse(res) {
   if (Array.isArray(res?.data?.content)) return res.data.content;
   if (Array.isArray(res?.data?.data)) return res.data.data;
   if (Array.isArray(res?.data?.data?.content)) return res.data.data.content;
+
   return [];
 }
 
@@ -64,6 +66,7 @@ const ProjectCard = ({ project }) => {
           alt={project.title}
           className="h-full w-full object-cover"
         />
+
         <div className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white/90 px-2 py-0.5 text-[10px] font-bold text-slate-700 shadow-sm backdrop-blur-sm md:right-3 md:top-3 md:px-2.5 md:py-1 md:text-[11px]">
           <Eye size={13} className="text-slate-500" />
           <span>{project.views.toLocaleString()}</span>
@@ -107,6 +110,7 @@ const ProjectCard = ({ project }) => {
             className="group inline-flex items-center gap-1 rounded-lg !bg-slate-900 px-2.5 py-1 text-[10px] font-bold !text-white shadow-sm transition-all md:px-3.5 md:py-1.5 md:text-[12px]"
           >
             <span>Chi tiết</span>
+
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-3 w-3 transition-transform group-hover:translate-x-0.5 md:h-3.5 md:w-3.5"
@@ -136,10 +140,12 @@ const ProjectList = () => {
     const fetchProjects = async () => {
       try {
         setLoading(true);
+
         const res = await projectService.getPublicProjects({
           page: 0,
           size: 8,
         });
+
         const list = normalizeProjectsResponse(res);
         setProjects(list.map(mapProjectForCard));
       } catch (error) {
@@ -148,42 +154,81 @@ const ProjectList = () => {
         setLoading(false);
       }
     };
+
     fetchProjects();
   }, []);
 
   const { row1, row2 } = useMemo(() => {
-    if (!projects.length) return { row1: [], row2: [] };
+    if (!projects.length) {
+      return {
+        row1: [],
+        row2: [],
+      };
+    }
+
     const midpoint = Math.ceil(projects.length / 2);
     const r1 = projects.slice(0, midpoint);
     const r2 = projects.slice(midpoint);
-    return { row1: [...r1, ...r1], row2: [...r2, ...r2] };
+
+    return {
+      row1: [...r1, ...r1],
+      row2: [...r2, ...r2],
+    };
   }, [projects]);
 
-  if (loading) return <div className="py-20 text-center">Đang tải...</div>;
+  if (loading) {
+    return <div className="py-20 text-center">Đang tải...</div>;
+  }
 
   return (
-    <div className="relative mx-auto w-full max-w-7xl bg-white py-10 md:py-16">
+    <div className="relative mx-auto w-full max-w-7xl bg-white pt-1 pb-1 md:pt-2 md:pb-2">
       <style>{`
-        .marquee-forward { animation: scrollForward 35s linear infinite; }
-        .marquee-reverse { animation: scrollReverse 35s linear infinite; }
-        
-        @keyframes scrollForward { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        @keyframes scrollReverse { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
-        
+        .marquee-forward {
+          animation: scrollForward 35s linear infinite;
+        }
+
+        .marquee-reverse {
+          animation: scrollReverse 35s linear infinite;
+        }
+
+        @keyframes scrollForward {
+          0% {
+            transform: translateX(0);
+          }
+
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+
+        @keyframes scrollReverse {
+          0% {
+            transform: translateX(-50%);
+          }
+
+          100% {
+            transform: translateX(0);
+          }
+        }
+
         /* Hiệu ứng dừng khi di chuột vào container */
         .marquee-container:hover .marquee-inner {
           animation-play-state: paused !important;
         }
 
         @media (max-width: 768px) {
-          .marquee-forward, .marquee-reverse { animation-duration: 25s; }
+          .marquee-forward,
+          .marquee-reverse {
+            animation-duration: 25s;
+          }
         }
       `}</style>
 
-      <div className="mb-8 px-4 text-center md:mb-10">
+      <div className="mb-6 px-4 text-center md:mb-8">
         <h1 className="font-display text-3xl font-extrabold tracking-tight text-slate-950 md:text-4xl">
           Dự án sinh viên nổi bật
         </h1>
+
         <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-slate-500 md:text-base">
           Các giải pháp công nghệ sáng tạo được đánh giá cao, phù hợp để tham
           khảo ý tưởng và cách triển khai thực tế.
@@ -222,6 +267,7 @@ const ProjectList = () => {
 
       {/* Gradient phủ hai bên: Chỉ hiện trên Desktop */}
       <div className="pointer-events-none absolute inset-y-0 left-0 z-20 hidden w-32 bg-gradient-to-r from-white via-white/80 to-transparent md:block" />
+
       <div className="pointer-events-none absolute inset-y-0 right-0 z-20 hidden w-32 bg-gradient-to-l from-white via-white/80 to-transparent md:block" />
     </div>
   );

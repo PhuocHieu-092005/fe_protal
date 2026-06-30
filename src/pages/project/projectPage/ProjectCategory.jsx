@@ -16,7 +16,7 @@ export default function ProjectCategory() {
     priceType: "",
     technologyIds: [],
     page: 0,
-    size: 9,
+    size: 12,
   });
 
   const [keyword, setKeyword] = useState("");
@@ -31,6 +31,7 @@ export default function ProjectCategory() {
 
   const fetchProjects = async (customFilters = filters) => {
     setLoading(true);
+
     try {
       const params = {
         title: customFilters.title || "",
@@ -64,11 +65,13 @@ export default function ProjectCategory() {
   const fetchTechnologies = async () => {
     try {
       const res = await technologyService.getAllTechnologies();
+
       const techs = Array.isArray(res)
         ? res
         : Array.isArray(res?.data)
           ? res.data
           : [];
+
       setTechnologies(techs);
     } catch (err) {
       console.error("Lỗi fetch technologies:", err);
@@ -136,20 +139,21 @@ export default function ProjectCategory() {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f8fafc]">
-      <main className="mt-16 flex-grow pb-20">
+      <main className="mt-16 flex-grow  pb-4 md:pb-20">
         <ProjectHero
           keyword={keyword}
           onKeywordChange={setKeyword}
           onSearch={handleSearch}
         />
 
-        <div className="mx-auto mt-8 w-[90%] max-w-[1450px] lg:mt-10">
-          <div className="mb-5 flex items-center justify-between gap-3 lg:hidden">
+        <div className="mx-auto mt-6 w-[96%] max-w-[1450px] md:mt-8 md:w-[90%] lg:mt-10">
+          <div className="mb-4 flex items-center justify-between gap-3 px-1 md:mb-5 md:px-0 lg:hidden">
             <div>
-              <h2 className="text-xl font-bold text-slate-900">
+              <h2 className="text-lg font-bold text-slate-900 md:text-xl">
                 Danh sách Dự án
               </h2>
-              <p className="mt-1 text-xs font-medium text-slate-500">
+
+              <p className="mt-1 text-[11px] font-medium text-slate-500 md:text-xs">
                 Tìm thấy{" "}
                 <span className="font-bold text-blue-600">
                   {filters.priceType
@@ -163,7 +167,7 @@ export default function ProjectCategory() {
             <button
               type="button"
               onClick={() => setFilterOpen(true)}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm md:h-10 md:w-10"
             >
               <SlidersHorizontal size={18} />
             </button>
@@ -185,6 +189,7 @@ export default function ProjectCategory() {
                   <h2 className="text-2xl font-bold text-slate-900">
                     Danh sách Dự án
                   </h2>
+
                   <div className="mt-2 h-1 w-12 rounded-full bg-blue-600"></div>
                 </div>
 
@@ -200,24 +205,24 @@ export default function ProjectCategory() {
               </div>
 
               {loading ? (
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+                <div className="grid grid-cols-2 items-start gap-1.5 md:grid-cols-2 md:items-stretch md:gap-3 xl:grid-cols-4">
                   {[...Array(6)].map((_, i) => (
                     <div
                       key={i}
-                      className="h-[380px] animate-pulse rounded-2xl border border-slate-100 bg-white shadow-sm"
+                      className="h-[245px] animate-pulse rounded-xl border border-slate-100 bg-white shadow-sm md:h-[380px] md:rounded-2xl"
                     />
                   ))}
                 </div>
               ) : (
                 <>
                   {filteredProjects.length > 0 ? (
-                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
+                    <div className="grid grid-cols-2 items-start gap-1.5 md:grid-cols-2 md:items-stretch md:gap-2 xl:grid-cols-4">
                       {filteredProjects.map((p) => (
                         <ProjectCard key={p.id} project={p} />
                       ))}
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white py-20">
+                    <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white px-4 py-16 text-center md:py-20">
                       <p className="font-medium text-slate-500">
                         Không tìm thấy Dự án nào phù hợp với bộ lọc.
                       </p>
@@ -234,12 +239,15 @@ export default function ProjectCategory() {
               )}
 
               {pageInfo.totalPages > 1 && !filters.priceType && (
-                <div className="mt-12 flex justify-center">
+                <div className="mt-8 flex justify-center md:mt-12">
                   <Pagination
                     currentPage={pageInfo.number + 1}
                     totalPages={pageInfo.totalPages}
                     setCurrentPage={(p) =>
-                      setFilters((prev) => ({ ...prev, page: p - 1 }))
+                      setFilters((prev) => ({
+                        ...prev,
+                        page: p - 1,
+                      }))
                     }
                   />
                 </div>

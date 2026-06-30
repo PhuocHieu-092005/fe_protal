@@ -76,6 +76,7 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
       alertUtils.success(
         "Đăng ký tài khoản thành công! Vui lòng kiểm tra email để xác thực.",
       );
+
       onSwitchSignIn();
     } catch (err) {
       const errorData = err.response?.data;
@@ -97,24 +98,24 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
   };
 
   return (
-    <div className="bg-white text-gray-500 w-full max-w-[340px] sm:max-w-[450px] mx-3 sm:mx-4 p-5 sm:p-6 md:p-10 text-left text-sm rounded-3xl shadow-2xl relative max-h-[92vh] overflow-y-auto">
+    <div className="relative mx-auto max-h-[92vh] w-full max-w-[340px] overflow-y-auto rounded-3xl bg-white p-5 text-left text-sm text-gray-500 shadow-2xl sm:max-w-[450px] sm:p-6 md:p-10">
       <button
         type="button"
         onClick={onClose}
-        className="absolute top-2 right-4 text-2xl sm:text-3xl font-bold text-gray-400 hover:text-red-500 p-2"
+        className="absolute right-4 top-2 p-2 text-2xl font-bold text-gray-400 hover:text-red-500 sm:text-3xl"
       >
         ×
       </button>
 
-      <h2 className="text-2xl sm:text-3xl font-extrabold mb-5 sm:mb-6 text-center text-slate-800 pr-6">
+      <h2 className="mb-5 pr-6 text-center text-2xl font-extrabold text-slate-800 sm:mb-6 sm:text-3xl">
         Tạo Tài Khoản
       </h2>
 
-      <div className="flex bg-gray-100 p-1 rounded-full mb-5 sm:mb-6">
+      <div className="mb-5 flex rounded-full bg-gray-100 p-1 sm:mb-6">
         <button
           type="button"
           onClick={() => setRole("STUDENT")}
-          className={`flex-1 py-2 sm:py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all ${
+          className={`flex-1 rounded-full py-2 text-xs font-bold transition-all sm:py-2.5 sm:text-sm ${
             role === "STUDENT"
               ? "bg-white text-indigo-600 shadow-sm"
               : "text-gray-500"
@@ -122,10 +123,11 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
         >
           Sinh viên
         </button>
+
         <button
           type="button"
           onClick={() => setRole("COMPANY")}
-          className={`flex-1 py-2 sm:py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all ${
+          className={`flex-1 rounded-full py-2 text-xs font-bold transition-all sm:py-2.5 sm:text-sm ${
             role === "COMPANY"
               ? "bg-white text-indigo-600 shadow-sm"
               : "text-gray-500"
@@ -141,16 +143,17 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
         noValidate
       >
         <div>
-          <label className="block mb-1.5 ml-3 sm:ml-4 font-semibold text-gray-700 text-xs sm:text-sm">
+          <label className="mb-1.5 ml-3 block text-xs font-semibold text-gray-700 sm:ml-4 sm:text-sm">
             Họ và tên
           </label>
+
           <input
             type="text"
             value={fullName}
             onChange={(e) =>
               handleFieldChange("full_name", e.target.value, setFullName)
             }
-            className={`w-full border rounded-full py-2.5 sm:py-3 px-5 sm:px-6 text-xs sm:text-sm outline-none focus:border-indigo-500 ${
+            className={`w-full rounded-full border px-5 py-2.5 text-xs outline-none focus:border-indigo-500 sm:px-6 sm:py-3 sm:text-sm ${
               fieldErrors.full_name ? "border-red-400" : "border-gray-300"
             }`}
             placeholder={
@@ -159,24 +162,26 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
                 : "Nhập tên doanh nghiệp"
             }
           />
+
           {fieldErrors.full_name && (
-            <p className="mt-1.5 ml-3 sm:ml-4 text-xs font-medium text-red-500">
+            <p className="ml-3 mt-1.5 text-xs font-medium text-red-500 sm:ml-4">
               {fieldErrors.full_name}
             </p>
           )}
         </div>
 
         <div>
-          <label className="block mb-1.5 ml-3 sm:ml-4 font-semibold text-gray-700 text-xs sm:text-sm">
+          <label className="mb-1.5 ml-3 block text-xs font-semibold text-gray-700 sm:ml-4 sm:text-sm">
             Địa chỉ Email
           </label>
+
           <input
             type="email"
             value={email}
             onChange={(e) =>
               handleFieldChange("email", e.target.value, setEmail)
             }
-            className={`w-full border rounded-full py-2.5 sm:py-3 px-5 sm:px-6 text-xs sm:text-sm outline-none focus:border-indigo-500 ${
+            className={`w-full rounded-full border px-5 py-2.5 text-xs outline-none focus:border-indigo-500 sm:px-6 sm:py-3 sm:text-sm ${
               fieldErrors.email ? "border-red-400" : "border-gray-300"
             }`}
             placeholder={
@@ -185,52 +190,55 @@ export default function SignUpForm({ onClose, onSwitchSignIn }) {
                 : "Nhập email doanh nghiệp"
             }
           />
+
           {fieldErrors.email && (
-            <p className="mt-1.5 ml-3 sm:ml-4 text-xs font-medium text-red-500">
+            <p className="ml-3 mt-1.5 text-xs font-medium text-red-500 sm:ml-4">
               {fieldErrors.email}
             </p>
           )}
         </div>
 
         <div>
-          <label className="block mb-1.5 ml-3 sm:ml-4 font-semibold text-gray-700 text-xs sm:text-sm">
+          <label className="mb-1.5 ml-3 block text-xs font-semibold text-gray-700 sm:ml-4 sm:text-sm">
             Mật khẩu
           </label>
+
           <input
             type="password"
             value={password}
             onChange={(e) =>
               handleFieldChange("password", e.target.value, setPassword)
             }
-            className={`w-full border rounded-full py-2.5 sm:py-3 px-5 sm:px-6 text-xs sm:text-sm outline-none focus:border-indigo-500 ${
+            className={`w-full rounded-full border px-5 py-2.5 text-xs outline-none focus:border-indigo-500 sm:px-6 sm:py-3 sm:text-sm ${
               fieldErrors.password ? "border-red-400" : "border-gray-300"
             }`}
             placeholder="Tạo mật khẩu"
           />
+
           {fieldErrors.password && (
-            <p className="mt-1.5 ml-3 sm:ml-4 text-xs font-medium text-red-500">
+            <p className="ml-3 mt-1.5 text-xs font-medium text-red-500 sm:ml-4">
               {fieldErrors.password}
             </p>
           )}
         </div>
 
-        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+        {error && <p className="text-center text-sm text-red-500">{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full !mt-6 sm:!mt-8 bg-indigo-600 py-3 sm:py-4 rounded-full text-white font-bold text-sm sm:text-base hover:bg-indigo-700 transition-all disabled:opacity-70"
+          className="!mt-6 w-full rounded-full bg-indigo-600 py-3 text-sm font-bold text-white transition-all hover:bg-indigo-700 disabled:opacity-70 sm:!mt-8 sm:py-4 sm:text-base"
         >
           {loading ? "Đang tạo tài khoản..." : "Tạo Tài Khoản"}
         </button>
       </form>
 
-      <p className="text-center mt-5 sm:mt-6 text-gray-700 text-xs sm:text-sm">
+      <p className="mt-5 text-center text-xs text-gray-700 sm:mt-6 sm:text-sm">
         Đã có tài khoản?{" "}
         <button
           type="button"
           onClick={onSwitchSignIn}
-          className="text-blue-600 font-extrabold hover:underline"
+          className="font-extrabold text-blue-600 hover:underline"
         >
           Đăng nhập
         </button>
